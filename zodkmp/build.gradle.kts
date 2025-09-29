@@ -3,8 +3,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.composeMultiplatform)
-    alias(libs.plugins.composeCompiler)
     `maven-publish`
     signing
 }
@@ -59,13 +57,12 @@ publishing {
     publications {
         withType<MavenPublication> {
             // Configure artifact IDs for different variants
-            if (name == "androidRelease") {
+            // Only set artifactId for main publications to avoid conflicts
+            if (name == "kotlinMultiplatform") {
+                artifactId = "zodkmp"
+            } else if (name == "androidRelease") {
                 artifactId = "zodkmp"
             } else if (name == "androidDebug") {
-                artifactId = "zodkmp-debug"
-            } else if (name.startsWith("ios")) {
-                artifactId = "zodkmp-ios" 
-            } else if (name == "kotlinMultiplatform") {
                 artifactId = "zodkmp"
             }
             
@@ -91,7 +88,7 @@ publishing {
                 
                 scm {
                     connection.set("scm:git:https://github.com/piashcse/zodkmp.git")
-                    developerConnection.set("scm:git:ssh://git@github.com:piashcse/zodkmp.git")
+                    developerConnection.set("scm:git:ssh://github.com/piashcse/zodkmp.git")
                     url.set("https://github.com/piashcse/zodkmp")
                 }
             }
