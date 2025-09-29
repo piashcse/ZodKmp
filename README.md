@@ -474,6 +474,18 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+## Publishing to Maven Central
+
+ZodKmp is published to Maven Central. Releases are published automatically when a new GitHub release is created.
+
+### For Maintainers
+
+To publish a new version:
+
+1. Update the version in the root `build.gradle.kts` file
+2. Create a new GitHub release 
+3. The CI/CD workflow will automatically publish to Maven Central
+
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
