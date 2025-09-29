@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    `maven-publish`
+    signing
 }
 
 kotlin {
@@ -26,12 +28,6 @@ kotlin {
     
     sourceSets {
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
             implementation(libs.kotlinx.datetime)
         }
         commonTest.dependencies {
@@ -56,4 +52,76 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+}
+
+// Configure publications for Maven Central
+publishing {
+    publications {
+        withType<MavenPublication> {
+            // Configure artifact IDs for different variants
+            if (name == "androidRelease") {
+                artifactId = "zodkmp"
+            } else if (name == "androidDebug") {
+                artifactId = "zodkmp-debug"
+            } else if (name.startsWith("ios")) {
+                artifactId = "zodkmp-ios" 
+            } else if (name == "kotlinMultiplatform") {
+                artifactId = "zodkmp"
+            }
+            
+            pom {
+                name.set("ZodKmp")
+                description.set("A Kotlin Multiplatform library for Zod-like validation")
+                url.set("https://github.com/piashcse/zodkmp")
+                
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://opensource.org/licenses/MIT")
+                    }
+                }
+                
+                developers {
+                    developer {
+                        id.set("piashcse")
+                        name.set("Mehedi Hassan Piash")
+                        email.set("piash599@gmail.com")
+                    }
+                }
+                
+                scm {
+                    connection.set("scm:git:https://github.com/piashcse/zodkmp.git")
+                    developerConnection.set("scm:git:ssh://git@github.com:piashcse/zodkmp.git")
+                    url.set("https://github.com/piashcse/zodkmp")
+                }
+            }
+        }
+    }
+    
+    repositories {
+        maven {
+            name = "Central"
+            setUrl("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = System.getenv("OSSRH_USERNAME")
+                password = System.getenv("OSSRH_PASSWORD")
+            }
+        }
+        
+        // For testing purposes - local repository
+        maven {
+            name = "Local"
+            url = uri("$buildDir/repository")
+        }
+    }
+}
+
+// Signing configuration
+signing {
+    useInMemoryPgpKeys(
+        System.getenv("SIGNING_KEY"),
+        System.getenv("SIGNING_PASSWORD")
+    )
+    sign(publishing.publications)
+    isRequired = !project.hasProperty("skipSigning")
 }
