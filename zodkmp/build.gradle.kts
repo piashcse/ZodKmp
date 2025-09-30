@@ -3,8 +3,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.composeMultiplatform)
-    alias(libs.plugins.composeCompiler)
     `maven-publish`
     signing
 }
@@ -54,18 +52,40 @@ android {
     }
 }
 
+// Create javadoc and sources JARs for Maven Central compliance
+val javadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+    // Empty Javadoc JAR - required by Maven Central but can be empty if no docs exist
+}
+
+val allSourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    // Include sources from all relevant source sets
+    from(kotlin.sourceSets.commonMain.get().kotlin.srcDirs)
+}
+
+// Add artifacts to all publications
+publishing {
+    publications.withType<MavenPublication> {
+        artifact(javadocJar.get())
+        artifact(allSourcesJar.get())
+    }
+}
+
 // Configure publications for Maven Central
 publishing {
     publications {
         withType<MavenPublication> {
             // Configure artifact IDs for different variants
-            if (name == "androidRelease") {
+            // Only set artifactId for main publications to avoid conflicts
+            if (name == "kotlinMultiplatform") {
+                artifactId = "zodkmp"
+            } else if (name == "androidRelease") {
                 artifactId = "zodkmp"
             } else if (name == "androidDebug") {
-                artifactId = "zodkmp-debug"
+                artifactId = "zodkmp"
             } else if (name.startsWith("ios")) {
-                artifactId = "zodkmp-ios" 
-            } else if (name == "kotlinMultiplatform") {
+                // Set consistent artifact ID for iOS targets
                 artifactId = "zodkmp"
             }
             
@@ -78,6 +98,7 @@ publishing {
                     license {
                         name.set("MIT License")
                         url.set("https://opensource.org/licenses/MIT")
+                        distribution.set("repo")
                     }
                 }
                 
@@ -86,12 +107,14 @@ publishing {
                         id.set("piashcse")
                         name.set("Mehedi Hassan Piash")
                         email.set("piash599@gmail.com")
+                        organization.set("piashcse")
+                        organizationUrl.set("https://github.com/piashcse")
                     }
                 }
                 
                 scm {
                     connection.set("scm:git:https://github.com/piashcse/zodkmp.git")
-                    developerConnection.set("scm:git:ssh://git@github.com:piashcse/zodkmp.git")
+                    developerConnection.set("scm:git:ssh://github.com/piashcse/zodkmp.git")
                     url.set("https://github.com/piashcse/zodkmp")
                 }
             }
@@ -102,6 +125,15 @@ publishing {
         maven {
             name = "Central"
             setUrl("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = System.getenv("OSSRH_USERNAME")
+                password = System.getenv("OSSRH_PASSWORD")
+            }
+        }
+        
+        maven {
+            name = "Snapshot"
+            setUrl("https://s01.oss.sonatype.org/content/repositories/snapshots/")
             credentials {
                 username = System.getenv("OSSRH_USERNAME")
                 password = System.getenv("OSSRH_PASSWORD")

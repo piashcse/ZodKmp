@@ -57,7 +57,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("com.piashcse.zodkmp:zodkmp:1.0.0")
+                implementation("io.github.piashcse:zodkmp:1.0.0")
             }
         }
     }
@@ -71,7 +71,7 @@ kotlin {
 zodkmp = "1.0.0"
 
 [libraries]
-zodkmp = { module = "com.piashcse.zodkmp:zodkmp", version.ref = "zodkmp" }
+zodkmp = { module = "io.github.piashcse:zodkmp", version.ref = "zodkmp" }
 ```
 
 ## Getting Started
@@ -476,15 +476,69 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Publishing to Maven Central
 
-ZodKmp is published to Maven Central. Releases are published automatically when a new GitHub release is created.
+ZodKmp is published to Maven Central. The library is configured to be published through Sonatype OSSRH.
 
-### For Maintainers
+### Prerequisites for Publishing
 
-To publish a new version:
+1. **Sonatype Account**: You need an account on Sonatype OSSRH (OSS Repository Hosting)
+2. **GPG Key**: Set up GPG signing keys for artifact signing
+3. **GitHub Secrets**: For automated publishing, configure the following secrets in your GitHub repository:
 
-1. Update the version in the root `build.gradle.kts` file
-2. Create a new GitHub release 
-3. The CI/CD workflow will automatically publish to Maven Central
+```bash
+OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }} 
+SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+```
+
+4. **Library Version**: The version is managed in `gradle.properties`:
+
+```properties
+library.version=1.x.y
+```
+
+### Automated Release Process
+
+The library uses GitHub Actions for automated releases and publishing. For detailed instructions, see the [RELEASING.md](RELEASING.md) document.
+
+#### Creating a New Release
+
+1. **Via GitHub UI**: Use the "Create Release" workflow in the GitHub Actions tab
+2. **Manual Tagging**: Push a git tag in the format `vX.Y.Z` (e.g., `v1.0.0`)
+
+The process will:
+- Update the version in `gradle.properties`
+- Create a Git tag
+- Create a GitHub release
+- Automatically publish to Maven Central
+
+### Verification
+
+To verify artifacts locally before publishing to Maven Central:
+
+```bash
+./gradlew publishAllPublicationsToLocalRepository
+```
+
+This will publish to a local repository under the build directory for testing.
+
+### Manual Publishing
+
+For manual publishing (if needed):
+
+1. **Build Artifacts**: Run the build to ensure everything is working:
+
+```bash
+./gradlew build
+```
+
+2. **Publish**: Publish to Sonatype OSSRH:
+
+```bash
+./gradlew publishAllPublicationsToCentralRepository
+```
+
+3. **Close and Release**: After successful upload, go to [Sonatype OSSRH](https://s01.oss.sonatype.org/) to close the staging repository and release it to Maven Central.
 
 ## License
 
