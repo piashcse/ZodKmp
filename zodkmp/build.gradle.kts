@@ -155,5 +155,7 @@ signing {
         System.getenv("SIGNING_PASSWORD")
     )
     sign(publishing.publications)
-    isRequired = !project.hasProperty("skipSigning")
+    // Only require signing when explicitly building for publication (not for JitPack or when skipSigning is set)
+    isRequired = !project.hasProperty("skipSigning") && System.getenv("JITPACK") != "true" && 
+                 !project.findProperty("skipSigning").toString().toBoolean()
 }
