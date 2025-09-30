@@ -52,6 +52,26 @@ android {
     }
 }
 
+// Create javadoc and sources JARs for Maven Central compliance
+val javadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+    // Empty Javadoc JAR - required by Maven Central but can be empty if no docs exist
+}
+
+val allSourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    // Include sources from all relevant source sets
+    from(kotlin.sourceSets.commonMain.get().kotlin.srcDirs)
+}
+
+// Add artifacts to all publications
+publishing {
+    publications.withType<MavenPublication> {
+        artifact(javadocJar.get())
+        artifact(allSourcesJar.get())
+    }
+}
+
 // Configure publications for Maven Central
 publishing {
     publications {
@@ -64,6 +84,9 @@ publishing {
                 artifactId = "zodkmp"
             } else if (name == "androidDebug") {
                 artifactId = "zodkmp"
+            } else if (name.startsWith("ios")) {
+                // Set consistent artifact ID for iOS targets
+                artifactId = "zodkmp"
             }
             
             pom {
@@ -75,6 +98,7 @@ publishing {
                     license {
                         name.set("MIT License")
                         url.set("https://opensource.org/licenses/MIT")
+                        distribution.set("repo")
                     }
                 }
                 
@@ -83,6 +107,8 @@ publishing {
                         id.set("piashcse")
                         name.set("Mehedi Hassan Piash")
                         email.set("piash599@gmail.com")
+                        organization.set("piashcse")
+                        organizationUrl.set("https://github.com/piashcse")
                     }
                 }
                 
@@ -99,6 +125,15 @@ publishing {
         maven {
             name = "Central"
             setUrl("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = System.getenv("OSSRH_USERNAME")
+                password = System.getenv("OSSRH_PASSWORD")
+            }
+        }
+        
+        maven {
+            name = "Snapshot"
+            setUrl("https://s01.oss.sonatype.org/content/repositories/snapshots/")
             credentials {
                 username = System.getenv("OSSRH_USERNAME")
                 password = System.getenv("OSSRH_PASSWORD")
