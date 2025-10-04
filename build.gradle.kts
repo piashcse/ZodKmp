@@ -13,7 +13,7 @@ plugins {
 // Set the version for the library
 allprojects {
     version = providers.gradleProperty("library.version").getOrElse("1.0.0")
-    group = "io.github.piashcse"
+    group = providers.gradleProperty("GROUP").getOrElse("io.github.piashcse")
 }
 
 // Configure repositories for publishing

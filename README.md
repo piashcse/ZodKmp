@@ -476,7 +476,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Publishing to Maven Central
 
-ZodKmp is published to Maven Central. The library is configured to be published through Sonatype OSSRH.
+ZodKmp is published to Maven Central. The library is configured to be published using the vanniktech Maven Publish plugin.
 
 ### Prerequisites for Publishing
 
@@ -485,10 +485,11 @@ ZodKmp is published to Maven Central. The library is configured to be published 
 3. **GitHub Secrets**: For automated publishing, configure the following secrets in your GitHub repository:
 
 ```bash
-OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }} 
-SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }} 
+SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
 SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+GPG_KEY_CONTENTS: ${{ secrets.GPG_KEY_CONTENTS }}
 ```
 
 4. **Library Version**: The version is managed in `gradle.properties`:
@@ -503,24 +504,16 @@ The library uses GitHub Actions for automated releases and publishing. For detai
 
 #### Creating a New Release
 
-1. **Via GitHub UI**: Use the "Create Release" workflow in the GitHub Actions tab
-2. **Manual Tagging**: Push a git tag in the format `vX.Y.Z` (e.g., `v1.0.0`)
-
-The process will:
-- Update the version in `gradle.properties`
-- Create a Git tag
-- Create a GitHub release
-- Automatically publish to Maven Central
+1. **Via GitHub UI**: Create a new release in the GitHub releases page with a tag in the format `vX.Y.Z` (e.g., `v1.0.0`)
+2. **The workflow** `.github/workflows/publish.yml` will automatically trigger and publish to Maven Central
 
 ### Verification
 
 To verify artifacts locally before publishing to Maven Central:
 
 ```bash
-./gradlew publishAllPublicationsToLocalRepository
+./gradlew publishToMavenCentral --no-configuration-cache
 ```
-
-This will publish to a local repository under the build directory for testing.
 
 ### Manual Publishing
 
@@ -535,10 +528,23 @@ For manual publishing (if needed):
 2. **Publish**: Publish to Sonatype OSSRH:
 
 ```bash
-./gradlew publishAllPublicationsToCentralRepository
+./gradlew publishToMavenCentral --no-configuration-cache
 ```
 
-3. **Close and Release**: After successful upload, go to [Sonatype OSSRH](https://s01.oss.sonatype.org/) to close the staging repository and release it to Maven Central.
+The vanniktech plugin handles publishing automatically to Maven Central.
+
+### Required Properties
+
+The following properties are required for Maven Central compliance and are defined in `gradle.properties`:
+
+- `GROUP` - The Maven group ID (e.g., `io.github.piashcse`)
+- `POM_ARTIFACT_ID` - The artifact ID (e.g., `zodkmp`)
+- `POM_NAME` - The display name of the library
+- `POM_DESCRIPTION` - A description of the library
+- `POM_URL` - The project URL
+- `POM_LICENSE_NAME`, `POM_LICENSE_URL` - License information
+- `POM_DEVELOPER_ID`, `POM_DEVELOPER_NAME`, `POM_DEVELOPER_EMAIL` - Developer information
+- `POM_SCM_URL`, `POM_SCM_CONNECTION`, `POM_SCM_DEV_CONNECTION` - Source code management information
 
 ## License
 
