@@ -51,8 +51,14 @@ android {
     }
 }
 
-// Configure publishing with vanniktech plugin - automatically configured by plugin for Kotlin Multiplatform
+// Configure publishing with vanniktech plugin for Maven Central
 mavenPublishing {
+    publishToMavenCentral()
+    coordinates(
+        artifactId = findProperty("POM_ARTIFACT_ID")?.toString() ?: "zodkmp", 
+        version = version.toString()
+    )
+
     pom {
         name = findProperty("POM_NAME")?.toString() ?: "ZodKmp"
         description = findProperty("POM_DESCRIPTION")?.toString() ?: "A Kotlin Multiplatform library for Zod-like validation"
