@@ -13,8 +13,21 @@ kotlin {
         }
     }
     
+    jvm("desktop")
+    
+    js {
+        browser()
+        nodejs()
+    }
+    
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+    }
+    
     listOf(
         iosArm64(),
+        iosX64(),  // Adding iosX64 target
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
@@ -22,6 +35,28 @@ kotlin {
             isStatic = true
         }
     }
+
+    // Add macOS targets
+    macosX64()
+    macosArm64()
+    
+    // Add tvOS targets
+    tvosArm64()
+    tvosX64()
+    tvosSimulatorArm64()
+    
+    // Add watchOS targets
+    watchosArm32()
+    watchosArm64()
+    watchosX64()
+    watchosSimulatorArm64()
+    
+    // Add Linux targets
+    linuxX64()
+    linuxArm64()
+    
+    // Add Windows targets
+    mingwX64()
     
     sourceSets {
         commonMain.dependencies {
