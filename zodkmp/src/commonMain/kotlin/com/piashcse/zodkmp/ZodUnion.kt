@@ -1,7 +1,5 @@
 package com.piashcse.zodkmp
 
-import kotlin.jvm.JvmInline
-
 /**
  * Schema for validating union types (accepts values that match any of the provided schemas)
  */
