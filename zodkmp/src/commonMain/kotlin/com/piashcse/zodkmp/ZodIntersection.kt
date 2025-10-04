@@ -1,7 +1,5 @@
 package com.piashcse.zodkmp
 
-import kotlin.jvm.JvmInline
-
 /**
  * Schema for validating intersection types (value must satisfy both schemas)
  */

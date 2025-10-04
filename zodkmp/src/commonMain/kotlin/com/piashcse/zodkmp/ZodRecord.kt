@@ -1,7 +1,5 @@
 package com.piashcse.zodkmp
 
-import kotlin.jvm.JvmInline
-
 /**
  * Schema for validating records (objects with string keys and values of a specific type)
  */

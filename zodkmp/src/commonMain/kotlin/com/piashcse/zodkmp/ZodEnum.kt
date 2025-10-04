@@ -1,7 +1,5 @@
 package com.piashcse.zodkmp
 
-import kotlin.jvm.JvmInline
-
 /**
  * Schema for validating enum values
  */
