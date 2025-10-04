@@ -23,6 +23,36 @@ ZodKmp supports the following platforms:
 - JS (JavaScript)
 - Native (Linux, Windows, macOS)
 
+
+## Installation
+
+### Gradle
+
+Add the following to your `build.gradle.kts`:
+
+```kotlin
+kotlin {
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation("io.github.piashcse:zodkmp:1.0.0")
+            }
+        }
+    }
+}
+```
+
+### Version Catalog (libs.versions.toml)
+
+```toml
+[versions]
+zodkmp = "1.0.0"
+
+[libraries]
+zodkmp = { module = "io.github.piashcse:zodkmp", version.ref = "zodkmp" }
+```
+
+
 ## Table of Contents
 
 - [Features](#features)
@@ -62,35 +92,7 @@ ZodKmp supports the following platforms:
 - ✅ **Extensible** - Easy to extend with custom validations
 - ✅ **Zero Dependencies** - Lightweight with minimal footprint
 - ✅ **Excellent Error Messages** - Detailed, customizable error reporting
-
-## Installation
-
-### Gradle
-
-Add the following to your `build.gradle.kts`:
-
-```kotlin
-kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation("io.github.piashcse:zodkmp:1.0.0")
-            }
-        }
-    }
-}
-```
-
-### Version Catalog (libs.versions.toml)
-
-```toml
-[versions]
-zodkmp = "1.0.0"
-
-[libraries]
-zodkmp = { module = "io.github.piashcse:zodkmp", version.ref = "zodkmp" }
-```
-
+- 
 ## Getting Started
 
 ZodKmp allows you to define validation schemas and use them to validate data:
