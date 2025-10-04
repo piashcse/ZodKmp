@@ -1,56 +1,26 @@
-name: Publish to Maven Central
-
+name: Publish
 on:
-  push:
-    tags:
-      - 'v*'
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version to publish (e.g., 1.0.0)'
-        required: true
-        default: '1.0.0'
-
+  release:
+    types: [released, prereleased]
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    name: Release build and publish
+    runs-on: macOS-latest
     steps:
-      - name: Checkout
+      - name: Check out code
         uses: actions/checkout@v4
-
-      - name: Extract version from tag
-        id: extract_version
-        run: |
-          VERSION="${{ github.event.inputs.version }}"
-          if [ -z "$VERSION" ]; then
-            VERSION="${GITHUB_REF#refs/tags/v}"
-          fi
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "Extracted version: $VERSION"
-
-      - name: Set up JDK 11
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '11'
-          distribution: 'temurin'
-
-      - name: Update library version in gradle.properties
-        run: |
-          sed -i.bak "s/library.version=.*/library.version=$VERSION/" gradle.properties
-          cat gradle.properties
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: wrapper
-
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-
-      - name: Publish to Maven Central
-        run: ./gradlew publishAllPublicationsToCentralRepository --no-daemon
+          distribution: 'zulu'
+          java-version: 21
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Publish to MavenCentral
+        run: ./gradlew publishToMavenCentral --no-configuration-cache
         env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }} 
-          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY_CONTENTS }}
