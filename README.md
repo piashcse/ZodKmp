@@ -1,10 +1,27 @@
-# ZodKmp: Kotlin Multiplatform Validation Library
+# ZodKmp: Kotlin Multiplatform Validation
 
-[![License](https://img.shields.io/github/license/colinhacks/zod)](LICENSE)
+
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.piashcse/zodkmp.svg)](https://search.maven.org/artifact/io.github.piashcse/zodkmp)
 [![Kotlin Version](https://img.shields.io/badge/kotlin-2.2.20-blue.svg?logo=kotlin)](http://kotlinlang.org)
-[![Platform](https://img.shields.io/badge/platform-android%20|%20ios-lightgrey)](#)
+![badge-Android](https://img.shields.io/badge/Platform-Android-brightgreen)
+![badge-iOS](https://img.shields.io/badge/Platform-iOS-lightgray)
+![badge-desktop](http://img.shields.io/badge/Platform-Desktop-4D76CD.svg?style=flat)
+![badge-web](https://img.shields.io/badge/Platform-Web-blueviolet.svg?style=flat)
+[![License](https://img.shields.io/github/license/colinhacks/zod)](LICENSE)
+<a href="https://github.com/piashcse"><img alt="License" src="https://img.shields.io/static/v1?label=GitHub&message=piashcse&color=C51162"/></a>
 
 ZodKmp is a Kotlin Multiplatform implementation of the popular [Zod](https://zod.dev/) TypeScript validation library. It provides a declarative, type-safe way to validate data in your Kotlin Multiplatform projects.
+
+
+## Platform Support
+
+ZodKmp supports the following platforms:
+
+- Android (JVM)
+- iOS (Native)
+- JVM
+- JS (JavaScript)
+- Native (Linux, Windows, macOS)
 
 ## Table of Contents
 
@@ -454,16 +471,6 @@ when (result) {
 }
 ```
 
-## Platform Support
-
-ZodKmp supports the following platforms:
-
-- Android (JVM)
-- iOS (Native)
-- JVM
-- JS (JavaScript)
-- Native (Linux, Windows, macOS)
-
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
@@ -473,79 +480,42 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+## 👨 Developed By
 
-## Publishing to Maven Central
+<a href="https://twitter.com/piashcse" target="_blank">
+  <img src="https://avatars.githubusercontent.com/piashcse" width="90" align="left">
+</a>
 
-ZodKmp is published to Maven Central. The library is configured to be published using the vanniktech Maven Publish plugin.
+**Mehedi Hassan Piash**
 
-### Prerequisites for Publishing
-
-1. **Sonatype Account**: You need an account on Sonatype OSSRH (OSS Repository Hosting)
-2. **GPG Key**: Set up GPG signing keys for artifact signing
-3. **GitHub Secrets**: For automated publishing, configure the following secrets in your GitHub repository:
-
-```bash
-MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }} 
-SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
-SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
-GPG_KEY_CONTENTS: ${{ secrets.GPG_KEY_CONTENTS }}
-```
-
-4. **Library Version**: The version is managed in `gradle.properties`:
-
-```properties
-library.version=1.x.y
-```
-
-### Automated Release Process
-
-The library uses GitHub Actions for automated releases and publishing. For detailed instructions, see the [RELEASING.md](RELEASING.md) document.
-
-#### Creating a New Release
-
-1. **Via GitHub UI**: Create a new release in the GitHub releases page with a tag in the format `vX.Y.Z` (e.g., `v1.0.0`)
-2. **The workflow** `.github/workflows/publish.yml` will automatically trigger and publish to Maven Central
-
-### Verification
-
-To verify artifacts locally before publishing to Maven Central:
-
-```bash
-./gradlew publishToMavenCentral --no-configuration-cache
-```
-
-### Manual Publishing
-
-For manual publishing (if needed):
-
-1. **Build Artifacts**: Run the build to ensure everything is working:
-
-```bash
-./gradlew build
-```
-
-2. **Publish**: Publish to Sonatype OSSRH:
-
-```bash
-./gradlew publishToMavenCentral --no-configuration-cache
-```
-
-The vanniktech plugin handles publishing automatically to Maven Central.
-
-### Required Properties
-
-The following properties are required for Maven Central compliance and are defined in `gradle.properties`:
-
-- `GROUP` - The Maven group ID (e.g., `io.github.piashcse`)
-- `POM_ARTIFACT_ID` - The artifact ID (e.g., `zodkmp`)
-- `POM_NAME` - The display name of the library
-- `POM_DESCRIPTION` - A description of the library
-- `POM_URL` - The project URL
-- `POM_LICENSE_NAME`, `POM_LICENSE_URL` - License information
-- `POM_DEVELOPER_ID`, `POM_DEVELOPER_NAME`, `POM_DEVELOPER_EMAIL` - Developer information
-- `POM_SCM_URL`, `POM_SCM_CONNECTION`, `POM_SCM_DEV_CONNECTION` - Source code management information
+[![Twitter](https://img.shields.io/badge/-Twitter-1DA1F2?logo=x&logoColor=white&style=for-the-badge)](https://twitter.com/piashcse)
+[![Medium](https://img.shields.io/badge/-Medium-00AB6C?logo=medium&logoColor=white&style=for-the-badge)](https://medium.com/@piashcse)
+[![Linkedin](https://img.shields.io/badge/-LinkedIn-0077B5?logo=linkedin&logoColor=white&style=for-the-badge)](https://www.linkedin.com/in/piashcse/)
+[![Web](https://img.shields.io/badge/-Web-0073E6?logo=appveyor&logoColor=white&style=for-the-badge)](https://piashcse.github.io/)
+[![Blog](https://img.shields.io/badge/-Blog-0077B5?logo=readme&logoColor=white&style=for-the-badge)](https://piashcse.blogspot.com)
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+```
+MIT License
+
+Copyright (c) 2025 Mehedi Hassan Piash
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
