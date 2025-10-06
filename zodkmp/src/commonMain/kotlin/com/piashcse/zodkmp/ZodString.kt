@@ -83,6 +83,27 @@ value class ZodString private constructor(private val validations: List<(String)
         return ZodString(validations + validation)
     }
     
+    fun startsWith(prefix: String, message: String = "String must start with '$prefix'"): ZodString {
+        val validation: (String) -> ZodError? = { value ->
+            if (!value.startsWith(prefix)) ZodError(message) else null
+        }
+        return ZodString(validations + validation)
+    }
+    
+    fun endsWith(suffix: String, message: String = "String must end with '$suffix'"): ZodString {
+        val validation: (String) -> ZodError? = { value ->
+            if (!value.endsWith(suffix)) ZodError(message) else null
+        }
+        return ZodString(validations + validation)
+    }
+    
+    fun includes(substring: String, message: String = "String must contain '$substring'"): ZodString {
+        val validation: (String) -> ZodError? = { value ->
+            if (!value.contains(substring)) ZodError(message) else null
+        }
+        return ZodString(validations + validation)
+    }
+
     override fun parse(input: Any?): String {
         val result = safeParse(input)
         return when (result) {
