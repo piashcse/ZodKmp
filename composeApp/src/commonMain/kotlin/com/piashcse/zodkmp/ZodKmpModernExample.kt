@@ -69,7 +69,7 @@ fun ZodKmpModernExample() {
             TopAppBar(
                 title = {
                     Text(
-                        "ZodKmp Validation Library",
+                        "ZodKmp",
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold
                         )
