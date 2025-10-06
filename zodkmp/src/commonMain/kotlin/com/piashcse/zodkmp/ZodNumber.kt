@@ -27,7 +27,7 @@ value class ZodNumber private constructor(private val validations: List<(Double)
     
     fun int(message: String = "Number must be an integer"): ZodNumber {
         val validation: (Double) -> ZodError? = { num ->
-            if (num != num.toLong().toDouble()) ZodError(message) else null
+            if (num % 1 != 0.0) ZodError(message) else null
         }
         return ZodNumber(validations + validation)
     }
@@ -46,9 +46,23 @@ value class ZodNumber private constructor(private val validations: List<(Double)
         return ZodNumber(validations + validation)
     }
     
+    fun nonPositive(message: String = "Number must be non-positive (less than or equal to zero)"): ZodNumber {
+        val validation: (Double) -> ZodError? = { num ->
+            if (num > 0) ZodError(message) else null
+        }
+        return ZodNumber(validations + validation)
+    }
+    
     fun nonNegative(message: String = "Number must be non-negative"): ZodNumber {
         val validation: (Double) -> ZodError? = { num ->
             if (num < 0) ZodError(message) else null
+        }
+        return ZodNumber(validations + validation)
+    }
+    
+    fun range(min: Double, max: Double, message: String = "Number must be between $min and $max"): ZodNumber {
+        val validation: (Double) -> ZodError? = { num ->
+            if (num < min || num > max) ZodError(message) else null
         }
         return ZodNumber(validations + validation)
     }

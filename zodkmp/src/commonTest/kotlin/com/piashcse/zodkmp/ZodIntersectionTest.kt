@@ -15,7 +15,6 @@ class ZodIntersectionTest {
         
         // Should pass - positive and less than 100
         val result = intersectionSchema.parse(50)
-        assertTrue(result is Pair<*, *>)  // Intersection returns a pair of both results
         assertEquals(50.0, (result as Pair<*, *>).first)
         assertEquals(50.0, result.second)
     }

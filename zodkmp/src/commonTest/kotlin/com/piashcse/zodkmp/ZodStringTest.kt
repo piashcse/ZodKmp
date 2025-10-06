@@ -140,4 +140,43 @@ class ZodStringTest {
         assertTrue(result3 is ZodResult.Failure)
         assertTrue(result3.error.errors.any { it.contains("does not match required pattern") })
     }
+
+    @Test
+    fun `startsWith validation should work`() {
+        val schema = basicStringSchema.startsWith("Hello")
+        
+        // Should pass
+        assertEquals("Hello World", schema.parse("Hello World"))
+        
+        // Should fail
+        val result = schema.safeParse("Hi there")
+        assertTrue(result is ZodResult.Failure)
+        assertTrue(result.error.errors.any { it.contains("must start with") })
+    }
+
+    @Test
+    fun `endsWith validation should work`() {
+        val schema = basicStringSchema.endsWith("World")
+        
+        // Should pass
+        assertEquals("Hello World", schema.parse("Hello World"))
+        
+        // Should fail
+        val result = schema.safeParse("Hello there")
+        assertTrue(result is ZodResult.Failure)
+        assertTrue(result.error.errors.any { it.contains("must end with") })
+    }
+
+    @Test
+    fun `includes validation should work`() {
+        val schema = basicStringSchema.includes("test")
+        
+        // Should pass
+        assertEquals("This is a test string", schema.parse("This is a test string"))
+        
+        // Should fail
+        val result = schema.safeParse("Hello there")
+        assertTrue(result is ZodResult.Failure)
+        assertTrue(result.error.errors.any { it.contains("must contain") })
+    }
 }

@@ -27,7 +27,7 @@ class ZodNumberTest {
 
     @Test
     fun `safeParse should return Success with valid number`() {
-        val result = basicNumberSchema.safeParse(42)
+        val result = basicNumberSchema.safeParse(42.0)
         assertTrue(result is ZodResult.Success)
         assertEquals(42.0, result.data)
     }
@@ -142,5 +142,56 @@ class ZodNumberTest {
         val result3 = schema.safeParse(50.5)
         assertTrue(result3 is ZodResult.Failure)
         assertTrue(result3.error.errors.any { it.contains("must be an integer") })
+    }
+
+    @Test
+    fun `nonPositive validation should work`() {
+        val schema = basicNumberSchema.nonPositive()
+        
+        // Zero should pass
+        assertEquals(0.0, schema.parse(0.0))
+        
+        // Negative should pass
+        assertEquals(-5.0, schema.parse(-5.0))
+        
+        // Positive should fail
+        val result = schema.safeParse(5.0)
+        assertTrue(result is ZodResult.Failure)
+        assertTrue(result.error.errors.any { it.contains("non-positive") })
+    }
+
+    @Test
+    fun `nonNegative validation should work - second test`() {
+        val schema = basicNumberSchema.nonNegative()
+        
+        // Zero should pass
+        assertEquals(0.0, schema.parse(0.0))
+        
+        // Positive should pass
+        assertEquals(5.0, schema.parse(5.0))
+        
+        // Negative should fail
+        val result = schema.safeParse(-5.0)
+        assertTrue(result is ZodResult.Failure)
+        assertTrue(result.error.errors.any { it.contains("non-negative") })
+    }
+
+    @Test
+    fun `range validation should work`() {
+        val schema = basicNumberSchema.range(1.0, 10.0)
+        
+        // Within range should pass
+        assertEquals(5.0, schema.parse(5.0))
+        
+        // At boundaries should pass
+        assertEquals(1.0, schema.parse(1.0))
+        assertEquals(10.0, schema.parse(10.0))
+        
+        // Outside range should fail
+        val result1 = schema.safeParse(0.0)
+        assertTrue(result1 is ZodResult.Failure)
+        
+        val result2 = schema.safeParse(11.0)
+        assertTrue(result2 is ZodResult.Failure)
     }
 }

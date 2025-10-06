@@ -119,4 +119,34 @@ class ZodArrayTest {
         assertTrue(result2.error.errors.any { it.contains("[1]") }) // Error at index 1
         assertTrue(result2.error.errors.any { it.contains("at least 2 characters") })
     }
+
+    @Test
+    fun `nonEmpty validation should work`() {
+        val stringElementSchema = Zod.string()
+        val baseArraySchema = ZodArray.schema(stringElementSchema)
+        val schema: ZodArray<String> = baseArraySchema.nonEmpty()
+        
+        // Should pass - non-empty array
+        assertEquals(listOf("hello"), schema.parse(listOf("hello")))
+        
+        // Should fail - empty array
+        val result = schema.safeParse(emptyList<String>())
+        assertTrue(result is ZodResult.Failure)
+        assertTrue(result.error.errors.any { it.contains("cannot be empty") })
+    }
+
+    @Test
+    fun `unique validation should work`() {
+        val stringElementSchema = Zod.string()
+        val baseArraySchema = ZodArray.schema(stringElementSchema)
+        val schema: ZodArray<String> = baseArraySchema.unique()
+        
+        // Should pass - unique elements
+        assertEquals(listOf("a", "b", "c"), schema.parse(listOf("a", "b", "c")))
+        
+        // Should fail - duplicate elements
+        val result = schema.safeParse(listOf("a", "b", "a"))
+        assertTrue(result is ZodResult.Failure)
+        assertTrue(result.error.errors.any { it.contains("must be unique") })
+    }
 }
