@@ -1,10 +1,57 @@
-# ZodKmp: Kotlin Multiplatform Validation Library
+# ZodKmp: Kotlin Multiplatform Validation
 
-[![License](https://img.shields.io/github/license/colinhacks/zod)](LICENSE)
+
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.piashcse/zodkmp.svg)](https://search.maven.org/artifact/io.github.piashcse/zodkmp)
 [![Kotlin Version](https://img.shields.io/badge/kotlin-2.2.20-blue.svg?logo=kotlin)](http://kotlinlang.org)
-[![Platform](https://img.shields.io/badge/platform-android%20|%20ios-lightgrey)](#)
+![badge-Android](https://img.shields.io/badge/Platform-Android-brightgreen)
+![badge-iOS](https://img.shields.io/badge/Platform-iOS-lightgray)
+![badge-desktop](http://img.shields.io/badge/Platform-Desktop-4D76CD.svg?style=flat)
+![badge-web](https://img.shields.io/badge/Platform-Web-blueviolet.svg?style=flat)
+[![License](https://img.shields.io/github/license/colinhacks/zod)](LICENSE)
+<a href="https://github.com/piashcse"><img alt="License" src="https://img.shields.io/static/v1?label=GitHub&message=piashcse&color=C51162"/></a>
 
 ZodKmp is a Kotlin Multiplatform implementation of the popular [Zod](https://zod.dev/) TypeScript validation library. It provides a declarative, type-safe way to validate data in your Kotlin Multiplatform projects.
+
+
+## Platform Support
+
+ZodKmp supports the following platforms:
+
+- Android (JVM)
+- iOS (Native)
+- JVM
+- JS (JavaScript)
+- Native (Linux, Windows, macOS)
+
+
+## Installation
+
+### Gradle
+
+Add the following to your `build.gradle.kts`:
+
+```kotlin
+kotlin {
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation("io.github.piashcse:zodkmp:1.1.0")
+            }
+        }
+    }
+}
+```
+
+### Version Catalog (libs.versions.toml)
+
+```toml
+[versions]
+zodkmp = "1.1.0"
+
+[libraries]
+zodkmp = { module = "io.github.piashcse:zodkmp", version.ref = "zodkmp" }
+```
+
 
 ## Table of Contents
 
@@ -45,35 +92,7 @@ ZodKmp is a Kotlin Multiplatform implementation of the popular [Zod](https://zod
 - ✅ **Extensible** - Easy to extend with custom validations
 - ✅ **Zero Dependencies** - Lightweight with minimal footprint
 - ✅ **Excellent Error Messages** - Detailed, customizable error reporting
-
-## Installation
-
-### Gradle
-
-Add the following to your `build.gradle.kts`:
-
-```kotlin
-kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation("com.piashcse.zodkmp:zodkmp:1.0.0")
-            }
-        }
-    }
-}
-```
-
-### Version Catalog (libs.versions.toml)
-
-```toml
-[versions]
-zodkmp = "1.0.0"
-
-[libraries]
-zodkmp = { module = "com.piashcse.zodkmp:zodkmp", version.ref = "zodkmp" }
-```
-
+-
 ## Getting Started
 
 ZodKmp allows you to define validation schemas and use them to validate data:
@@ -454,16 +473,6 @@ when (result) {
 }
 ```
 
-## Platform Support
-
-ZodKmp supports the following platforms:
-
-- Android (JVM)
-- iOS (Native)
-- JVM
-- JS (JavaScript)
-- Native (Linux, Windows, macOS)
-
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
@@ -473,7 +482,42 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+## 👨 Developed By
+
+<a href="https://twitter.com/piashcse" target="_blank">
+  <img src="https://avatars.githubusercontent.com/piashcse" width="90" align="left">
+</a>
+
+**Mehedi Hassan Piash**
+
+[![Twitter](https://img.shields.io/badge/-Twitter-1DA1F2?logo=x&logoColor=white&style=for-the-badge)](https://twitter.com/piashcse)
+[![Medium](https://img.shields.io/badge/-Medium-00AB6C?logo=medium&logoColor=white&style=for-the-badge)](https://medium.com/@piashcse)
+[![Linkedin](https://img.shields.io/badge/-LinkedIn-0077B5?logo=linkedin&logoColor=white&style=for-the-badge)](https://www.linkedin.com/in/piashcse/)
+[![Web](https://img.shields.io/badge/-Web-0073E6?logo=appveyor&logoColor=white&style=for-the-badge)](https://piashcse.github.io/)
+[![Blog](https://img.shields.io/badge/-Blog-0077B5?logo=readme&logoColor=white&style=for-the-badge)](https://piashcse.blogspot.com)
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+```
+MIT License
+
+Copyright (c) 2025 Mehedi Hassan Piash
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
