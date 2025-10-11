@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AndroidLayouts">
+    <shared>
+      <config />
+    </shared>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="76a20488-7c4d-43d1-b496-1ff904f3916b" name="Changes" comment="feat: Add MkDocs documentation site and bump version script&#10;&#10;**New Features:**&#10;&#10;- **MkDocs Site:** A comprehensive documentation site has been created under the `docs/` and `site/` directories. This includes:&#10;  -   `mkdocs.yml`: The main configuration file for the site, defining the theme, navigation, and plugins.&#10;  -   Markdown pages for &quot;Getting Started,&quot; &quot;Contributing,&quot; &quot;Changelog,&quot; and detailed API references for primitives, objects, collections, and other validation types.&#10;  -   Static assets including CSS for custom styling and all necessary JavaScript bundles for the Material theme.&#10;&#10;- **`bump-version.sh` script:**&#10;  -   A new shell script in the `scripts/` directory automates updating the `library.version` in `gradle.properties`, committing the change, and creating a corresponding Git tag.&#10;&#10;**Documentation Content Added:**&#10;- `index.md`: Main landing page for the documentation.&#10;- `getting-started.md`: Installation and basic usage guide.&#10;- `advanced-usage.md`: Covers more complex topics like error handling.&#10;- API reference pages for: `collections.md`, `enums.md`, `intersections.md`, `objects.md`, `primitives.md`, `refinements.md`, `transformations.md`, and `unions.md`.&#10;- `changelog.md`: A manually maintained changelog.&#10;- `contributing.md` &amp; `license.md`: Project contribution guidelines and license information.&#10;&#10;**New Scripts:**&#10;&#10;-   `scripts/bump-version.sh`: For version management.&#10;-   `scripts/setup_docs.sh`: To install MkDocs and its dependencies.&#10;-   `scripts/prepareJitpackEnvironment.sh`: To set environment variables for JitPack builds." />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=/Users/mehedihassanpiash/.android/avd/Pixel_8_Pro_API_35.avd)]" />
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="ZodKmpApp" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="feature-desktop-wasmjs-in-example" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;piashcse&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/piashcse/ZodKmp.git&quot;,
+    &quot;accountId&quot;: &quot;4afce1d8-8d07-48e0-a153-e3b5bb7864d3&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="33Kyly3i1Au5S14UmgS8poTqJs5" />
+  <component name="ProjectReloadState">
+    <option name="STATE" value="1" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Android App.ZodKmpApp.composeApp.executor": "Run",
+    "Android App.composeApp.executor": "Run",
+    "Gradle.Building Kotlin artifacts for Build :composeApp:embedAndSignAppleFrameworkForXcode.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "Xcode Application.iosApp.executor": "Run",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "gh-pages",
+    "last_opened_file_path": "/Users/mehedihassanpiash/Documents/OpenSource/zodkmp/composeApp/src/wasmJsMain/resources",
+    "settings.editor.selected.configurable": "preferences.fileTypes",
+    "show.migrate.to.gradle.popup": "false"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/composeApp/src/wasmJsMain/resources" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Android App.composeApp">
+    <configuration name="ZodKmpApp.composeApp" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
+      <module name="ZodKmpApp.composeApp" />
+      <option name="ANDROID_RUN_CONFIGURATION_SCHEMA_VERSION" value="1" />
+      <option name="DEPLOY" value="true" />
+      <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
+      <option name="DEPLOY_AS_INSTANT" value="false" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="PM_INSTALL_OPTIONS" value="" />
+      <option name="ALL_USERS" value="false" />
+      <option name="ALWAYS_INSTALL_WITH_PM" value="false" />
+      <option name="ALLOW_ASSUME_VERIFIED" value="false" />
+      <option name="CLEAR_APP_STORAGE" value="false" />
+      <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+      <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="RESTORE_ENABLED" value="false" />
+      <option name="RESTORE_FILE" value="" />
+      <option name="RESTORE_FRESH_INSTALL_ONLY" value="false" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+      <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="DEBUGGER_TYPE" value="Auto" />
+      <Auto>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Auto>
+      <Hybrid>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Hybrid>
+      <Java>
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Java>
+      <Native>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Native>
+      <Profilers>
+        <option name="ADVANCED_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_CONFIGURATION_NAME" value="Java/Kotlin Method Sample (legacy)" />
+        <option name="STARTUP_NATIVE_MEMORY_PROFILING_ENABLED" value="false" />
+        <option name="NATIVE_MEMORY_SAMPLE_RATE_BYTES" value="2048" />
+      </Profilers>
+      <option name="DEEP_LINK" value="" />
+      <option name="ACTIVITY" value="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="SEARCH_ACTIVITY_IN_GLOBAL_SCOPE" value="false" />
+      <option name="SKIP_ACTIVITY_VALIDATION" value="false" />
+      <method v="2">
+        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="composeApp" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
+      <module name="ZodKmpApp.composeApp" />
+      <option name="ANDROID_RUN_CONFIGURATION_SCHEMA_VERSION" value="1" />
+      <option name="DEPLOY" value="true" />
+      <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
+      <option name="DEPLOY_AS_INSTANT" value="false" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="PM_INSTALL_OPTIONS" value="" />
+      <option name="ALL_USERS" value="false" />
+      <option name="ALWAYS_INSTALL_WITH_PM" value="false" />
+      <option name="ALLOW_ASSUME_VERIFIED" value="false" />
+      <option name="CLEAR_APP_STORAGE" value="false" />
+      <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+      <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="RESTORE_ENABLED" value="false" />
+      <option name="RESTORE_FILE" value="" />
+      <option name="RESTORE_FRESH_INSTALL_ONLY" value="false" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+      <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="DEBUGGER_TYPE" value="Auto" />
+      <Auto>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Auto>
+      <Hybrid>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Hybrid>
+      <Java>
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Java>
+      <Native>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Native>
+      <Profilers>
+        <option name="ADVANCED_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_CONFIGURATION_NAME" value="Java/Kotlin Method Sample (legacy)" />
+        <option name="STARTUP_NATIVE_MEMORY_PROFILING_ENABLED" value="false" />
+        <option name="NATIVE_MEMORY_SAMPLE_RATE_BYTES" value="2048" />
+      </Profilers>
+      <option name="DEEP_LINK" value="" />
+      <option name="ACTIVITY" value="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="SEARCH_ACTIVITY_IN_GLOBAL_SCOPE" value="false" />
+      <option name="SKIP_ACTIVITY_VALIDATION" value="false" />
+      <method v="2">
+        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="AppleRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" IS_LOCATION_SIMULATION_SUPPORTED="false" IS_LOCATION_SIMULATION_ALLOWED="true" APPLICATION_LANGUAGE="IDELaunchSchemeLanguageUseSystemLanguage" APPLICATION_REGION="" DEVELOPMENT_TEAM="${TEAM_ID}" MAKE_ACTIVE="TRUE" SHOULD_DEBUG_EXTENSIONS="false">
+      <embedded_app_extension_list />
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="iosApp" type="AppleRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="iosApp" TARGET_NAME="iosApp" CONFIG_NAME="Debug" IS_LOCATION_SIMULATION_SUPPORTED="true" SCHEME_NAME="iosApp" IS_LOCATION_SIMULATION_ALLOWED="true" APPLICATION_LANGUAGE="IDELaunchSchemeLanguageUseSystemLanguage" APPLICATION_REGION="" DEVELOPMENT_TEAM="${TEAM_ID}" RUN_TARGET_PROJECT_NAME="iosApp" RUN_TARGET_NAME="iosApp" MAKE_ACTIVE="TRUE" SHOULD_DEBUG_EXTENSIONS="false">
+      <embedded_app_extension_list />
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="composeApp [desktop]" type="GradleRunConfiguration" factoryName="Gradle">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/composeApp" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="-DmainClass=com.piashcse.zodkmp.MainKt --quiet" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="desktopRun" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="composeApp [js]" type="GradleRunConfiguration" factoryName="Gradle">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/composeApp" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="jsBrowserDevelopmentRun" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="composeApp [wasmJs]" type="GradleRunConfiguration" factoryName="Gradle">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/composeApp" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="wasmJsBrowserDevelopmentRun" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="kotlin.scripts.KotlinBuildScript.build.gradle.kts" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="kotlin.scripts.KotlinBuildScript.build.gradle.kts" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Android App.ZodKmpApp.composeApp" />
+      <item itemvalue="Android App.composeApp" />
+      <item itemvalue="Gradle.composeApp [wasmJs]" />
+      <item itemvalue="Gradle.composeApp [desktop]" />
+      <item itemvalue="Gradle.composeApp [js]" />
+      <item itemvalue="Xcode Application.iosApp" />
+    </list>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="76a20488-7c4d-43d1-b496-1ff904f3916b" name="Changes" comment="" />
+      <created>1759080212968</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1759080212968</updated>
+    </task>
+    <task id="LOCAL-00001" summary="feat: Implement comprehensive validation schemas and UI&#10;&#10;This commit introduces a wide range of validation schemas to the ZodKmp library, significantly expanding its capabilities. It also includes a modern Compose UI example (`ZodKmpModernExample.kt`) to demonstrate these new features.&#10;&#10;New validation schemas added:&#10;- `ZodArray`: Validates arrays with element-specific schemas and constraints like min/max length.&#10;- `ZodDate`: Validates date values, supporting parsing from strings and min/max date constraints.&#10;- `ZodDefault`: Provides default values for schemas when input is null/undefined.&#10;- `ZodEnum`: Validates values against a predefined set of enum-like options.&#10;- `ZodIntersection`: Validates that input satisfies multiple schemas simultaneously.&#10;- `ZodLiteral`: Validates that input matches a specific literal value.&#10;- `ZodNull`: Validates that input is explicitly null.&#10;- `ZodNullable`: Allows a schema to accept null values in addition to its defined type.&#10;- `ZodRecord`: Validates objects with string keys and values of a specific type.&#10;- `ZodRefinement`: Allows adding custom validation logic (refinements) to existing schemas.&#10;- `ZodTransform`: Transforms the validated value into a different type or format.&#10;- `ZodTuple`: Validates fixed-length arrays (tuples) with specific types for each element.&#10;- `ZodUndefined`: Validates that input is undefined (represented as null in Kotlin).&#10;- `ZodUnion`: Validates that input matches at least one of several provided schemas.&#10;&#10;The `Zod.kt` entry point has been updated to include factory methods for these new schemas.&#10;&#10;The `composeApp` module now features `ZodKmpModernExample.kt`, a comprehensive UI built with Jetpack Compose Material 3. This example showcases various validation scenarios using the new schemas, organized into &quot;Basic,&quot; &quot;Advanced,&quot; and &quot;Transform&quot; sections. It replaces the older `MainView.kt`.&#10;&#10;Dependencies:&#10;- Added `kotlinx-datetime` for date validation capabilities.&#10;&#10;Removed:&#10;- `MainView.kt` (replaced by `ZodKmpModernExample.kt`)&#10;- `User.kt` (no longer used in the example)">
+      <option name="closed" value="true" />
+      <created>1759167433629</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1759167433629</updated>
+    </task>
+    <task id="LOCAL-00002" summary="feat: Implement comprehensive validation schemas and UI&#10;&#10;This commit introduces a wide range of validation schemas to the ZodKmp library, significantly expanding its capabilities. It also includes a modern Compose UI example (`ZodKmpModernExample.kt`) to demonstrate these new features.&#10;&#10;New validation schemas added:&#10;- `ZodArray`: Validates arrays with element-specific schemas and constraints like min/max length.&#10;- `ZodDate`: Validates date values, supporting parsing from strings and min/max date constraints.&#10;- `ZodDefault`: Provides default values for schemas when input is null/undefined.&#10;- `ZodEnum`: Validates values against a predefined set of enum-like options.&#10;- `ZodIntersection`: Validates that input satisfies multiple schemas simultaneously.&#10;- `ZodLiteral`: Validates that input matches a specific literal value.&#10;- `ZodNull`: Validates that input is explicitly null.&#10;- `ZodNullable`: Allows a schema to accept null values in addition to its defined type.&#10;- `ZodRecord`: Validates objects with string keys and values of a specific type.&#10;- `ZodRefinement`: Allows adding custom validation logic (refinements) to existing schemas.&#10;- `ZodTransform`: Transforms the validated value into a different type or format.&#10;- `ZodTuple`: Validates fixed-length arrays (tuples) with specific types for each element.&#10;- `ZodUndefined`: Validates that input is undefined (represented as null in Kotlin).&#10;- `ZodUnion`: Validates that input matches at least one of several provided schemas.&#10;&#10;The `Zod.kt` entry point has been updated to include factory methods for these new schemas.&#10;&#10;The `composeApp` module now features `ZodKmpModernExample.kt`, a comprehensive UI built with Jetpack Compose Material 3. This example showcases various validation scenarios using the new schemas, organized into &quot;Basic,&quot; &quot;Advanced,&quot; and &quot;Transform&quot; sections. It replaces the older `MainView.kt`.&#10;&#10;Dependencies:&#10;- Added `kotlinx-datetime` for date validation capabilities.&#10;&#10;Removed:&#10;- `MainView.kt` (replaced by `ZodKmpModernExample.kt`)&#10;- `User.kt` (no longer used in the example)">
+      <option name="closed" value="true" />
+      <created>1759168772117</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1759168772117</updated>
+    </task>
+    <task id="LOCAL-00003" summary="- Multiplatform Support: Properly configured for Android, iOS and other KMP targets&#10;   - Security: Uses environment variables for credentials and signing keys&#10;   - Metadata: Complete POM metadata with proper license, developers, and SCM information&#10;   - CI/CD Integration: Automated publishing via GitHub Actions&#10;   - Local Testing: Configured to allow local testing of the publishing process">
+      <option name="closed" value="true" />
+      <created>1759170358442</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1759170358442</updated>
+    </task>
+    <task id="LOCAL-00004" summary="feat: Enhance publishing process and documentation&#10;&#10;This commit significantly improves the publishing process for Maven Central and updates the related documentation.&#10;&#10;Key changes:&#10;&#10;Build Configuration (`build.gradle.kts` and `zodkmp/build.gradle.kts`):&#10;- Changed `group` from `com.piashcse.zodkmp` to `io.github.piashcse` in the root `build.gradle.kts`.&#10;- Added global `repositories` configuration for `google()` and `mavenCentral()`.&#10;- Introduced a new Gradle task `bumpVersion` to update `library.version` in `gradle.properties`.&#10;- Added Javadoc and sources JAR generation (`javadocJar`, `allSourcesJar`) in `zodkmp/build.gradle.kts` for Maven Central compliance.&#10;- Ensured consistent `artifactId` (&quot;zodkmp&quot;) for iOS publications.&#10;- Added `distribution.set(&quot;repo&quot;)` to the license information in POM.&#10;- Added organization details (`piashcse`, `https://github.com/piashcse`) to developer information in POM.&#10;- Included a &quot;Snapshot&quot; repository configuration for Sonatype OSSRH.&#10;&#10;README (`README.md`):&#10;- Updated the group ID in dependency examples from `com.piashcse.zodkmp` to `io.github.piashcse`.&#10;- Expanded the &quot;Publishing to Maven Central&quot; section with detailed prerequisites, automated release process using GitHub Actions, verification steps, and manual publishing instructions.&#10;&#10;GitHub Workflows:&#10;- Added a new workflow `release.yml` for creating GitHub releases. This workflow:&#10;    - Takes version, release title, and body as inputs.&#10;    - Updates `library.version` in `gradle.properties`.&#10;    - Commits version changes.&#10;    - Creates and pushes a Git tag.&#10;    - Creates a GitHub release.&#10;- Modified `publish.yml` workflow:&#10;    - Triggers on push to tags matching `v*` (in addition to `workflow_dispatch`).&#10;    - Added an input for `version` for manual dispatch.&#10;    - Extracts the version from the Git tag if not provided as input.&#10;    - Updates `library.version` in `gradle.properties` using the extracted or input version before publishing.">
+      <option name="closed" value="true" />
+      <created>1759247865719</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1759247865719</updated>
+    </task>
+    <task id="LOCAL-00005" summary="fix: Disable signing for JitPack builds">
+      <option name="closed" value="true" />
+      <created>1759250843179</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1759250843179</updated>
+    </task>
+    <task id="LOCAL-00006" summary="refactor: Simplify Maven Central publishing with vanniktech plugin&#10;&#10;This commit refactors the publishing process to Maven Central by replacing the manual `maven-publish` and `signing` configuration with the `com.vanniktech.maven.publish` plugin. This significantly simplifies the build scripts and standardizes the process.&#10;&#10;Key changes:&#10;- **Replaced Manual Publishing:** Removed the extensive manual configuration for `maven-publish`, `signing`, Javadoc/sources JAR creation, and repository definitions from `zodkmp/build.gradle.kts`.&#10;- **Adopted Vanniktech Plugin:** Added `com.vanniktech.maven.publish` plugin to `libs.versions.toml` and applied it in `zodkmp/build.gradle.kts`.&#10;- **Externalized Configuration:** All POM metadata and library coordinates (group, version, artifactId, developer info, SCM, etc.) are now defined in `gradle.properties` and read dynamically in the build script. This makes configuration more centralized and easier to manage.&#10;- **Simplified CI/CD:** The `.github/workflows/publish.yml` workflow is updated to trigger on GitHub releases. It now uses a single command, `./gradlew publishToMavenCentral`, and relies on environment variables prefixed with `ORG_GRADLE_PROJECT_` for credentials, as recommended by the vanniktech plugin.&#10;- **Updated Documentation:** The `README.md` has been updated to reflect the new, simpler publishing process, including changes to required GitHub secrets and local verification commands.">
+      <option name="closed" value="true" />
+      <created>1759569780419</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1759569780419</updated>
+    </task>
+    <task id="LOCAL-00007" summary="refactor: Configure Maven Central publishing coordinates&#10;&#10;This commit updates the `build.gradle.kts` file to explicitly configure the publishing settings for Maven Central using the `vanniktech.maven.publish` plugin.&#10;&#10;Key changes:&#10;- Added `publishToMavenCentral()` to target the Maven Central repository.&#10;- Defined the artifact coordinates (`artifactId` and `version`) for the project, allowing them to be sourced from Gradle properties.">
+      <option name="closed" value="true" />
+      <created>1759570552299</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1759570552299</updated>
+    </task>
+    <task id="LOCAL-00008" summary="feat: Expand multiplatform support&#10;&#10;This commit significantly expands the range of supported targets for the `zodkmp` library, enhancing its cross-platform capabilities.&#10;&#10;Support has been added for the following platforms:&#10;- **JVM**: `desktop`&#10;- **JavaScript**: `js` (browser and nodejs) and `wasmJs`&#10;- **iOS**: `iosX64` for simulators on Intel Macs&#10;- **macOS**: `macosX64` and `macosArm64`&#10;- **tvOS**: `tvosArm64`, `tvosX64`, and `tvosSimulatorArm64`&#10;- **watchOS**: `watchosArm32`, `watchosArm64`, `watchosX64`, and `watchosSimulatorArm64`&#10;- **Linux**: `linuxX64` and `linuxArm64`&#10;- **Windows**: `mingwX64`">
+      <option name="closed" value="true" />
+      <created>1759609989545</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1759609989545</updated>
+    </task>
+    <task id="LOCAL-00009" summary="chore: Bump version to 1.1.0&#10;&#10;This commit updates the project version from 1.0.0 to 1.1.0.&#10;&#10;Specifically, the following files have been changed:&#10;- `gradle.properties`: The `library.version` is set to `1.1.0`.&#10;- `README.md`: The usage examples in the documentation are updated to reflect the new version `1.1.0`.">
+      <option name="closed" value="true" />
+      <created>1759610903914</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1759610903914</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Code optimization">
+      <option name="closed" value="true" />
+      <created>1759611776741</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1759611776741</updated>
+    </task>
+    <task id="LOCAL-00011" summary="docs: Update README and project metadata&#10;&#10;### README.md&#10;- **Badges**: Added a Maven Central badge and more specific platform badges.&#10;- **Coordinates**: Updated the Gradle dependency coordinates from `com.piashcse.zodkmp:zodkmp:1.0.0` to `io.github.piashcse:zodkmp:1.1.0`.&#10;- **Structure**: Reorganized sections for better readability, moving `Platform Support` and `Installation` to the top.&#10;- **Content**: Added a &quot;Developed By&quot; section with author information and expanded the `License` section to include the full MIT license text.&#10;&#10;### gradle.properties&#10;- **Description**: Updated `POM_DESCRIPTION` to provide a more detailed and descriptive summary of the library's purpose.">
+      <option name="closed" value="true" />
+      <created>1759759858457</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1759759858457</updated>
+    </task>
+    <task id="LOCAL-00012" summary="refactor: Shorten app bar title">
+      <option name="closed" value="true" />
+      <created>1759761123599</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1759761123599</updated>
+    </task>
+    <task id="LOCAL-00013" summary="feat: Add comprehensive tests for all validation schemas&#10;&#10;This commit introduces a complete test suite for the ZodKmp library, ensuring the correctness and reliability of all existing validation schemas. Test files have been added for each schema type, covering a wide range of scenarios including successful parsing, failure cases, and specific validation rules.&#10;&#10;**Key tests added:**&#10;- `ZodArrayTest`: Validates array schema with tests for element types, `min`, `max`, and `length`.&#10;- `ZodBooleanTest`: Tests boolean parsing, including case-insensitive strings and `isEqual` checks.&#10;- `ZodDateTest`: Verifies parsing of `LocalDateTime` objects and date/time strings, plus `min`/`max` constraints.&#10;- `ZodDefaultTest`: Ensures default values are correctly applied for `null` inputs.&#10;- `ZodEnumTest`: Checks validation against a predefined set of values.&#10;- `ZodIntersectionTest`: Tests that input satisfies multiple schemas simultaneously.&#10;- `ZodLiteralTest`: Verifies that input matches a specific literal value.&#10;- `ZodNullTest`: Confirms that only `null` values are accepted.&#10;- `ZodNullableTest`: Ensures schemas correctly handle `null` in addition to their defined type.&#10;- `ZodNumberTest`: Covers number parsing, `min`/`max`, `int`, `positive`, and `negative` checks.&#10;- `ZodObjectTest`: Validates object shape, type correctness, strict mode, and optional fields.&#10;- `ZodOptionalTest`: Confirms that schemas correctly handle optional (`null`) values.&#10;- `ZodRecordTest`: Tests validation for maps with string keys and typed values.&#10;- `ZodRefinementTest`: Verifies custom validation logic on top of existing schemas.&#10;- `ZodStringTest`: Includes tests for `min`/`max`/`length`, `email`, `url`, and `regex` validations.&#10;- `ZodTransformTest`: Ensures data transformation logic is applied correctly after validation.&#10;- `ZodTupleTest`: Validates fixed-length arrays with specific types for each element.&#10;- `ZodUndefinedTest`: Confirms that only `null` (representing `undefined`) is accepted.&#10;- `ZodUnionTest`: Tests that input matches at least one of several provided schemas.&#10;&#10;These tests cover both `parse` (throwing exceptions on failure) and `safeParse` (returning a `ZodResult`) methods for each schema, providing robust coverage for the library's core functionality.">
+      <option name="closed" value="true" />
+      <created>1759765099063</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1759765099063</updated>
+    </task>
+    <task id="LOCAL-00014" summary="feat: Add more validation rules for String, Number, and Array schemas&#10;&#10;**ZodString:**&#10;- New validation methods: `startsWith`, `endsWith`, and `includes`.&#10;&#10;**ZodNumber:**&#10;- New validation methods: `nonPositive`, `nonNegative`, and `range`.&#10;- **Fix:** The `int()` validation now correctly checks for whole numbers using the modulo operator (`num % 1 != 0.0`) instead of `num != num.toLong().toDouble()`.&#10;&#10;**ZodArray:**&#10;- New validation methods: `nonEmpty` and `unique`.&#10;&#10;All new features are accompanied by comprehensive tests in `ZodStringTest.kt`, `ZodNumberTest.kt`, and `ZodArrayTest.kt`. Additionally, tests in `ZodTupleTest.kt` and `ZodIntersectionTest.kt` have been updated for stricter type safety and to remove redundant assertions.">
+      <option name="closed" value="true" />
+      <created>1759772227943</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1759772227943</updated>
+    </task>
+    <task id="LOCAL-00015" summary="chore: Remove tvOS and watchOS targets and bump version&#10;&#10;- The library version has been updated from 1.1.0 to 1.2.0.">
+      <option name="closed" value="true" />
+      <created>1759772962830</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1759772962830</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Update README.md">
+      <option name="closed" value="true" />
+      <created>1759773814022</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1759773814022</updated>
+    </task>
+    <task id="LOCAL-00017" summary="feat: Add example support for Desktop and Web (WASM)&#10;&#10;**Desktop Support:**&#10;- A `desktop` source set has been added with its own platform-specific implementation.&#10;- The entry point `main.kt` is configured to launch a Compose for Desktop window, which displays the existing `ZodKmpModernExample`.&#10;- The Gradle build is updated to configure the desktop application, including the main class and native distribution formats (`.dmg`, `.msi`, `.deb`).&#10;&#10;**Web (WASM) Support:**&#10;- The experimental Compose for Web (WASM) target (`wasmJs`) has been enabled in `gradle.properties`.&#10;- A `wasmJs` source set is introduced, containing the platform implementation and the `main.kt` entry point that renders the `App` within a `ComposeViewport`.&#10;- Basic web resources (`index.html`, `styles.css`) have been added to host the WASM application.&#10;- Webpack is configured to output `composeApp.js`.">
+      <option name="closed" value="true" />
+      <created>1759857808029</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1759857808029</updated>
+    </task>
+    <task id="LOCAL-00018" summary="feat: Add MkDocs documentation site and bump version script&#10;&#10;**New Features:**&#10;&#10;- **MkDocs Site:** A comprehensive documentation site has been created under the `docs/` and `site/` directories. This includes:&#10;  -   `mkdocs.yml`: The main configuration file for the site, defining the theme, navigation, and plugins.&#10;  -   Markdown pages for &quot;Getting Started,&quot; &quot;Contributing,&quot; &quot;Changelog,&quot; and detailed API references for primitives, objects, collections, and other validation types.&#10;  -   Static assets including CSS for custom styling and all necessary JavaScript bundles for the Material theme.&#10;&#10;- **`bump-version.sh` script:**&#10;  -   A new shell script in the `scripts/` directory automates updating the `library.version` in `gradle.properties`, committing the change, and creating a corresponding Git tag.&#10;&#10;**Documentation Content Added:**&#10;- `index.md`: Main landing page for the documentation.&#10;- `getting-started.md`: Installation and basic usage guide.&#10;- `advanced-usage.md`: Covers more complex topics like error handling.&#10;- API reference pages for: `collections.md`, `enums.md`, `intersections.md`, `objects.md`, `primitives.md`, `refinements.md`, `transformations.md`, and `unions.md`.&#10;- `changelog.md`: A manually maintained changelog.&#10;- `contributing.md` &amp; `license.md`: Project contribution guidelines and license information.&#10;&#10;**New Scripts:**&#10;&#10;-   `scripts/bump-version.sh`: For version management.&#10;-   `scripts/setup_docs.sh`: To install MkDocs and its dependencies.&#10;-   `scripts/prepareJitpackEnvironment.sh`: To set environment variables for JitPack builds.">
+      <option name="closed" value="true" />
+      <created>1760206573834</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1760206573834</updated>
+    </task>
+    <task id="LOCAL-00019" summary="feat: Add MkDocs documentation site and bump version script&#10;&#10;**New Features:**&#10;&#10;- **MkDocs Site:** A comprehensive documentation site has been created under the `docs/` and `site/` directories. This includes:&#10;  -   `mkdocs.yml`: The main configuration file for the site, defining the theme, navigation, and plugins.&#10;  -   Markdown pages for &quot;Getting Started,&quot; &quot;Contributing,&quot; &quot;Changelog,&quot; and detailed API references for primitives, objects, collections, and other validation types.&#10;  -   Static assets including CSS for custom styling and all necessary JavaScript bundles for the Material theme.&#10;&#10;- **`bump-version.sh` script:**&#10;  -   A new shell script in the `scripts/` directory automates updating the `library.version` in `gradle.properties`, committing the change, and creating a corresponding Git tag.&#10;&#10;**Documentation Content Added:**&#10;- `index.md`: Main landing page for the documentation.&#10;- `getting-started.md`: Installation and basic usage guide.&#10;- `advanced-usage.md`: Covers more complex topics like error handling.&#10;- API reference pages for: `collections.md`, `enums.md`, `intersections.md`, `objects.md`, `primitives.md`, `refinements.md`, `transformations.md`, and `unions.md`.&#10;- `changelog.md`: A manually maintained changelog.&#10;- `contributing.md` &amp; `license.md`: Project contribution guidelines and license information.&#10;&#10;**New Scripts:**&#10;&#10;-   `scripts/bump-version.sh`: For version management.&#10;-   `scripts/setup_docs.sh`: To install MkDocs and its dependencies.&#10;-   `scripts/prepareJitpackEnvironment.sh`: To set environment variables for JitPack builds.">
+      <option name="closed" value="true" />
+      <created>1760206832055</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1760206832055</updated>
+    </task>
+    <task id="LOCAL-00020" summary="feat: Add MkDocs documentation site and bump version script&#10;&#10;**New Features:**&#10;&#10;- **MkDocs Site:** A comprehensive documentation site has been created under the `docs/` and `site/` directories. This includes:&#10;  -   `mkdocs.yml`: The main configuration file for the site, defining the theme, navigation, and plugins.&#10;  -   Markdown pages for &quot;Getting Started,&quot; &quot;Contributing,&quot; &quot;Changelog,&quot; and detailed API references for primitives, objects, collections, and other validation types.&#10;  -   Static assets including CSS for custom styling and all necessary JavaScript bundles for the Material theme.&#10;&#10;- **`bump-version.sh` script:**&#10;  -   A new shell script in the `scripts/` directory automates updating the `library.version` in `gradle.properties`, committing the change, and creating a corresponding Git tag.&#10;&#10;**Documentation Content Added:**&#10;- `index.md`: Main landing page for the documentation.&#10;- `getting-started.md`: Installation and basic usage guide.&#10;- `advanced-usage.md`: Covers more complex topics like error handling.&#10;- API reference pages for: `collections.md`, `enums.md`, `intersections.md`, `objects.md`, `primitives.md`, `refinements.md`, `transformations.md`, and `unions.md`.&#10;- `changelog.md`: A manually maintained changelog.&#10;- `contributing.md` &amp; `license.md`: Project contribution guidelines and license information.&#10;&#10;**New Scripts:**&#10;&#10;-   `scripts/bump-version.sh`: For version management.&#10;-   `scripts/setup_docs.sh`: To install MkDocs and its dependencies.&#10;-   `scripts/prepareJitpackEnvironment.sh`: To set environment variables for JitPack builds.">
+      <option name="closed" value="true" />
+      <created>1760206864068</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1760206864068</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="feat: Implement comprehensive validation schemas and UI&#10;&#10;This commit introduces a wide range of validation schemas to the ZodKmp library, significantly expanding its capabilities. It also includes a modern Compose UI example (`ZodKmpModernExample.kt`) to demonstrate these new features.&#10;&#10;New validation schemas added:&#10;- `ZodArray`: Validates arrays with element-specific schemas and constraints like min/max length.&#10;- `ZodDate`: Validates date values, supporting parsing from strings and min/max date constraints.&#10;- `ZodDefault`: Provides default values for schemas when input is null/undefined.&#10;- `ZodEnum`: Validates values against a predefined set of enum-like options.&#10;- `ZodIntersection`: Validates that input satisfies multiple schemas simultaneously.&#10;- `ZodLiteral`: Validates that input matches a specific literal value.&#10;- `ZodNull`: Validates that input is explicitly null.&#10;- `ZodNullable`: Allows a schema to accept null values in addition to its defined type.&#10;- `ZodRecord`: Validates objects with string keys and values of a specific type.&#10;- `ZodRefinement`: Allows adding custom validation logic (refinements) to existing schemas.&#10;- `ZodTransform`: Transforms the validated value into a different type or format.&#10;- `ZodTuple`: Validates fixed-length arrays (tuples) with specific types for each element.&#10;- `ZodUndefined`: Validates that input is undefined (represented as null in Kotlin).&#10;- `ZodUnion`: Validates that input matches at least one of several provided schemas.&#10;&#10;The `Zod.kt` entry point has been updated to include factory methods for these new schemas.&#10;&#10;The `composeApp` module now features `ZodKmpModernExample.kt`, a comprehensive UI built with Jetpack Compose Material 3. This example showcases various validation scenarios using the new schemas, organized into &quot;Basic,&quot; &quot;Advanced,&quot; and &quot;Transform&quot; sections. It replaces the older `MainView.kt`.&#10;&#10;Dependencies:&#10;- Added `kotlinx-datetime` for date validation capabilities.&#10;&#10;Removed:&#10;- `MainView.kt` (replaced by `ZodKmpModernExample.kt`)&#10;- `User.kt` (no longer used in the example)" />
+    <MESSAGE value="- Multiplatform Support: Properly configured for Android, iOS and other KMP targets&#10;   - Security: Uses environment variables for credentials and signing keys&#10;   - Metadata: Complete POM metadata with proper license, developers, and SCM information&#10;   - CI/CD Integration: Automated publishing via GitHub Actions&#10;   - Local Testing: Configured to allow local testing of the publishing process" />
+    <MESSAGE value="feat: Enhance publishing process and documentation&#10;&#10;This commit significantly improves the publishing process for Maven Central and updates the related documentation.&#10;&#10;Key changes:&#10;&#10;Build Configuration (`build.gradle.kts` and `zodkmp/build.gradle.kts`):&#10;- Changed `group` from `com.piashcse.zodkmp` to `io.github.piashcse` in the root `build.gradle.kts`.&#10;- Added global `repositories` configuration for `google()` and `mavenCentral()`.&#10;- Introduced a new Gradle task `bumpVersion` to update `library.version` in `gradle.properties`.&#10;- Added Javadoc and sources JAR generation (`javadocJar`, `allSourcesJar`) in `zodkmp/build.gradle.kts` for Maven Central compliance.&#10;- Ensured consistent `artifactId` (&quot;zodkmp&quot;) for iOS publications.&#10;- Added `distribution.set(&quot;repo&quot;)` to the license information in POM.&#10;- Added organization details (`piashcse`, `https://github.com/piashcse`) to developer information in POM.&#10;- Included a &quot;Snapshot&quot; repository configuration for Sonatype OSSRH.&#10;&#10;README (`README.md`):&#10;- Updated the group ID in dependency examples from `com.piashcse.zodkmp` to `io.github.piashcse`.&#10;- Expanded the &quot;Publishing to Maven Central&quot; section with detailed prerequisites, automated release process using GitHub Actions, verification steps, and manual publishing instructions.&#10;&#10;GitHub Workflows:&#10;- Added a new workflow `release.yml` for creating GitHub releases. This workflow:&#10;    - Takes version, release title, and body as inputs.&#10;    - Updates `library.version` in `gradle.properties`.&#10;    - Commits version changes.&#10;    - Creates and pushes a Git tag.&#10;    - Creates a GitHub release.&#10;- Modified `publish.yml` workflow:&#10;    - Triggers on push to tags matching `v*` (in addition to `workflow_dispatch`).&#10;    - Added an input for `version` for manual dispatch.&#10;    - Extracts the version from the Git tag if not provided as input.&#10;    - Updates `library.version` in `gradle.properties` using the extracted or input version before publishing." />
+    <MESSAGE value="fix: Disable signing for JitPack builds" />
+    <MESSAGE value="refactor: Simplify Maven Central publishing with vanniktech plugin&#10;&#10;This commit refactors the publishing process to Maven Central by replacing the manual `maven-publish` and `signing` configuration with the `com.vanniktech.maven.publish` plugin. This significantly simplifies the build scripts and standardizes the process.&#10;&#10;Key changes:&#10;- **Replaced Manual Publishing:** Removed the extensive manual configuration for `maven-publish`, `signing`, Javadoc/sources JAR creation, and repository definitions from `zodkmp/build.gradle.kts`.&#10;- **Adopted Vanniktech Plugin:** Added `com.vanniktech.maven.publish` plugin to `libs.versions.toml` and applied it in `zodkmp/build.gradle.kts`.&#10;- **Externalized Configuration:** All POM metadata and library coordinates (group, version, artifactId, developer info, SCM, etc.) are now defined in `gradle.properties` and read dynamically in the build script. This makes configuration more centralized and easier to manage.&#10;- **Simplified CI/CD:** The `.github/workflows/publish.yml` workflow is updated to trigger on GitHub releases. It now uses a single command, `./gradlew publishToMavenCentral`, and relies on environment variables prefixed with `ORG_GRADLE_PROJECT_` for credentials, as recommended by the vanniktech plugin.&#10;- **Updated Documentation:** The `README.md` has been updated to reflect the new, simpler publishing process, including changes to required GitHub secrets and local verification commands." />
+    <MESSAGE value="refactor: Configure Maven Central publishing coordinates&#10;&#10;This commit updates the `build.gradle.kts` file to explicitly configure the publishing settings for Maven Central using the `vanniktech.maven.publish` plugin.&#10;&#10;Key changes:&#10;- Added `publishToMavenCentral()` to target the Maven Central repository.&#10;- Defined the artifact coordinates (`artifactId` and `version`) for the project, allowing them to be sourced from Gradle properties." />
+    <MESSAGE value="feat: Expand multiplatform support&#10;&#10;This commit significantly expands the range of supported targets for the `zodkmp` library, enhancing its cross-platform capabilities.&#10;&#10;Support has been added for the following platforms:&#10;- **JVM**: `desktop`&#10;- **JavaScript**: `js` (browser and nodejs) and `wasmJs`&#10;- **iOS**: `iosX64` for simulators on Intel Macs&#10;- **macOS**: `macosX64` and `macosArm64`&#10;- **tvOS**: `tvosArm64`, `tvosX64`, and `tvosSimulatorArm64`&#10;- **watchOS**: `watchosArm32`, `watchosArm64`, `watchosX64`, and `watchosSimulatorArm64`&#10;- **Linux**: `linuxX64` and `linuxArm64`&#10;- **Windows**: `mingwX64`" />
+    <MESSAGE value="chore: Bump version to 1.1.0&#10;&#10;This commit updates the project version from 1.0.0 to 1.1.0.&#10;&#10;Specifically, the following files have been changed:&#10;- `gradle.properties`: The `library.version` is set to `1.1.0`.&#10;- `README.md`: The usage examples in the documentation are updated to reflect the new version `1.1.0`." />
+    <MESSAGE value="Code optimization" />
+    <MESSAGE value="docs: Update README and project metadata&#10;&#10;### README.md&#10;- **Badges**: Added a Maven Central badge and more specific platform badges.&#10;- **Coordinates**: Updated the Gradle dependency coordinates from `com.piashcse.zodkmp:zodkmp:1.0.0` to `io.github.piashcse:zodkmp:1.1.0`.&#10;- **Structure**: Reorganized sections for better readability, moving `Platform Support` and `Installation` to the top.&#10;- **Content**: Added a &quot;Developed By&quot; section with author information and expanded the `License` section to include the full MIT license text.&#10;&#10;### gradle.properties&#10;- **Description**: Updated `POM_DESCRIPTION` to provide a more detailed and descriptive summary of the library's purpose." />
+    <MESSAGE value="refactor: Shorten app bar title" />
+    <MESSAGE value="feat: Add comprehensive tests for all validation schemas&#10;&#10;This commit introduces a complete test suite for the ZodKmp library, ensuring the correctness and reliability of all existing validation schemas. Test files have been added for each schema type, covering a wide range of scenarios including successful parsing, failure cases, and specific validation rules.&#10;&#10;**Key tests added:**&#10;- `ZodArrayTest`: Validates array schema with tests for element types, `min`, `max`, and `length`.&#10;- `ZodBooleanTest`: Tests boolean parsing, including case-insensitive strings and `isEqual` checks.&#10;- `ZodDateTest`: Verifies parsing of `LocalDateTime` objects and date/time strings, plus `min`/`max` constraints.&#10;- `ZodDefaultTest`: Ensures default values are correctly applied for `null` inputs.&#10;- `ZodEnumTest`: Checks validation against a predefined set of values.&#10;- `ZodIntersectionTest`: Tests that input satisfies multiple schemas simultaneously.&#10;- `ZodLiteralTest`: Verifies that input matches a specific literal value.&#10;- `ZodNullTest`: Confirms that only `null` values are accepted.&#10;- `ZodNullableTest`: Ensures schemas correctly handle `null` in addition to their defined type.&#10;- `ZodNumberTest`: Covers number parsing, `min`/`max`, `int`, `positive`, and `negative` checks.&#10;- `ZodObjectTest`: Validates object shape, type correctness, strict mode, and optional fields.&#10;- `ZodOptionalTest`: Confirms that schemas correctly handle optional (`null`) values.&#10;- `ZodRecordTest`: Tests validation for maps with string keys and typed values.&#10;- `ZodRefinementTest`: Verifies custom validation logic on top of existing schemas.&#10;- `ZodStringTest`: Includes tests for `min`/`max`/`length`, `email`, `url`, and `regex` validations.&#10;- `ZodTransformTest`: Ensures data transformation logic is applied correctly after validation.&#10;- `ZodTupleTest`: Validates fixed-length arrays with specific types for each element.&#10;- `ZodUndefinedTest`: Confirms that only `null` (representing `undefined`) is accepted.&#10;- `ZodUnionTest`: Tests that input matches at least one of several provided schemas.&#10;&#10;These tests cover both `parse` (throwing exceptions on failure) and `safeParse` (returning a `ZodResult`) methods for each schema, providing robust coverage for the library's core functionality." />
+    <MESSAGE value="feat: Add more validation rules for String, Number, and Array schemas&#10;&#10;**ZodString:**&#10;- New validation methods: `startsWith`, `endsWith`, and `includes`.&#10;&#10;**ZodNumber:**&#10;- New validation methods: `nonPositive`, `nonNegative`, and `range`.&#10;- **Fix:** The `int()` validation now correctly checks for whole numbers using the modulo operator (`num % 1 != 0.0`) instead of `num != num.toLong().toDouble()`.&#10;&#10;**ZodArray:**&#10;- New validation methods: `nonEmpty` and `unique`.&#10;&#10;All new features are accompanied by comprehensive tests in `ZodStringTest.kt`, `ZodNumberTest.kt`, and `ZodArrayTest.kt`. Additionally, tests in `ZodTupleTest.kt` and `ZodIntersectionTest.kt` have been updated for stricter type safety and to remove redundant assertions." />
+    <MESSAGE value="chore: Remove tvOS and watchOS targets and bump version&#10;&#10;- The library version has been updated from 1.1.0 to 1.2.0." />
+    <MESSAGE value="Update README.md" />
+    <MESSAGE value="feat: Add example support for Desktop and Web (WASM)&#10;&#10;**Desktop Support:**&#10;- A `desktop` source set has been added with its own platform-specific implementation.&#10;- The entry point `main.kt` is configured to launch a Compose for Desktop window, which displays the existing `ZodKmpModernExample`.&#10;- The Gradle build is updated to configure the desktop application, including the main class and native distribution formats (`.dmg`, `.msi`, `.deb`).&#10;&#10;**Web (WASM) Support:**&#10;- The experimental Compose for Web (WASM) target (`wasmJs`) has been enabled in `gradle.properties`.&#10;- A `wasmJs` source set is introduced, containing the platform implementation and the `main.kt` entry point that renders the `App` within a `ComposeViewport`.&#10;- Basic web resources (`index.html`, `styles.css`) have been added to host the WASM application.&#10;- Webpack is configured to output `composeApp.js`." />
+    <MESSAGE value="feat: Add MkDocs documentation site and bump version script&#10;&#10;**New Features:**&#10;&#10;- **MkDocs Site:** A comprehensive documentation site has been created under the `docs/` and `site/` directories. This includes:&#10;  -   `mkdocs.yml`: The main configuration file for the site, defining the theme, navigation, and plugins.&#10;  -   Markdown pages for &quot;Getting Started,&quot; &quot;Contributing,&quot; &quot;Changelog,&quot; and detailed API references for primitives, objects, collections, and other validation types.&#10;  -   Static assets including CSS for custom styling and all necessary JavaScript bundles for the Material theme.&#10;&#10;- **`bump-version.sh` script:**&#10;  -   A new shell script in the `scripts/` directory automates updating the `library.version` in `gradle.properties`, committing the change, and creating a corresponding Git tag.&#10;&#10;**Documentation Content Added:**&#10;- `index.md`: Main landing page for the documentation.&#10;- `getting-started.md`: Installation and basic usage guide.&#10;- `advanced-usage.md`: Covers more complex topics like error handling.&#10;- API reference pages for: `collections.md`, `enums.md`, `intersections.md`, `objects.md`, `primitives.md`, `refinements.md`, `transformations.md`, and `unions.md`.&#10;- `changelog.md`: A manually maintained changelog.&#10;- `contributing.md` &amp; `license.md`: Project contribution guidelines and license information.&#10;&#10;**New Scripts:**&#10;&#10;-   `scripts/bump-version.sh`: For version management.&#10;-   `scripts/setup_docs.sh`: To install MkDocs and its dependencies.&#10;-   `scripts/prepareJitpackEnvironment.sh`: To set environment variables for JitPack builds." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: Add MkDocs documentation site and bump version script&#10;&#10;**New Features:**&#10;&#10;- **MkDocs Site:** A comprehensive documentation site has been created under the `docs/` and `site/` directories. This includes:&#10;  -   `mkdocs.yml`: The main configuration file for the site, defining the theme, navigation, and plugins.&#10;  -   Markdown pages for &quot;Getting Started,&quot; &quot;Contributing,&quot; &quot;Changelog,&quot; and detailed API references for primitives, objects, collections, and other validation types.&#10;  -   Static assets including CSS for custom styling and all necessary JavaScript bundles for the Material theme.&#10;&#10;- **`bump-version.sh` script:**&#10;  -   A new shell script in the `scripts/` directory automates updating the `library.version` in `gradle.properties`, committing the change, and creating a corresponding Git tag.&#10;&#10;**Documentation Content Added:**&#10;- `index.md`: Main landing page for the documentation.&#10;- `getting-started.md`: Installation and basic usage guide.&#10;- `advanced-usage.md`: Covers more complex topics like error handling.&#10;- API reference pages for: `collections.md`, `enums.md`, `intersections.md`, `objects.md`, `primitives.md`, `refinements.md`, `transformations.md`, and `unions.md`.&#10;- `changelog.md`: A manually maintained changelog.&#10;- `contributing.md` &amp; `license.md`: Project contribution guidelines and license information.&#10;&#10;**New Scripts:**&#10;&#10;-   `scripts/bump-version.sh`: For version management.&#10;-   `scripts/setup_docs.sh`: To install MkDocs and its dependencies.&#10;-   `scripts/prepareJitpackEnvironment.sh`: To set environment variables for JitPack builds." />
+  </component>
+  <component name="play_dynamic_filters_status">
+    <option name="appIdToCheckInfo">
+      <map>
+        <entry key="com.piashcse.zodkmp">
+          <value>
+            <CheckInfo lastCheckTimestamp="1759760257226" />
+          </value>
+        </entry>
+        <entry key="com.piashcse.zodkmp.lib.test">
+          <value>
+            <CheckInfo lastCheckTimestamp="1759759732988" />
+          </value>
+        </entry>
+        <entry key="com.piashcse.zodkmp.test">
+          <value>
+            <CheckInfo lastCheckTimestamp="1759760257227" />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

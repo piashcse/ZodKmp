@@ -478,18 +478,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#object-schema-definition" class="md-nav__link">
+  <a href="#basic-object-validation" class="md-nav__link">
     <span class="md-ellipsis">
-      Object Schema Definition
+      Basic Object Validation
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#nested-objects" class="md-nav__link">
+  <a href="#strict-objects" class="md-nav__link">
     <span class="md-ellipsis">
-      Nested Objects
+      Strict Objects
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nested-object-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nested Object Validation
     </span>
   </a>
   
@@ -698,18 +707,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#object-schema-definition" class="md-nav__link">
+  <a href="#basic-object-validation" class="md-nav__link">
     <span class="md-ellipsis">
-      Object Schema Definition
+      Basic Object Validation
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#nested-objects" class="md-nav__link">
+  <a href="#strict-objects" class="md-nav__link">
     <span class="md-ellipsis">
-      Nested Objects
+      Strict Objects
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nested-object-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nested Object Validation
     </span>
   </a>
   
@@ -735,11 +753,59 @@
 
 
 <h1 id="objects">Objects<a class="headerlink" href="#objects" title="Permanent link">&para;</a></h1>
-<p>This section covers object validation in ZodKmp.</p>
-<h2 id="object-schema-definition">Object Schema Definition<a class="headerlink" href="#object-schema-definition" title="Permanent link">&para;</a></h2>
-<p>Examples of how to define object schemas.</p>
-<h2 id="nested-objects">Nested Objects<a class="headerlink" href="#nested-objects" title="Permanent link">&para;</a></h2>
-<p>Examples of nested object validation.</p>
+<h2 id="basic-object-validation">Basic Object Validation<a class="headerlink" href="#basic-object-validation" title="Permanent link">&para;</a></h2>
+<p>Validate complex objects:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">userSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">objectSchema</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="p">({</span>
+<span class="w">    </span><span class="n">string</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">().</span><span class="na">min</span><span class="p">(</span><span class="m">2</span><span class="p">))</span>
+<span class="w">    </span><span class="n">string</span><span class="p">(</span><span class="s">&quot;email&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">().</span><span class="na">email</span><span class="p">())</span>
+<span class="w">    </span><span class="n">number</span><span class="p">(</span><span class="s">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">number</span><span class="p">().</span><span class="na">min</span><span class="p">(</span><span class="m">0</span><span class="p">).</span><span class="na">max</span><span class="p">(</span><span class="m">120</span><span class="p">))</span>
+<span class="w">    </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;isActive&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">boolean</span><span class="p">().</span><span class="na">default</span><span class="p">(</span><span class="kc">true</span><span class="p">))</span>
+<span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">-&gt;</span>
+<span class="w">    </span><span class="n">User</span><span class="p">(</span>
+<span class="w">        </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="o">[</span><span class="s">&quot;name&quot;</span><span class="o">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">String</span><span class="p">,</span>
+<span class="w">        </span><span class="n">email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="o">[</span><span class="s">&quot;email&quot;</span><span class="o">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">String</span><span class="p">,</span>
+<span class="w">        </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">map</span><span class="o">[</span><span class="s">&quot;age&quot;</span><span class="o">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Number</span><span class="p">).</span><span class="na">toDouble</span><span class="p">(),</span>
+<span class="w">        </span><span class="n">isActive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="o">[</span><span class="s">&quot;isActive&quot;</span><span class="o">]</span><span class="w"> </span><span class="k">as?</span><span class="w"> </span><span class="kt">Boolean</span><span class="w"> </span><span class="o">?:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="strict-objects">Strict Objects<a class="headerlink" href="#strict-objects" title="Permanent link">&para;</a></h2>
+<p>Strict objects (reject unknown keys):</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">strictUserSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">objectSchema</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="p">({</span>
+<span class="w">    </span><span class="n">string</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">().</span><span class="na">min</span><span class="p">(</span><span class="m">2</span><span class="p">))</span>
+<span class="w">    </span><span class="n">string</span><span class="p">(</span><span class="s">&quot;email&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">().</span><span class="na">email</span><span class="p">())</span>
+<span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">-&gt;</span>
+<span class="w">    </span><span class="n">User</span><span class="p">(</span>
+<span class="w">        </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="o">[</span><span class="s">&quot;name&quot;</span><span class="o">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">String</span><span class="p">,</span>
+<span class="w">        </span><span class="n">email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="o">[</span><span class="s">&quot;email&quot;</span><span class="o">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="p">}.</span><span class="na">strict</span><span class="p">()</span>
+</code></pre></div>
+
+<h2 id="nested-object-validation">Nested Object Validation<a class="headerlink" href="#nested-object-validation" title="Permanent link">&para;</a></h2>
+<div class="codehilite"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">addressSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">objectSchema</span><span class="o">&lt;</span><span class="n">Address</span><span class="o">&gt;</span><span class="p">({</span>
+<span class="w">    </span><span class="n">string</span><span class="p">(</span><span class="s">&quot;street&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">().</span><span class="na">min</span><span class="p">(</span><span class="m">5</span><span class="p">))</span>
+<span class="w">    </span><span class="n">string</span><span class="p">(</span><span class="s">&quot;city&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">().</span><span class="na">min</span><span class="p">(</span><span class="m">2</span><span class="p">))</span>
+<span class="w">    </span><span class="n">string</span><span class="p">(</span><span class="s">&quot;zipCode&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">().</span><span class="na">regex</span><span class="p">(</span><span class="n">Regex</span><span class="p">(</span><span class="s">&quot;\\d{5}&quot;</span><span class="p">))</span>
+<span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">-&gt;</span>
+<span class="w">    </span><span class="n">Address</span><span class="p">(</span>
+<span class="w">        </span><span class="n">street</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="o">[</span><span class="s">&quot;street&quot;</span><span class="o">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">String</span><span class="p">,</span>
+<span class="w">        </span><span class="n">city</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="o">[</span><span class="s">&quot;city&quot;</span><span class="o">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">String</span><span class="p">,</span>
+<span class="w">        </span><span class="n">zipCode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="o">[</span><span class="s">&quot;zipCode&quot;</span><span class="o">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">val</span><span class="w"> </span><span class="nv">userWithAddressSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">objectSchema</span><span class="o">&lt;</span><span class="n">UserWithAddress</span><span class="o">&gt;</span><span class="p">({</span>
+<span class="w">    </span><span class="n">string</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">().</span><span class="na">min</span><span class="p">(</span><span class="m">2</span><span class="p">))</span>
+<span class="w">    </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;address&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">addressSchema</span><span class="p">)</span>
+<span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">-&gt;</span>
+<span class="w">    </span><span class="n">UserWithAddress</span><span class="p">(</span>
+<span class="w">        </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="o">[</span><span class="s">&quot;name&quot;</span><span class="o">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">String</span><span class="p">,</span>
+<span class="w">        </span><span class="n">address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="o">[</span><span class="s">&quot;address&quot;</span><span class="o">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Address</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
 
 
 

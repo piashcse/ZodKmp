@@ -570,9 +570,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#intersection-types" class="md-nav__link">
+  <a href="#intersections_1" class="md-nav__link">
     <span class="md-ellipsis">
-      Intersection Types
+      Intersections
     </span>
   </a>
   
@@ -689,9 +689,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#intersection-types" class="md-nav__link">
+  <a href="#intersections_1" class="md-nav__link">
     <span class="md-ellipsis">
-      Intersection Types
+      Intersections
     </span>
   </a>
   
@@ -717,9 +717,22 @@
 
 
 <h1 id="intersections">Intersections<a class="headerlink" href="#intersections" title="Permanent link">&para;</a></h1>
-<p>This section covers intersection validation in ZodKmp.</p>
-<h2 id="intersection-types">Intersection Types<a class="headerlink" href="#intersection-types" title="Permanent link">&para;</a></h2>
-<p>Examples of how to define intersection schemas that combine multiple schemas.</p>
+<h2 id="intersections_1">Intersections<a class="headerlink" href="#intersections_1" title="Permanent link">&para;</a></h2>
+<p>Validate values that must satisfy multiple schemas:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">personSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">objectSchema</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span><span class="p">({</span>
+<span class="w">    </span><span class="n">string</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">())</span>
+<span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">-&gt;</span>
+<span class="w">    </span><span class="n">Person</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="o">[</span><span class="s">&quot;name&quot;</span><span class="o">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">String</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">val</span><span class="w"> </span><span class="nv">employeeSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">objectSchema</span><span class="o">&lt;</span><span class="n">Employee</span><span class="o">&gt;</span><span class="p">({</span>
+<span class="w">    </span><span class="n">string</span><span class="p">(</span><span class="s">&quot;employeeId&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">())</span>
+<span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">-&gt;</span>
+<span class="w">    </span><span class="n">Employee</span><span class="p">(</span><span class="n">employeeId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="o">[</span><span class="s">&quot;employeeId&quot;</span><span class="o">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">String</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">val</span><span class="w"> </span><span class="nv">personEmployeeSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">intersection</span><span class="p">(</span><span class="n">personSchema</span><span class="p">,</span><span class="w"> </span><span class="n">employeeSchema</span><span class="p">)</span>
+</code></pre></div>
 
 
 

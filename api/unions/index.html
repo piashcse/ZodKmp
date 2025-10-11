@@ -524,9 +524,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#union-types" class="md-nav__link">
+  <a href="#basic-unions" class="md-nav__link">
     <span class="md-ellipsis">
-      Union Types
+      Basic Unions
     </span>
   </a>
   
@@ -689,9 +689,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#union-types" class="md-nav__link">
+  <a href="#basic-unions" class="md-nav__link">
     <span class="md-ellipsis">
-      Union Types
+      Basic Unions
     </span>
   </a>
   
@@ -717,9 +717,23 @@
 
 
 <h1 id="unions">Unions<a class="headerlink" href="#unions" title="Permanent link">&para;</a></h1>
-<p>This section covers union validation in ZodKmp.</p>
-<h2 id="union-types">Union Types<a class="headerlink" href="#union-types" title="Permanent link">&para;</a></h2>
-<p>Examples of how to define union schemas that accept multiple types.</p>
+<h2 id="basic-unions">Basic Unions<a class="headerlink" href="#basic-unions" title="Permanent link">&para;</a></h2>
+<p>Validate values that match any of multiple schemas:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">stringOrNumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">union</span><span class="p">(</span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">(),</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">number</span><span class="p">())</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">complexUnion</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">union</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">(),</span>
+<span class="w">    </span><span class="n">Zod</span><span class="p">.</span><span class="na">number</span><span class="p">(),</span>
+<span class="w">    </span><span class="n">Zod</span><span class="p">.</span><span class="na">objectSchema</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span><span class="p">({</span>
+<span class="w">        </span><span class="n">number</span><span class="p">(</span><span class="s">&quot;x&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">number</span><span class="p">())</span>
+<span class="w">        </span><span class="n">number</span><span class="p">(</span><span class="s">&quot;y&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">number</span><span class="p">())</span>
+<span class="w">    </span><span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">-&gt;</span>
+<span class="w">        </span><span class="n">Point</span><span class="p">(</span>
+<span class="w">            </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">map</span><span class="o">[</span><span class="s">&quot;x&quot;</span><span class="o">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Number</span><span class="p">).</span><span class="na">toDouble</span><span class="p">(),</span>
+<span class="w">            </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">map</span><span class="o">[</span><span class="s">&quot;y&quot;</span><span class="o">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Number</span><span class="p">).</span><span class="na">toDouble</span><span class="p">()</span>
+<span class="w">        </span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div>
 
 
 

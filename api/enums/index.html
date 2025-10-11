@@ -547,9 +547,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#enum-definitions" class="md-nav__link">
+  <a href="#string-enums" class="md-nav__link">
     <span class="md-ellipsis">
-      Enum Definitions
+      String Enums
     </span>
   </a>
   
@@ -689,9 +689,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#enum-definitions" class="md-nav__link">
+  <a href="#string-enums" class="md-nav__link">
     <span class="md-ellipsis">
-      Enum Definitions
+      String Enums
     </span>
   </a>
   
@@ -717,9 +717,15 @@
 
 
 <h1 id="enums">Enums<a class="headerlink" href="#enums" title="Permanent link">&para;</a></h1>
-<p>This section covers enum validation in ZodKmp.</p>
-<h2 id="enum-definitions">Enum Definitions<a class="headerlink" href="#enum-definitions" title="Permanent link">&para;</a></h2>
-<p>Examples of how to define and validate enum schemas.</p>
+<h2 id="string-enums">String Enums<a class="headerlink" href="#string-enums" title="Permanent link">&para;</a></h2>
+<p>Validate enum values:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// String enums</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">roleSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">enum</span><span class="p">(</span><span class="s">&quot;admin&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;user&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;guest&quot;</span><span class="p">)</span>
+
+<span class="c1">// Using collections</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">roles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">listOf</span><span class="p">(</span><span class="s">&quot;admin&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;user&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;guest&quot;</span><span class="p">)</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">roleSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">enum</span><span class="p">(</span><span class="n">roles</span><span class="p">)</span>
+</code></pre></div>
 
 
 

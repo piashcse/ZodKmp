@@ -616,9 +616,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#custom-validators" class="md-nav__link">
+  <a href="#refinements_1" class="md-nav__link">
     <span class="md-ellipsis">
-      Custom Validators
+      Refinements
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conditional-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conditional Validation
     </span>
   </a>
   
@@ -689,9 +698,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#custom-validators" class="md-nav__link">
+  <a href="#refinements_1" class="md-nav__link">
     <span class="md-ellipsis">
-      Custom Validators
+      Refinements
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conditional-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conditional Validation
     </span>
   </a>
   
@@ -717,9 +735,30 @@
 
 
 <h1 id="refinements">Refinements<a class="headerlink" href="#refinements" title="Permanent link">&para;</a></h1>
-<p>This section covers refinement operations in ZodKmp.</p>
-<h2 id="custom-validators">Custom Validators<a class="headerlink" href="#custom-validators" title="Permanent link">&para;</a></h2>
-<p>Examples of how to define custom validation functions for schemas.</p>
+<h2 id="refinements_1">Refinements<a class="headerlink" href="#refinements_1" title="Permanent link">&para;</a></h2>
+<p>Add custom validation rules:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">evenNumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">number</span><span class="p">().</span><span class="na">refine</span><span class="p">({</span><span class="w"> </span><span class="nb">it</span><span class="p">.</span><span class="na">toInt</span><span class="p">()</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;Number must be even&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">strongPassword</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">().</span><span class="na">refine</span><span class="p">({</span><span class="w"> </span><span class="nb">it</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="m">8</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">it</span><span class="p">.</span><span class="na">any</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">char</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">char</span><span class="p">.</span><span class="na">isDigit</span><span class="p">()</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;Password must be at least 8 characters with numbers&quot;</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+
+<h2 id="conditional-validation">Conditional Validation<a class="headerlink" href="#conditional-validation" title="Permanent link">&para;</a></h2>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Custom validation based on other fields</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">conditionalSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">objectSchema</span><span class="o">&lt;</span><span class="n">Conditional</span><span class="o">&gt;</span><span class="p">({</span>
+<span class="w">    </span><span class="n">string</span><span class="p">(</span><span class="s">&quot;type&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">enum</span><span class="p">(</span><span class="s">&quot;email&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;phone&quot;</span><span class="p">))</span>
+<span class="w">    </span><span class="n">string</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">())</span>
+<span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">-&gt;</span>
+<span class="w">    </span><span class="n">Conditional</span><span class="p">(</span>
+<span class="w">        </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="o">[</span><span class="s">&quot;type&quot;</span><span class="o">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">String</span><span class="p">,</span>
+<span class="w">        </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="o">[</span><span class="s">&quot;value&quot;</span><span class="o">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="p">}.</span><span class="na">refine</span><span class="p">({</span><span class="w"> </span><span class="n">obj</span><span class="w"> </span><span class="o">-&gt;</span>
+<span class="w">    </span><span class="k">when</span><span class="w"> </span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="na">type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;email&quot;</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">obj</span><span class="p">.</span><span class="na">value</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="s">&quot;@&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="s">&quot;phone&quot;</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">obj</span><span class="p">.</span><span class="na">value</span><span class="p">.</span><span class="na">all</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nb">it</span><span class="p">.</span><span class="na">isDigit</span><span class="p">()</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">it</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="sc">&#39;-&#39;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">})</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;Value must match the selected type&quot;</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
 
 
 

@@ -510,9 +510,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#maps" class="md-nav__link">
+  <a href="#tuples" class="md-nav__link">
     <span class="md-ellipsis">
-      Maps
+      Tuples
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#records" class="md-nav__link">
+    <span class="md-ellipsis">
+      Records
     </span>
   </a>
   
@@ -707,9 +716,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#maps" class="md-nav__link">
+  <a href="#tuples" class="md-nav__link">
     <span class="md-ellipsis">
-      Maps
+      Tuples
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#records" class="md-nav__link">
+    <span class="md-ellipsis">
+      Records
     </span>
   </a>
   
@@ -735,11 +753,35 @@
 
 
 <h1 id="collections">Collections<a class="headerlink" href="#collections" title="Permanent link">&para;</a></h1>
-<p>This section covers collection validation types in ZodKmp.</p>
 <h2 id="arrays">Arrays<a class="headerlink" href="#arrays" title="Permanent link">&para;</a></h2>
-<p>Examples of array validation schemas.</p>
-<h2 id="maps">Maps<a class="headerlink" href="#maps" title="Permanent link">&para;</a></h2>
-<p>Examples of map validation schemas.</p>
+<p>Validate array values with constraints:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">stringArray</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">array</span><span class="p">(</span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">())</span>
+
+<span class="c1">// With constraints</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">constrainedArray</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">array</span><span class="p">(</span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">())</span>
+<span class="w">    </span><span class="p">.</span><span class="na">min</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Array must have at least 2 elements&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">max</span><span class="p">(</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Array must have at most 10 elements&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">length</span><span class="p">(</span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Array must have exactly 5 elements&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">nonempty</span><span class="p">(</span><span class="s">&quot;Array must not be empty&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="tuples">Tuples<a class="headerlink" href="#tuples" title="Permanent link">&para;</a></h2>
+<p>Validate fixed-length arrays with specific types for each position:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">coordinates</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">tuple</span><span class="p">(</span><span class="n">listOf</span><span class="p">(</span><span class="n">Zod</span><span class="p">.</span><span class="na">number</span><span class="p">(),</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">number</span><span class="p">()))</span>
+
+<span class="c1">// Usage</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">coordinates</span><span class="p">.</span><span class="na">safeParse</span><span class="p">(</span><span class="n">listOf</span><span class="p">(</span><span class="m">10.0</span><span class="p">,</span><span class="w"> </span><span class="m">20.0</span><span class="p">))</span>
+</code></pre></div>
+
+<h2 id="records">Records<a class="headerlink" href="#records" title="Permanent link">&para;</a></h2>
+<p>Validate objects with string keys and uniform value types:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">stringRecord</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">record</span><span class="p">(</span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">())</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">numberRecord</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">record</span><span class="p">(</span><span class="n">Zod</span><span class="p">.</span><span class="na">number</span><span class="p">())</span>
+
+<span class="c1">// Usage</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">userData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mapOf</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="s">&quot;John&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;city&quot;</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="s">&quot;NYC&quot;</span><span class="p">)</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stringRecord</span><span class="p">.</span><span class="na">safeParse</span><span class="p">(</span><span class="n">userData</span><span class="p">)</span>
+</code></pre></div>
 
 
 

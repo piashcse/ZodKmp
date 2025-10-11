@@ -1,9 +1,13 @@
 /* Custom CSS for ZodKmp documentation */
 
-.md-typeset .admonition {
-  border-left: 0.2rem solid var(--md-accent-fg-color);
+/* Custom styling for the documentation site */
+.md-typeset__table {
+  width: 100%;
+  display: block;
 }
 
-.md-typeset .admonition > .admonition-title {
-  background-color: rgba(0, 0, 0, 0.05);
+.md-typeset table:not([class]) {
+  display: table;
 }
+
+/* Additional customizations can be added here */

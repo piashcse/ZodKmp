@@ -455,27 +455,81 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#string-validation" class="md-nav__link">
+  <a href="#string" class="md-nav__link">
     <span class="md-ellipsis">
-      String Validation
+      String
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#number-validation" class="md-nav__link">
+  <a href="#number" class="md-nav__link">
     <span class="md-ellipsis">
-      Number Validation
+      Number
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#boolean-validation" class="md-nav__link">
+  <a href="#boolean" class="md-nav__link">
     <span class="md-ellipsis">
-      Boolean Validation
+      Boolean
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#date" class="md-nav__link">
+    <span class="md-ellipsis">
+      Date
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#null-undefined" class="md-nav__link">
+    <span class="md-ellipsis">
+      Null &amp; Undefined
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#literals" class="md-nav__link">
+    <span class="md-ellipsis">
+      Literals
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nullables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nullables
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optionals" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optionals
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defaults" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defaults
     </span>
   </a>
   
@@ -707,27 +761,81 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#string-validation" class="md-nav__link">
+  <a href="#string" class="md-nav__link">
     <span class="md-ellipsis">
-      String Validation
+      String
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#number-validation" class="md-nav__link">
+  <a href="#number" class="md-nav__link">
     <span class="md-ellipsis">
-      Number Validation
+      Number
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#boolean-validation" class="md-nav__link">
+  <a href="#boolean" class="md-nav__link">
     <span class="md-ellipsis">
-      Boolean Validation
+      Boolean
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#date" class="md-nav__link">
+    <span class="md-ellipsis">
+      Date
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#null-undefined" class="md-nav__link">
+    <span class="md-ellipsis">
+      Null &amp; Undefined
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#literals" class="md-nav__link">
+    <span class="md-ellipsis">
+      Literals
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nullables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nullables
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optionals" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optionals
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defaults" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defaults
     </span>
   </a>
   
@@ -753,13 +861,102 @@
 
 
 <h1 id="primitives">Primitives<a class="headerlink" href="#primitives" title="Permanent link">&para;</a></h1>
-<p>This section covers the primitive validation types available in ZodKmp.</p>
-<h2 id="string-validation">String Validation<a class="headerlink" href="#string-validation" title="Permanent link">&para;</a></h2>
-<p>Examples of string validation schemas.</p>
-<h2 id="number-validation">Number Validation<a class="headerlink" href="#number-validation" title="Permanent link">&para;</a></h2>
-<p>Examples of number validation schemas.</p>
-<h2 id="boolean-validation">Boolean Validation<a class="headerlink" href="#boolean-validation" title="Permanent link">&para;</a></h2>
-<p>Examples of boolean validation schemas.</p>
+<h2 id="string">String<a class="headerlink" href="#string" title="Permanent link">&para;</a></h2>
+<p>Validate string values with various constraints:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">stringSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">()</span>
+
+<span class="c1">// With constraints</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">constrainedString</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="na">min</span><span class="p">(</span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;String must be at least 5 characters&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">max</span><span class="p">(</span><span class="m">100</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;String must be at most 100 characters&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">length</span><span class="p">(</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;String must be exactly 10 characters&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">email</span><span class="p">(</span><span class="s">&quot;Must be a valid email address&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">url</span><span class="p">(</span><span class="s">&quot;Must be a valid URL&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">regex</span><span class="p">(</span><span class="n">Regex</span><span class="p">(</span><span class="s">&quot;^[A-Za-z]+</span><span class="err">$</span><span class="s">&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Must contain only letters&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">startsWith</span><span class="p">(</span><span class="s">&quot;Hello&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Must start with &#39;Hello&#39;&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">endsWith</span><span class="p">(</span><span class="s">&quot;World&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Must end with &#39;World&#39;&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">includes</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Must contain &#39;test&#39;&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">toLowerCase</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="na">toUpperCase</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="na">trim</span><span class="p">()</span>
+</code></pre></div>
+
+<h2 id="number">Number<a class="headerlink" href="#number" title="Permanent link">&para;</a></h2>
+<p>Validate numeric values:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">numberSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">number</span><span class="p">()</span>
+
+<span class="c1">// With constraints</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">constrainedNumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">number</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="na">gt</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Must be greater than 0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">gte</span><span class="p">(</span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Must be greater than or equal to 5&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">lt</span><span class="p">(</span><span class="m">100</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Must be less than 100&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">lte</span><span class="p">(</span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Must be less than or equal to 50&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">min</span><span class="p">(</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Must be at least 10&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">max</span><span class="p">(</span><span class="m">90</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Must be at most 90&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">int</span><span class="p">(</span><span class="s">&quot;Must be an integer&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">positive</span><span class="p">(</span><span class="s">&quot;Must be positive&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">negative</span><span class="p">(</span><span class="s">&quot;Must be negative&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">nonPositive</span><span class="p">(</span><span class="s">&quot;Must be non-positive&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">nonNegative</span><span class="p">(</span><span class="s">&quot;Must be non-negative&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">multipleOf</span><span class="p">(</span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Must be a multiple of 5&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="boolean">Boolean<a class="headerlink" href="#boolean" title="Permanent link">&para;</a></h2>
+<p>Validate boolean values:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">booleanSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">boolean</span><span class="p">()</span>
+</code></pre></div>
+
+<h2 id="date">Date<a class="headerlink" href="#date" title="Permanent link">&para;</a></h2>
+<p>Validate date values:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">dateSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">date</span><span class="p">()</span>
+
+<span class="c1">// With constraints</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">constrainedDate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">date</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="na">min</span><span class="p">(</span><span class="n">LocalDateTime</span><span class="p">(</span><span class="m">2020</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Date must be after 2020&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">max</span><span class="p">(</span><span class="n">LocalDateTime</span><span class="p">(</span><span class="m">2030</span><span class="p">,</span><span class="w"> </span><span class="m">12</span><span class="p">,</span><span class="w"> </span><span class="m">31</span><span class="p">,</span><span class="w"> </span><span class="m">23</span><span class="p">,</span><span class="w"> </span><span class="m">59</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Date must be before 2030&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="null-undefined">Null &amp; Undefined<a class="headerlink" href="#null-undefined" title="Permanent link">&para;</a></h2>
+<p>Validate null and undefined values:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">nullSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">null</span><span class="p">()</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">undefinedSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">undefined</span><span class="p">()</span>
+</code></pre></div>
+
+<h2 id="literals">Literals<a class="headerlink" href="#literals" title="Permanent link">&para;</a></h2>
+<p>Validate exact literal values:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">literalSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">literal</span><span class="p">(</span><span class="s">&quot;admin&quot;</span><span class="p">)</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">numberLiteral</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">literal</span><span class="p">(</span><span class="m">42</span><span class="p">)</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">booleanLiteral</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">literal</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="nullables">Nullables<a class="headerlink" href="#nullables" title="Permanent link">&para;</a></h2>
+<p>Mark schemas as accepting null values:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">nullableString</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">().</span><span class="na">nullable</span><span class="p">()</span>
+
+<span class="c1">// Usage</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">result1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nullableString</span><span class="p">.</span><span class="na">safeParse</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">// Success</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">result2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nullableString</span><span class="p">.</span><span class="na">safeParse</span><span class="p">(</span><span class="kc">null</span><span class="p">)</span><span class="w">   </span><span class="c1">// Success</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">result3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nullableString</span><span class="p">.</span><span class="na">safeParse</span><span class="p">(</span><span class="m">42</span><span class="p">)</span><span class="w">       </span><span class="c1">// Failure</span>
+</code></pre></div>
+
+<h2 id="optionals">Optionals<a class="headerlink" href="#optionals" title="Permanent link">&para;</a></h2>
+<p>Mark schemas as accepting undefined values:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">optionalString</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">().</span><span class="na">optional</span><span class="p">()</span>
+
+<span class="c1">// Usage</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">result1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">optionalString</span><span class="p">.</span><span class="na">safeParse</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">// Success</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">result2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">optionalString</span><span class="p">.</span><span class="na">safeParse</span><span class="p">(</span><span class="kc">null</span><span class="p">)</span><span class="w">     </span><span class="c1">// Success (undefined)</span>
+</code></pre></div>
+
+<h2 id="defaults">Defaults<a class="headerlink" href="#defaults" title="Permanent link">&para;</a></h2>
+<p>Provide default values for schemas:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="nv">stringWithDefault</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">string</span><span class="p">().</span><span class="na">default</span><span class="p">(</span><span class="s">&quot;unknown&quot;</span><span class="p">)</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">numberWithDefault</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zod</span><span class="p">.</span><span class="na">number</span><span class="p">().</span><span class="na">default</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="m">0.0</span><span class="w"> </span><span class="p">}</span>
+
+<span class="c1">// Usage</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">result1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stringWithDefault</span><span class="p">.</span><span class="na">safeParse</span><span class="p">(</span><span class="kc">null</span><span class="p">)</span><span class="w">     </span><span class="c1">// Success with &quot;unknown&quot;</span>
+<span class="kd">val</span><span class="w"> </span><span class="nv">result2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stringWithDefault</span><span class="p">.</span><span class="na">safeParse</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">)</span><span class="w">  </span><span class="c1">// Success with &quot;hello&quot;</span>
+</code></pre></div>
 
 
 
