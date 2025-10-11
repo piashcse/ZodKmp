@@ -10,7 +10,7 @@
 [![License](https://img.shields.io/github/license/colinhacks/zod)](LICENSE)
 <a href="https://github.com/piashcse"><img alt="License" src="https://img.shields.io/static/v1?label=GitHub&message=piashcse&color=C51162"/></a>
 
-ZodKmp is a Kotlin Multiplatform implementation of the popular [Zod](https://zod.dev/) TypeScript validation library. It provides a declarative, type-safe way to validate data in your Kotlin Multiplatform projects.
+ZodKmp is a Kotlin Multiplatform implementation of the popular [Zod](https://zod.dev/) TypeScript validation library. It provides a declarative, type-safe way to validate data in your Kotlin Multiplatform projects. For detail [documentation ](https://piashcse.github.io/ZodKmp/).
 
 
 ## Platform Support
