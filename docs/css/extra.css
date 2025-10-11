@@ -1,0 +1,9 @@
+/* Custom CSS for ZodKmp documentation */
+
+.md-typeset .admonition {
+  border-left: 0.2rem solid var(--md-accent-fg-color);
+}
+
+.md-typeset .admonition > .admonition-title {
+  background-color: rgba(0, 0, 0, 0.05);
+}
