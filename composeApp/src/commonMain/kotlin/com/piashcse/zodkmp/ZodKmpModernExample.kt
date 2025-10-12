@@ -338,9 +338,9 @@ fun StringValidationCard() {
     ) {
         var text by remember { mutableStateOf("hello@example.com") }
         var validationResult by remember { mutableStateOf<ZodResult<String>?>(null) }
-        
-        val emailSchema = Zod.string().email()
-        
+
+        val emailSchema = remember { Zod.string().email() }
+
         Column {
             OutlinedTextField(
                 value = text,
@@ -377,9 +377,9 @@ fun NumberValidationCard() {
     ) {
         var text by remember { mutableStateOf("25") }
         var validationResult by remember { mutableStateOf<ZodResult<Double>?>(null) }
-        
-        val ageSchema = Zod.number().min(0.0).max(120.0)
-        
+
+        val ageSchema = remember { Zod.number().min(0.0).max(120.0) }
+
         Column {
             OutlinedTextField(
                 value = text,
@@ -417,9 +417,9 @@ fun BooleanValidationCard() {
     ) {
         var isChecked by remember { mutableStateOf(true) }
         var validationResult by remember { mutableStateOf<ZodResult<Boolean>?>(null) }
-        
-        val booleanSchema = Zod.boolean()
-        
+
+        val booleanSchema = remember { Zod.boolean() }
+
         Column {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -462,9 +462,9 @@ fun LiteralValidationCard() {
     ) {
         var text by remember { mutableStateOf("active") }
         var validationResult by remember { mutableStateOf<ZodResult<String>?>(null) }
-        
-        val statusSchema = Zod.literal("active")
-        
+
+        val statusSchema = remember { Zod.literal("active") }
+
         Column {
             OutlinedTextField(
                 value = text,
@@ -501,9 +501,9 @@ fun EnumValidationCard() {
     ) {
         var selectedRole by remember { mutableStateOf("user") }
         var validationResult by remember { mutableStateOf<ZodResult<String>?>(null) }
-        
-        val roleSchema = Zod.enum("admin", "user", "guest")
-        
+
+        val roleSchema = remember { Zod.enum("admin", "user", "guest") }
+
         Column {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -544,9 +544,9 @@ fun ArrayValidationCard() {
     ) {
         var tags by remember { mutableStateOf("tag1,tag2,tag3") }
         var validationResult by remember { mutableStateOf<ZodResult<List<String>>?>(null) }
-        
-        val tagsSchema = Zod.array(Zod.string().min(2)).min(1).max(5)
-        
+
+        val tagsSchema = remember { Zod.array(Zod.string().min(2)).min(1).max(5) }
+
         Column {
             OutlinedTextField(
                 value = tags,
@@ -658,9 +658,9 @@ fun UnionValidationCard() {
     ) {
         var inputValue by remember { mutableStateOf("hello") }
         var validationResult by remember { mutableStateOf<ZodResult<Any?>?>(null) }
-        
-        val stringOrNumberSchema = Zod.union(Zod.string(), Zod.number())
-        
+
+        val stringOrNumberSchema = remember { Zod.union(Zod.string(), Zod.number()) }
+
         Column {
             OutlinedTextField(
                 value = inputValue,
@@ -700,9 +700,9 @@ fun TupleValidationCard() {
         var x by remember { mutableStateOf("10") }
         var y by remember { mutableStateOf("20") }
         var validationResult by remember { mutableStateOf<ZodResult<List<Any?>>?>(null) }
-        
-        val coordinateSchema = Zod.tuple(listOf(Zod.number(), Zod.number()))
-        
+
+        val coordinateSchema = remember { Zod.tuple(listOf(Zod.number(), Zod.number())) }
+
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -756,10 +756,8 @@ fun RecordValidationCard() {
         title = "Record Validation",
         icon = Icons.Outlined.Key
     ) {
-        var validationResult by remember { mutableStateOf<ZodResult<Map<String, String>>?>(null) }
-        
-        val recordSchema = Zod.record(Zod.string())
-        
+        val recordSchema = remember { Zod.record(Zod.string()) }
+
         Column {
             Text(
                 text = "Records validate objects with string keys",
@@ -767,10 +765,10 @@ fun RecordValidationCard() {
             )
             
             Spacer(modifier = Modifier.height(16.dp))
-            
-            val sampleRecord = mapOf("firstName" to "John", "lastName" to "Doe")
-            val result = recordSchema.safeParse(sampleRecord)
-            
+
+            val sampleRecord = remember { mapOf("firstName" to "John", "lastName" to "Doe") }
+            val result = remember { recordSchema.safeParse(sampleRecord) }
+
             ValidationStatusDisplay(result)
             
             Spacer(modifier = Modifier.height(12.dp))
@@ -792,9 +790,9 @@ fun NullableValidationCard() {
     ) {
         var text by remember { mutableStateOf("") }
         var validationResult by remember { mutableStateOf<ZodResult<String?>?>(null) }
-        
-        val nullableSchema = Zod.string().nullable()
-        
+
+        val nullableSchema = remember { Zod.string().nullable() }
+
         Column {
             OutlinedTextField(
                 value = text,
@@ -830,9 +828,9 @@ fun TransformValidationCard() {
     ) {
         var text by remember { mutableStateOf("hello world") }
         var validationResult by remember { mutableStateOf<ZodResult<String>?>(null) }
-        
-        val uppercaseSchema = Zod.string().transform { it.uppercase() }
-        
+
+        val uppercaseSchema = remember { Zod.string().transform { it.uppercase() } }
+
         Column {
             OutlinedTextField(
                 value = text,
@@ -888,9 +886,11 @@ fun RefineValidationCard() {
     ) {
         var text by remember { mutableStateOf("42") }
         var validationResult by remember { mutableStateOf<ZodResult<Double>?>(null) }
-        
-        val evenNumberSchema = Zod.number().refine({ it.toInt() % 2 == 0 }) { "Number must be even" }
-        
+
+        val evenNumberSchema = remember {
+            Zod.number().refine({ it.toInt() % 2 == 0 }) { "Number must be even" }
+        }
+
         Column {
             OutlinedTextField(
                 value = text,
@@ -927,9 +927,9 @@ fun DefaultValidationCard() {
     ) {
         var text by remember { mutableStateOf("") }
         var validationResult by remember { mutableStateOf<ZodResult<String>?>(null) }
-        
-        val stringWithDefault = Zod.string().default("default_value")
-        
+
+        val stringWithDefault = remember { Zod.string().default("default_value") }
+
         Column {
             OutlinedTextField(
                 value = text,
