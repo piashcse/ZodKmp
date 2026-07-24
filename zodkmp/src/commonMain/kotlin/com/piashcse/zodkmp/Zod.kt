@@ -14,7 +14,12 @@ object Zod {
         shapeBuilder: ZodObjectShapeBuilder.() -> Unit,
         noinline parser: (Map<String, Any?>) -> T
     ) = ZodObjectSchema.build(shapeBuilder, parser)
-    
+
+    inline fun <reified T> typesafeObjectSchema(
+        shapeBuilder: ZodTypesafeObjectShapeBuilder<T>.() -> Unit,
+        noinline parser: (TypeSafeParsed<T>) -> T
+    ) = ZodTypesafeObjectSchema.build(shapeBuilder, parser)
+
     fun <T> literal(value: T) = ZodLiteral.schema(value)
     
     fun <T> array(elementSchema: ZodSchema<T>) = ZodArray.schema(elementSchema)
