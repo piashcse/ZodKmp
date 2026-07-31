@@ -78,6 +78,7 @@ android {
 // Configure publishing with vanniktech plugin for Maven Central
 mavenPublishing {
     publishToMavenCentral()
+    signAllPublications()
     coordinates(
         artifactId = findProperty("POM_ARTIFACT_ID")?.toString() ?: "zodkmp", 
         version = version.toString()

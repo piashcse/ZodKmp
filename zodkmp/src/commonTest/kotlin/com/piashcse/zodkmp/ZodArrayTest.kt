@@ -136,6 +136,21 @@ class ZodArrayTest {
     }
 
     @Test
+    fun `nonempty alias should behave like nonEmpty`() {
+        val stringElementSchema = Zod.string()
+        val baseArraySchema = ZodArray.schema(stringElementSchema)
+        val schema: ZodArray<String> = baseArraySchema.nonempty()
+        
+        // Should pass - non-empty array
+        assertEquals(listOf("hello"), schema.parse(listOf("hello")))
+        
+        // Should fail - empty array
+        val result = schema.safeParse(emptyList<String>())
+        assertTrue(result is ZodResult.Failure)
+        assertTrue(result.error.errors.any { it.contains("cannot be empty") })
+    }
+
+    @Test
     fun `unique validation should work`() {
         val stringElementSchema = Zod.string()
         val baseArraySchema = ZodArray.schema(stringElementSchema)

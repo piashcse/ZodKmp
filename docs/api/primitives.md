@@ -72,7 +72,7 @@ val constrainedDate = Zod.date()
 Validate null and undefined values:
 
 ```kotlin
-val nullSchema = Zod.null()
+val nullSchema = Zod.nullType()
 val undefinedSchema = Zod.undefined()
 ```
 

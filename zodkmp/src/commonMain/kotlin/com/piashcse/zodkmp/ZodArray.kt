@@ -39,6 +39,8 @@ class ZodArray<T> private constructor(
         return ZodArray(elementSchema, validations + validation)
     }
     
+    fun nonempty(message: String = "Array cannot be empty"): ZodArray<T> = nonEmpty(message)
+    
     fun unique(message: String = "Array elements must be unique"): ZodArray<T> {
         val validation: (List<T>) -> ZodError? = { value ->
             if (value.toSet().size != value.size) ZodError(message) else null

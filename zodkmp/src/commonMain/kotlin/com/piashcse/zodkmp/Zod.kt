@@ -8,6 +8,9 @@ object Zod {
     fun number() = ZodNumber.schema()
     fun boolean() = ZodBoolean.schema()
     fun nullType() = ZodNull.schema()
+    
+    fun `null`() = ZodNull.schema()
+    
     fun undefined() = ZodUndefined.schema()
     
     inline fun <reified T> objectSchema(

@@ -179,4 +179,51 @@ class ZodStringTest {
         assertTrue(result is ZodResult.Failure)
         assertTrue(result.error.errors.any { it.contains("must contain") })
     }
+
+    @Test
+    fun `toLowerCase should transform the value`() {
+        val schema = basicStringSchema.toLowerCase()
+        assertEquals("hello world", schema.parse("Hello World"))
+        val result = schema.safeParse("HeLLo")
+        assertTrue(result is ZodResult.Success)
+        assertEquals("hello", result.data)
+    }
+
+    @Test
+    fun `toUpperCase should transform the value`() {
+        val schema = basicStringSchema.toUpperCase()
+        assertEquals("HELLO WORLD", schema.parse("Hello World"))
+        val result = schema.safeParse("HeLLo")
+        assertTrue(result is ZodResult.Success)
+        assertEquals("HELLO", result.data)
+    }
+
+    @Test
+    fun `trim should transform the value`() {
+        val schema = basicStringSchema.trim()
+        assertEquals("hello", schema.parse("  hello  "))
+        val result = schema.safeParse("  padded  ")
+        assertTrue(result is ZodResult.Success)
+        assertEquals("padded", result.data)
+    }
+
+    @Test
+    fun `transforms should chain with validations`() {
+        val schema = basicStringSchema.trim().toLowerCase().min(3)
+        
+        val result = schema.safeParse("  Hello  ")
+        assertTrue(result is ZodResult.Success)
+        assertEquals("hello", result.data)
+        
+        // Too short after transform should fail
+        val result2 = schema.safeParse("  hi  ")
+        assertTrue(result2 is ZodResult.Failure)
+        assertTrue(result2.error.errors.any { it.contains("at least 3 characters") })
+    }
+
+    @Test
+    fun `chained transforms should apply in order`() {
+        val schema = basicStringSchema.trim().toLowerCase().toUpperCase()
+        assertEquals("HELLO", schema.parse("  HeLLo  "))
+    }
 }
