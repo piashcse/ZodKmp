@@ -1,7 +1,5 @@
 package com.piashcse.zodkmp
 
-import kotlin.jvm.JvmInline
-
 /**
  * Base interface for all Zod schemas
  */
@@ -33,8 +31,10 @@ data class ZodError(
 /**
  * Schema for validating strings
  */
-@JvmInline
-value class ZodString private constructor(private val validations: List<(String) -> ZodError?>) : ZodSchema<String> {
+data class ZodString private constructor(
+    private val validations: List<(String) -> ZodError?>,
+    private val transforms: List<(String) -> String> = emptyList()
+) : ZodSchema<String> {
     companion object {
         fun schema(): ZodString = ZodString(emptyList())
     }
@@ -43,21 +43,21 @@ value class ZodString private constructor(private val validations: List<(String)
         val validation: (String) -> ZodError? = { value ->
             if (value.length < length) ZodError(message) else null
         }
-        return ZodString(validations + validation)
+        return copy(validations = validations + validation)
     }
     
     fun max(length: Int, message: String = "String must be at most $length characters long"): ZodString {
         val validation: (String) -> ZodError? = { value ->
             if (value.length > length) ZodError(message) else null
         }
-        return ZodString(validations + validation)
+        return copy(validations = validations + validation)
     }
     
     fun length(exact: Int, message: String = "String must be exactly $exact characters long"): ZodString {
         val validation: (String) -> ZodError? = { value ->
             if (value.length != exact) ZodError(message) else null
         }
-        return ZodString(validations + validation)
+        return copy(validations = validations + validation)
     }
     
     fun email(message: String = "Invalid email format"): ZodString {
@@ -65,7 +65,7 @@ value class ZodString private constructor(private val validations: List<(String)
         val validation: (String) -> ZodError? = { value ->
             if (!emailRegex.matches(value)) ZodError(message) else null
         }
-        return ZodString(validations + validation)
+        return copy(validations = validations + validation)
     }
     
     fun url(message: String = "Invalid URL format"): ZodString {
@@ -73,36 +73,42 @@ value class ZodString private constructor(private val validations: List<(String)
         val validation: (String) -> ZodError? = { value ->
             if (!urlRegex.matches(value)) ZodError(message) else null
         }
-        return ZodString(validations + validation)
+        return copy(validations = validations + validation)
     }
     
     fun regex(pattern: Regex, message: String = "String does not match required pattern"): ZodString {
         val validation: (String) -> ZodError? = { value ->
             if (!pattern.matches(value)) ZodError(message) else null
         }
-        return ZodString(validations + validation)
+        return copy(validations = validations + validation)
     }
     
     fun startsWith(prefix: String, message: String = "String must start with '$prefix'"): ZodString {
         val validation: (String) -> ZodError? = { value ->
             if (!value.startsWith(prefix)) ZodError(message) else null
         }
-        return ZodString(validations + validation)
+        return copy(validations = validations + validation)
     }
     
     fun endsWith(suffix: String, message: String = "String must end with '$suffix'"): ZodString {
         val validation: (String) -> ZodError? = { value ->
             if (!value.endsWith(suffix)) ZodError(message) else null
         }
-        return ZodString(validations + validation)
+        return copy(validations = validations + validation)
     }
     
     fun includes(substring: String, message: String = "String must contain '$substring'"): ZodString {
         val validation: (String) -> ZodError? = { value ->
             if (!value.contains(substring)) ZodError(message) else null
         }
-        return ZodString(validations + validation)
+        return copy(validations = validations + validation)
     }
+    
+    fun toLowerCase(): ZodString = copy(transforms = transforms + { it.lowercase() })
+    
+    fun toUpperCase(): ZodString = copy(transforms = transforms + { it.uppercase() })
+    
+    fun trim(): ZodString = copy(transforms = transforms + { it.trim() })
 
     override fun parse(input: Any?): String {
         val result = safeParse(input)
@@ -118,17 +124,22 @@ value class ZodString private constructor(private val validations: List<(String)
             return ZodResult.Failure(ZodError("Expected string, received ${input?.let { it::class.simpleName } ?: "null"}"))
         }
         
+        var transformed: String = stringInput
+        for (transform in transforms) {
+            transformed = transform(transformed)
+        }
+        
         val errors = mutableListOf<String>()
         
         for (validation in validations) {
-            val error = validation(stringInput)
+            val error = validation(transformed)
             if (error != null) {
                 errors.addAll(error.errors)
             }
         }
         
         return if (errors.isEmpty()) {
-            ZodResult.Success(stringInput)
+            ZodResult.Success(transformed)
         } else {
             ZodResult.Failure(ZodError(errors))
         }

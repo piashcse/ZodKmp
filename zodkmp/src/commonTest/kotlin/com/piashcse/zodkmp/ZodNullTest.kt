@@ -42,4 +42,16 @@ class ZodNullTest {
         assertTrue(result is ZodResult.Failure)
         assertTrue(result.error.errors.first().contains("Expected null"))
     }
+
+    @Test
+    fun `backticked null alias should behave like nullType`() {
+        val schema = Zod.`null`()
+        
+        val result1 = schema.safeParse(null)
+        assertTrue(result1 is ZodResult.Success)
+        
+        val result2 = schema.safeParse("not null")
+        assertTrue(result2 is ZodResult.Failure)
+        assertTrue(result2.error.errors.first().contains("Expected null"))
+    }
 }

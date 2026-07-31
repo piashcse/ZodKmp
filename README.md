@@ -2,7 +2,7 @@
 
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.piashcse/zodkmp.svg)](https://search.maven.org/artifact/io.github.piashcse/zodkmp)
-[![Kotlin Version](https://img.shields.io/badge/kotlin-2.2.20-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![Kotlin Version](https://img.shields.io/badge/kotlin-2.4.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
 ![badge-Android](https://img.shields.io/badge/Platform-Android-brightgreen)
 ![badge-iOS](https://img.shields.io/badge/Platform-iOS-lightgray)
 ![badge-desktop](http://img.shields.io/badge/Platform-Desktop-4D76CD.svg?style=flat)
@@ -85,12 +85,12 @@ zodkmp = { module = "io.github.piashcse:zodkmp", version.ref = "zodkmp" }
 ## Features
 
 - ✅ **Declarative Schema Definition** - Define validation rules upfront
-- ✅ **Type Inference** - Automatic type inference from schemas
+- ✅ **Compile-Time Safety** - Schemas build on Kotlin's strong type system with type-safe outputs
 - ✅ **Immutable Architecture** - Immutable schemas that return new instances
 - ✅ **Kotlin Multiplatform** - Works on Android, iOS, and other Kotlin targets
 - ✅ **Comprehensive API** - Supports all major Zod validation features
 - ✅ **Extensible** - Easy to extend with custom validations
-- ✅ **Zero Dependencies** - Lightweight with minimal footprint
+- ✅ **Minimal Dependencies** - Single lightweight dependency (kotlinx-datetime)
 - ✅ **Excellent Error Messages** - Detailed, customizable error reporting
 - 
 ## Getting Started
@@ -198,7 +198,7 @@ val constrainedDate = Zod.date()
 Validate null and undefined values:
 
 ```kotlin
-val nullSchema = Zod.null()
+val nullSchema = Zod.nullType()
 val undefinedSchema = Zod.undefined()
 ```
 
