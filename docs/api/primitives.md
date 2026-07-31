@@ -23,6 +23,29 @@ val constrainedString = Zod.string()
     .trim()
 ```
 
+### String Formats
+
+Validate common string formats:
+
+```kotlin
+val uuidSchema = Zod.string().uuid()
+val ipv4Schema = Zod.string().ipv4()
+val ipv6Schema = Zod.string().ipv6()
+val ipSchema = Zod.string().ip()          // accepts IPv4 or IPv6
+val emojiSchema = Zod.string().emoji()
+val cuidSchema = Zod.string().cuid()
+val cuid2Schema = Zod.string().cuid2()
+val ulidSchema = Zod.string().ulid()
+val nanoidSchema = Zod.string().nanoid()
+val datetimeSchema = Zod.string().datetime()   // ISO-8601
+val base64Schema = Zod.string().base64()
+val base64urlSchema = Zod.string().base64url()
+
+// Usage
+val valid = uuidSchema.safeParse("123e4567-e89b-12d3-a456-426614174000") // Success
+val invalid = uuidSchema.safeParse("not-a-uuid")                          // Failure
+```
+
 ## Number
 
 Validate numeric values:
@@ -44,6 +67,22 @@ val constrainedNumber = Zod.number()
     .nonPositive("Must be non-positive")
     .nonNegative("Must be non-negative")
     .multipleOf(5, "Must be a multiple of 5")
+    .finite("Must be a finite number")
+```
+
+## Long
+
+Validate 64-bit integers (the Kotlin analog of Zod's `bigint`):
+
+```kotlin
+val longSchema = Zod.long()
+val positiveId = Zod.long().positive().max(1_000_000)
+
+// Usage (accepts Long, integral numbers and numeric strings)
+val result1 = longSchema.safeParse(9223372036854775807L) // Success
+val result2 = longSchema.safeParse(42)                    // Success
+val result3 = longSchema.safeParse("7")                   // Success
+val result4 = longSchema.safeParse(3.14)                  // Failure
 ```
 
 ## Boolean
@@ -84,6 +123,65 @@ Validate exact literal values:
 val literalSchema = Zod.literal("admin")
 val numberLiteral = Zod.literal(42)
 val booleanLiteral = Zod.literal(true)
+```
+
+Literal accepts multiple values and returns a union of literals. A single value
+returns a plain `ZodLiteral`, and no values returns `ZodNever`:
+
+```kotlin
+val statusLiteral = Zod.literal("draft", "published", "archived")
+val result1 = statusLiteral.safeParse("published") // Success
+val result2 = statusLiteral.safeParse("deleted")   // Failure
+```
+
+## Any
+
+Accepts any value without validation:
+
+```kotlin
+val anySchema = Zod.any()
+val result = anySchema.safeParse(mapOf("anything" to listOf(1, 2, 3))) // Success
+```
+
+## Unknown
+
+Accepts any value, but the result stays typed as `Any?`:
+
+```kotlin
+val unknownSchema = Zod.unknown()
+val result = unknownSchema.safeParse("whatever") // Success
+```
+
+## Never
+
+Rejects every value (useful to mark impossible branches):
+
+```kotlin
+val neverSchema = Zod.never()
+val result = neverSchema.safeParse(42) // Failure
+```
+
+## Void
+
+Accepts null values and returns `Unit` (mirrors Zod's `z.void()` which accepts
+`undefined`):
+
+```kotlin
+val voidSchema = Zod.void()
+val result = voidSchema.safeParse(null) // Success with Unit
+```
+
+## InstanceOf
+
+Validate that a value is an instance of a given class (reified, no reflection):
+
+```kotlin
+val dateSchema = Zod.instanceOf<Date>()
+val urlSchema = Zod.instanceOf<URL>()
+
+// Usage
+val result1 = dateSchema.safeParse(Date())     // Success
+val result2 = dateSchema.safeParse("2026-01-01") // Failure
 ```
 
 ## Nullables
