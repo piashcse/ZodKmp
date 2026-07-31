@@ -74,4 +74,47 @@ class ZodRecordTest {
         assertTrue(result is ZodResult.Success)
         assertTrue(result.data.isEmpty())
     }
+
+    @Test
+    fun `record with key schema should validate keys and values`() {
+        val schema = Zod.record(Zod.string().min(2), Zod.number())
+        val result = schema.safeParse(mapOf("aa" to 1, "bb" to 2))
+        assertTrue(result is ZodResult.Success)
+        assertEquals(mapOf("aa" to 1.0, "bb" to 2.0), result.data)
+    }
+
+    @Test
+    fun `record with key schema should reject invalid keys`() {
+        val schema = Zod.record(Zod.string().min(2), Zod.number())
+        val result = schema.safeParse(mapOf("a" to 1))
+        assertTrue(result is ZodResult.Failure)
+    }
+
+    @Test
+    fun `record with key schema should reject invalid values`() {
+        val schema = Zod.record(Zod.string(), Zod.number())
+        val result = schema.safeParse(mapOf("a" to "not-number"))
+        assertTrue(result is ZodResult.Failure)
+    }
+
+    @Test
+    fun `looseRecord should not reject non matching keys`() {
+        val schema = Zod.looseRecord(Zod.string().min(3), Zod.number())
+        // A non-matching key with a valid value passes.
+        assertTrue(schema.safeParse(mapOf("aaa" to 1, "x" to 2)) is ZodResult.Success)
+    }
+
+    @Test
+    fun `looseRecord should still validate values of non matching keys`() {
+        val schema = Zod.looseRecord(Zod.string().min(3), Zod.number())
+        assertTrue(schema.safeParse(mapOf("aaa" to "bad")) is ZodResult.Failure)
+        assertTrue(schema.safeParse(mapOf("x" to "bad")) is ZodResult.Failure)
+    }
+
+    @Test
+    fun `strictRecord should reject non matching keys`() {
+        val schema = Zod.strictRecord(Zod.string().min(3), Zod.number())
+        val result = schema.safeParse(mapOf("a" to 1))
+        assertTrue(result is ZodResult.Failure)
+    }
 }

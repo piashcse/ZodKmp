@@ -9,7 +9,22 @@ class ZodLiteral<T> private constructor(
 ) : ZodSchema<T> {
     companion object {
         fun <T> schema(value: T): ZodLiteral<T> = ZodLiteral(value, emptyList())
+        
+        fun <T> schema(vararg values: T): ZodSchema<T> {
+            if (values.isEmpty()) {
+                @Suppress("UNCHECKED_CAST")
+                return ZodNever.schema() as ZodSchema<T>
+            }
+            return if (values.size == 1) {
+                ZodLiteral.schema(values[0])
+            } else {
+                @Suppress("UNCHECKED_CAST")
+                ZodUnion.schema(*values.map { ZodLiteral.schema(it) as ZodSchema<*> }.toTypedArray()) as ZodSchema<T>
+            }
+        }
     }
+    
+    val literalValue: T get() = value
     
     override fun parse(input: Any?): T {
         val result = safeParse(input)

@@ -54,4 +54,25 @@ class ZodLiteralTest {
         assertTrue(result is ZodResult.Failure)
         assertTrue(result.error.errors.first().contains("Expected literal hello"))
     }
+
+    @Test
+    fun `multi value literal should accept any of the values`() {
+        val schema = Zod.literal("a", "b", "c")
+        assertEquals("a", schema.parse("a"))
+        assertEquals("c", schema.parse("c"))
+    }
+
+    @Test
+    fun `multi value literal should reject other values`() {
+        val schema = Zod.literal("a", "b", "c")
+        assertTrue(schema.safeParse("d") is ZodResult.Failure)
+    }
+
+    @Test
+    fun `single value literal should still behave as literal`() {
+        val schema = Zod.literal("only")
+        assertTrue(schema is ZodLiteral<*>)
+        assertEquals("only", schema.parse("only"))
+        assertTrue(schema.safeParse("other") is ZodResult.Failure)
+    }
 }

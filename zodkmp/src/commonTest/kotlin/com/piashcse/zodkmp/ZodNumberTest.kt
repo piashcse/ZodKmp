@@ -278,4 +278,17 @@ class ZodNumberTest {
         val result3 = schema.safeParse(17.0)
         assertTrue(result3 is ZodResult.Failure)
     }
+
+    @Test
+    fun `finite should accept finite numbers`() {
+        assertTrue(Zod.number().finite().safeParse(10.0) is ZodResult.Success)
+        assertTrue(Zod.number().finite().safeParse(-3.5) is ZodResult.Success)
+    }
+
+    @Test
+    fun `finite should reject non finite numbers`() {
+        assertTrue(Zod.number().finite().safeParse(Double.NaN) is ZodResult.Failure)
+        assertTrue(Zod.number().finite().safeParse(Double.POSITIVE_INFINITY) is ZodResult.Failure)
+        assertTrue(Zod.number().finite().safeParse(Double.NEGATIVE_INFINITY) is ZodResult.Failure)
+    }
 }

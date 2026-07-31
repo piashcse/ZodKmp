@@ -102,6 +102,13 @@ value class ZodNumber private constructor(private val validations: List<(Double)
         return ZodNumber(validations + validation)
     }
     
+    fun finite(message: String = "Number must be finite"): ZodNumber {
+        val validation: (Double) -> ZodError? = { num ->
+            if (!num.isFinite()) ZodError(message) else null
+        }
+        return ZodNumber(validations + validation)
+    }
+    
     override fun parse(input: Any?): Double {
         val result = safeParse(input)
         return when (result) {
