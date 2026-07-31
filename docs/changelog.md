@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.2.0] - 2024-10-06
+## [1.2.0] - 2025-10-06
 
 ### What's Changed
 - docs: Update README and project metadata by @piashcse in #10
@@ -12,7 +12,7 @@
 
 ---
 
-## [1.1.0] - 2024-10-04
+## [1.1.0] - 2025-10-05
 
 ### What's Changed
 - feat: Expand multiplatform support by @piashcse in #7
@@ -23,7 +23,7 @@
 
 ---
 
-## [1.0.0] - 2024-10-04
+## [1.0.0] - 2025-10-05
 
 ### What's Changed
 - feat: Implement comprehensive validation schemas and UI by @piashcse in #1

@@ -29,6 +29,8 @@ theme:
 
 nav:
   - Home: index.md
+  - Getting Started: getting-started.md
+  - Advanced Usage: advanced-usage.md
   - API Reference:
     - Primitives: api/primitives.md
     - Objects: api/objects.md
@@ -39,6 +41,8 @@ nav:
     - Transformations: api/transformations.md
     - Refinements: api/refinements.md
   - Changelog: changelog.md
+  - Contributing: contributing.md
+  - License: license.md
 
 repo_url: https://github.com/piashcse/zodkmp
 edit_uri: edit/main/docs/

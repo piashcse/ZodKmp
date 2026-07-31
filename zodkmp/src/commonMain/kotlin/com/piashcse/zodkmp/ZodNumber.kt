@@ -25,6 +25,41 @@ value class ZodNumber private constructor(private val validations: List<(Double)
         return ZodNumber(validations + validation)
     }
     
+    fun gt(value: Double, message: String = "Number must be greater than $value"): ZodNumber {
+        val validation: (Double) -> ZodError? = { num ->
+            if (num <= value) ZodError(message) else null
+        }
+        return ZodNumber(validations + validation)
+    }
+    
+    fun gte(value: Double, message: String = "Number must be greater than or equal to $value"): ZodNumber {
+        val validation: (Double) -> ZodError? = { num ->
+            if (num < value) ZodError(message) else null
+        }
+        return ZodNumber(validations + validation)
+    }
+    
+    fun lt(value: Double, message: String = "Number must be less than $value"): ZodNumber {
+        val validation: (Double) -> ZodError? = { num ->
+            if (num >= value) ZodError(message) else null
+        }
+        return ZodNumber(validations + validation)
+    }
+    
+    fun lte(value: Double, message: String = "Number must be less than or equal to $value"): ZodNumber {
+        val validation: (Double) -> ZodError? = { num ->
+            if (num > value) ZodError(message) else null
+        }
+        return ZodNumber(validations + validation)
+    }
+    
+    fun multipleOf(value: Double, message: String = "Number must be a multiple of $value"): ZodNumber {
+        val validation: (Double) -> ZodError? = { num ->
+            if (value != 0.0 && num % value != 0.0) ZodError(message) else null
+        }
+        return ZodNumber(validations + validation)
+    }
+    
     fun int(message: String = "Number must be an integer"): ZodNumber {
         val validation: (Double) -> ZodError? = { num ->
             if (num % 1 != 0.0) ZodError(message) else null

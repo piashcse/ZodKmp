@@ -22,7 +22,7 @@ class ZodUndefined internal constructor(
         // In Kotlin/JS, undefined is typically represented differently, but for multiplatform compatibility
         // we can consider null as undefined
         if (input != null) {
-            return ZodResult.Failure(ZodError("Expected undefined, received ${input?.let { it::class.simpleName } ?: "null"}"))
+            return ZodResult.Failure(ZodError("Expected undefined, received ${input.let { it::class.simpleName } ?: "null"}"))
         }
         
         val errors = mutableListOf<String>()

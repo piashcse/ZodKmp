@@ -49,7 +49,7 @@ class ZodNumberTest {
         // Should fail
         val result = schema.safeParse(5.0)
         assertTrue(result is ZodResult.Failure)
-        assertTrue(result.error.errors.any { it.contains("greater than or equal to 10.0") })
+        assertTrue(result.error.errors.any { it.contains("greater than or equal to 10") })
     }
 
     @Test
@@ -62,7 +62,7 @@ class ZodNumberTest {
         // Should fail
         val result = schema.safeParse(15.0)
         assertTrue(result is ZodResult.Failure)
-        assertTrue(result.error.errors.any { it.contains("less than or equal to 10.0") })
+        assertTrue(result.error.errors.any { it.contains("less than or equal to 10") })
     }
 
     @Test
@@ -131,12 +131,12 @@ class ZodNumberTest {
         // Should fail - negative
         val result1 = schema.safeParse(-5.0)
         assertTrue(result1 is ZodResult.Failure)
-        assertTrue(result1.error.errors.any { it.contains("greater than or equal to 0.0") })
+        assertTrue(result1.error.errors.any { it.contains("greater than or equal to 0") })
         
         // Should fail - too large
         val result2 = schema.safeParse(101.0)
         assertTrue(result2 is ZodResult.Failure)
-        assertTrue(result2.error.errors.any { it.contains("less than or equal to 100.0") })
+        assertTrue(result2.error.errors.any { it.contains("less than or equal to 100") })
         
         // Should fail - not integer
         val result3 = schema.safeParse(50.5)
@@ -193,5 +193,89 @@ class ZodNumberTest {
         
         val result2 = schema.safeParse(11.0)
         assertTrue(result2 is ZodResult.Failure)
+    }
+
+    @Test
+    fun `gt validation should work`() {
+        val schema = basicNumberSchema.gt(10.0)
+        
+        assertEquals(11.0, schema.parse(11.0))
+        
+        // At boundary should fail
+        val result1 = schema.safeParse(10.0)
+        assertTrue(result1 is ZodResult.Failure)
+        assertTrue(result1.error.errors.any { it.contains("greater than 10") })
+        
+        // Below should fail
+        val result2 = schema.safeParse(5.0)
+        assertTrue(result2 is ZodResult.Failure)
+    }
+
+    @Test
+    fun `gte validation should work`() {
+        val schema = basicNumberSchema.gte(10.0)
+        
+        assertEquals(10.0, schema.parse(10.0))
+        assertEquals(11.0, schema.parse(11.0))
+        
+        val result = schema.safeParse(9.0)
+        assertTrue(result is ZodResult.Failure)
+        assertTrue(result.error.errors.any { it.contains("greater than or equal to 10") })
+    }
+
+    @Test
+    fun `lt validation should work`() {
+        val schema = basicNumberSchema.lt(10.0)
+        
+        assertEquals(5.0, schema.parse(5.0))
+        
+        // At boundary should fail
+        val result1 = schema.safeParse(10.0)
+        assertTrue(result1 is ZodResult.Failure)
+        assertTrue(result1.error.errors.any { it.contains("less than 10") })
+        
+        // Above should fail
+        val result2 = schema.safeParse(11.0)
+        assertTrue(result2 is ZodResult.Failure)
+    }
+
+    @Test
+    fun `lte validation should work`() {
+        val schema = basicNumberSchema.lte(10.0)
+        
+        assertEquals(10.0, schema.parse(10.0))
+        assertEquals(5.0, schema.parse(5.0))
+        
+        val result = schema.safeParse(11.0)
+        assertTrue(result is ZodResult.Failure)
+        assertTrue(result.error.errors.any { it.contains("less than or equal to 10") })
+    }
+
+    @Test
+    fun `multipleOf validation should work`() {
+        val schema = basicNumberSchema.multipleOf(5.0)
+        
+        assertEquals(10.0, schema.parse(10.0))
+        assertEquals(15.0, schema.parse(15.0))
+        
+        val result = schema.safeParse(12.0)
+        assertTrue(result is ZodResult.Failure)
+        assertTrue(result.error.errors.any { it.contains("multiple of 5") })
+    }
+
+    @Test
+    fun `chained comparison validations should work`() {
+        val schema = basicNumberSchema.gt(0.0).lt(100.0).multipleOf(5.0)
+        
+        assertEquals(50.0, schema.parse(50.0))
+        
+        val result1 = schema.safeParse(0.0)
+        assertTrue(result1 is ZodResult.Failure)
+        
+        val result2 = schema.safeParse(100.0)
+        assertTrue(result2 is ZodResult.Failure)
+        
+        val result3 = schema.safeParse(17.0)
+        assertTrue(result3 is ZodResult.Failure)
     }
 }
