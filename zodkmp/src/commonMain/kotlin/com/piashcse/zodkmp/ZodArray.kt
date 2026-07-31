@@ -4,7 +4,7 @@ package com.piashcse.zodkmp
  * Schema for validating arrays
  */
 class ZodArray<T> private constructor(
-    private val elementSchema: ZodSchema<T>,
+    val elementSchema: ZodSchema<T>,
     private val validations: List<(List<T>) -> ZodError?>
 ) : ZodSchema<List<T>> {
     companion object {

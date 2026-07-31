@@ -61,3 +61,101 @@ val userWithAddressSchema = Zod.objectSchema<UserWithAddress>({
     )
 }
 ```
+
+## Pick
+
+Create a new schema with only the selected keys:
+
+```kotlin
+val userSchema = Zod.objectSchema<User>({
+    string("name", Zod.string())
+    string("email", Zod.string().email())
+    number("age", Zod.number())
+}) { map -> /* ... */ }
+
+val publicProfile = userSchema.pick("name", "age")
+val result = publicProfile.safeParse(mapOf("name" to "John", "age" to 30)) // Success
+```
+
+## Omit
+
+Create a new schema without the specified keys:
+
+```kotlin
+val credentialsOnly = userSchema.omit("name", "age")
+val result = credentialsOnly.safeParse(mapOf("email" to "john@example.com")) // Success
+```
+
+## Partial
+
+Make every field optional:
+
+```kotlin
+val updateUser = userSchema.partial()
+val result = updateUser.safeParse(mapOf("email" to "new@example.com")) // Success
+```
+
+## Deep Partial
+
+Make every field optional recursively, including nested objects, arrays and sets:
+
+```kotlin
+val settingsSchema = Zod.objectSchema<Settings>({
+    field("profile", Zod.objectSchema<Profile>({
+        string("displayName", Zod.string())
+        string("bio", Zod.string())
+    }) { map -> /* ... */ })
+    field("tags", Zod.array(Zod.string()))
+}) { map -> /* ... */ }
+
+val updateSettings = settingsSchema.deepPartial()
+val result = updateSettings.safeParse(mapOf("profile" to mapOf("displayName" to "Alex"))) // Success
+```
+
+## Merge
+
+Combine two object schemas into one. Merged keys must not overlap:
+
+```kotlin
+val baseSchema = Zod.objectSchema<Base>({
+    string("id", Zod.string())
+}) { map -> /* ... */ }
+
+val profileSchema = Zod.objectSchema<Profile>({
+    string("name", Zod.string())
+}) { map -> /* ... */ }
+
+val combined = baseSchema.merge(profileSchema)
+val result = combined.safeParse(mapOf("id" to "u1", "name" to "John")) // Success
+```
+
+`and` is an infix alias for `merge`:
+
+```kotlin
+val combined = baseSchema and profileSchema
+```
+
+## Extend
+
+Combine two object schemas, allowing overlapping keys (the right-hand schema wins):
+
+```kotlin
+val extended = baseSchema.extend(profileSchema)
+```
+
+## Object Modes
+
+Objects validate in `strip` mode by default (unknown keys are dropped). Switch modes:
+
+```kotlin
+// Reject unknown keys
+val strictSchema = userSchema.strict()
+val result1 = strictSchema.safeParse(mapOf("name" to "John", "unknown" to 1)) // Failure
+
+// Keep unknown keys in the output
+val passthroughSchema = userSchema.passthrough()
+val result2 = passthroughSchema.safeParse(mapOf("name" to "John", "extra" to true)) // Success
+
+// Drop unknown keys (default)
+val stripSchema = userSchema.strip()
+```
