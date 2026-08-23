@@ -26,7 +26,12 @@ object Zod {
         shapeBuilder: ZodObjectShapeBuilder.() -> Unit,
         noinline parser: (Map<String, Any?>) -> T
     ) = ZodObjectSchema.build(shapeBuilder, parser)
-    
+
+    inline fun <reified T> typesafeObjectSchema(
+        shapeBuilder: ZodTypesafeObjectShapeBuilder<T>.() -> Unit,
+        noinline parser: (TypeSafeParsed<T>) -> T
+    ) = ZodTypesafeObjectSchema.build(shapeBuilder, parser)
+
     fun <T> literal(value: T) = ZodLiteral.schema(value)
     
     fun <T> literal(vararg values: T): ZodSchema<T> = ZodLiteral.schema(*values)
@@ -66,7 +71,7 @@ object Zod {
     ): ZodDiscriminatedUnion<T> = ZodDiscriminatedUnion.schema(discriminator, options)
     
     fun <T, U> intersection(left: ZodSchema<T>, right: ZodSchema<U>) = ZodIntersection.schema(left, right)
-    
+
     fun <I> preprocess(preprocessor: (Any?) -> Any?, schema: ZodSchema<I>): ZodPreprocess<I> = ZodPreprocess.schema(schema, preprocessor)
     
     fun <T, R> pipe(first: ZodSchema<T>, second: ZodSchema<R>): ZodPipe<T, R> = ZodPipe.schema(first, second)
