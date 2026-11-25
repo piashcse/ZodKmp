@@ -1,8 +1,8 @@
 # Changelog
 
-## [1.4.0]
+## [2.0.0]
 
-A correctness and API release. See [the full changelog](https://github.com/piashcse/zodkmp/blob/main/CHANGELOG.md) for the full list.
+A major correctness and API release with breaking changes. See [the full changelog](https://github.com/piashcse/zodkmp/blob/main/CHANGELOG.md) for the full list.
 
 ### Added
 - Structured `ZodIssue` errors with paths, codes, `flatten()` and `ZodValidationException`.
@@ -10,7 +10,7 @@ A correctness and API release. See [the full changelog](https://github.com/piash
 - Explicit coercion (`Zod.coerce.*`), `Zod.lazy`, JSON interop and `Zod.date()`.
 - Typed `refine()` on string, number, boolean, array, set, object and date schemas.
 - `toJsonSchema()`, configurable error maps and `@ZodModel` KSP code generation.
-- Gradle 9.4.1, JDK 21 toolchain, Dokka, Kover, API compatibility checks and hardened CI.
+- Gradle 9.9.2, JDK 21 toolchain, Dokka, Kover, API compatibility checks and hardened CI.
 
 ### Fixed
 - URL, datetime, cuid2, nanoid, emoji, regex, multipleOf, deepPartial, strict/passthrough,

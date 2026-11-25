@@ -1,7 +1,7 @@
 # ZodKmp: Kotlin Multiplatform Validation
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.piashcse/zodkmp.svg)](https://central.sonatype.com/artifact/io.github.piashcse/zodkmp)
-[![Kotlin Version](https://img.shields.io/badge/kotlin-2.4.0-blue.svg?logo=kotlin)](https://kotlinlang.org)
+[![Kotlin Version](https://img.shields.io/badge/kotlin-2.4.21-blue.svg?logo=kotlin)](https://kotlinlang.org)
 ![Android](https://img.shields.io/badge/Platform-Android-brightgreen)
 ![iOS](https://img.shields.io/badge/Platform-iOS-lightgray)
 ![JVM](https://img.shields.io/badge/Platform-JVM-4D76CD)
@@ -24,7 +24,7 @@ Android, iOS, JVM/desktop, JS (browser and Node.js), Wasm (browser), Linux, macO
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.piashcse:zodkmp:1.4.0")
+            implementation("io.github.piashcse:zodkmp:2.0.0")
         }
     }
 }
@@ -34,7 +34,7 @@ Version catalog:
 
 ```toml
 [versions]
-zodkmp = "1.4.0"
+zodkmp = "2.0.0"
 
 [libraries]
 zodkmp = { module = "io.github.piashcse:zodkmp", version.ref = "zodkmp" }
@@ -296,8 +296,8 @@ plugins {
 }
 
 dependencies {
-    implementation("io.github.piashcse:zodkmp:1.4.0")
-    ksp("io.github.piashcse:zodkmp-ksp:1.4.0")
+    implementation("io.github.piashcse:zodkmp:2.0.0")
+    ksp("io.github.piashcse:zodkmp-ksp:2.0.0")
 }
 ```
 
@@ -355,7 +355,7 @@ val jsonSchema = userSchema.toJsonSchema()
 
 ## Building
 
-The build requires JDK 21. Gradle 9.4.1 provisions the toolchain automatically through the
+The build requires JDK 21. Gradle 9.9.2 provisions the toolchain automatically through the
 Foojay resolver.
 
 ```bash

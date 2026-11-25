@@ -16,16 +16,16 @@ import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Label
+import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.filled.Science
 import androidx.compose.material.icons.outlined.AdsClick
 import androidx.compose.material.icons.outlined.Category
 import androidx.compose.material.icons.outlined.ControlPoint
 import androidx.compose.material.icons.outlined.Dataset
-import androidx.compose.material.icons.outlined.HelpOutline
+import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.JoinFull
 import androidx.compose.material.icons.outlined.Key
-import androidx.compose.material.icons.outlined.List
+import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.outlined.Numbers
 import androidx.compose.material.icons.outlined.Reorder
 import androidx.compose.material.icons.outlined.Restore
@@ -33,7 +33,7 @@ import androidx.compose.material.icons.outlined.Science
 import androidx.compose.material.icons.outlined.TextFields
 import androidx.compose.material.icons.outlined.ToggleOn
 import androidx.compose.material.icons.outlined.Transform
-import androidx.compose.material.icons.outlined.ViewList
+import androidx.compose.material.icons.automirrored.outlined.ViewList
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -386,7 +386,7 @@ fun NumberValidationCard() {
                 onValueChange = { 
                     text = it
                     val number = try { it.toDouble() } catch (e: Exception) { null }
-                    validationResult = if (number != null) ageSchema.safeParse(number) else ZodResult.Failure(ZodError(listOf("Invalid number")))
+                    validationResult = if (number != null) ageSchema.safeParse(number) else ZodResult.Failure(ZodError("Invalid number"))
                 },
                 label = { Text("Age (0-120)") },
                 modifier = Modifier.fillMaxWidth(),
@@ -458,7 +458,7 @@ fun BooleanValidationCard() {
 fun LiteralValidationCard() {
     ValidationCard(
         title = "Literal Validation",
-        icon = Icons.Filled.Label
+        icon = Icons.AutoMirrored.Filled.Label
     ) {
         var text by remember { mutableStateOf("active") }
         var validationResult by remember { mutableStateOf<ZodResult<String>?>(null) }
@@ -497,7 +497,7 @@ fun LiteralValidationCard() {
 fun EnumValidationCard() {
     ValidationCard(
         title = "Enum Validation",
-        icon = Icons.Outlined.List
+        icon = Icons.AutoMirrored.Outlined.List
     ) {
         var selectedRole by remember { mutableStateOf("user") }
         var validationResult by remember { mutableStateOf<ZodResult<String>?>(null) }
@@ -540,7 +540,7 @@ fun EnumValidationCard() {
 fun ArrayValidationCard() {
     ValidationCard(
         title = "Array Validation",
-        icon = Icons.Outlined.ViewList
+        icon = Icons.AutoMirrored.Outlined.ViewList
     ) {
         var tags by remember { mutableStateOf("tag1,tag2,tag3") }
         var validationResult by remember { mutableStateOf<ZodResult<List<String>>?>(null) }
@@ -786,7 +786,7 @@ fun RecordValidationCard() {
 fun NullableValidationCard() {
     ValidationCard(
         title = "Nullable Validation",
-        icon = Icons.Outlined.HelpOutline
+        icon = Icons.AutoMirrored.Outlined.HelpOutline
     ) {
         var text by remember { mutableStateOf("") }
         var validationResult by remember { mutableStateOf<ZodResult<String?>?>(null) }
@@ -897,7 +897,7 @@ fun RefineValidationCard() {
                 onValueChange = { 
                     text = it
                     val number = try { it.toDouble() } catch (e: Exception) { null }
-                    validationResult = if (number != null) evenNumberSchema.safeParse(number) else ZodResult.Failure(ZodError(listOf("Invalid number")))
+                    validationResult = if (number != null) evenNumberSchema.safeParse(number) else ZodResult.Failure(ZodError("Invalid number"))
                 },
                 label = { Text("Even Number") },
                 modifier = Modifier.fillMaxWidth(),

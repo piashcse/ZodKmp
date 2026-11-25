@@ -96,6 +96,7 @@ jobs:
             :zodkmp:compileKotlinMingwX64 \
             :zodkmp:compileDebugKotlinAndroid \
             :zodkmp:compileReleaseKotlinAndroid \
+            :composeApp:assembleDebug \
             --stacktrace --console=plain
 
       - name: Publish to Maven Local (smoke test)

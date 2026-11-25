@@ -8,7 +8,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 /**
- * Regression tests for the correctness issues fixed in 1.4.0.
+ * Regression tests for the correctness issues fixed in 2.0.0.
  */
 class ZodRegressionTest {
     @Test

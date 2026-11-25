@@ -6,7 +6,7 @@ hide:
 # ZodKmp: Kotlin Multiplatform Validation
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.piashcse/zodkmp.svg)](https://search.maven.org/artifact/io.github.piashcse/zodkmp)
-[![Kotlin Version](https://img.shields.io/badge/kotlin-2.4.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![Kotlin Version](https://img.shields.io/badge/kotlin-2.4.21-blue.svg?logo=kotlin)](http://kotlinlang.org)
 ![badge-Android](https://img.shields.io/badge/Platform-Android-brightgreen)
 ![badge-iOS](https://img.shields.io/badge/Platform-iOS-lightgray)
 ![badge-desktop](http://img.shields.io/badge/Platform-Desktop-4D76CD.svg?style=flat)
@@ -50,7 +50,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("io.github.piashcse:zodkmp:1.4.0")
+                implementation("io.github.piashcse:zodkmp:2.0.0")
             }
         }
     }
@@ -61,7 +61,7 @@ kotlin {
 
 ```toml
 [versions]
-zodkmp = "1.4.0"
+zodkmp = "2.0.0"
 
 [libraries]
 zodkmp = { module = "io.github.piashcse:zodkmp", version.ref = "zodkmp" }
