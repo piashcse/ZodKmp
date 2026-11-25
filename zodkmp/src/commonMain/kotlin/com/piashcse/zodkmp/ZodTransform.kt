@@ -12,11 +12,6 @@ class ZodTransform<I, O> internal constructor(
             = ZodTransform(baseSchema, transform)
     }
     
-    override fun parse(input: Any?): O {
-        val parsedValue = schema.parse(input)
-        return transform(parsedValue)
-    }
-    
     override fun safeParse(input: Any?): ZodResult<O> {
         val result = schema.safeParse(input)
         return when (result) {

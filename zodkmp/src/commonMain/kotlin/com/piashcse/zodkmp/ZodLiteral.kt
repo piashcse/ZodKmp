@@ -1,15 +1,14 @@
 package com.piashcse.zodkmp
 
 /**
- * Schema for validating literal values
+ * Schema for validating literal values.
  */
 class ZodLiteral<T> private constructor(
-    private val value: T,
-    private val validations: List<(T) -> ZodError?>
+    private val value: T
 ) : ZodSchema<T> {
     companion object {
-        fun <T> schema(value: T): ZodLiteral<T> = ZodLiteral(value, emptyList())
-        
+        fun <T> schema(value: T): ZodLiteral<T> = ZodLiteral(value)
+
         fun <T> schema(vararg values: T): ZodSchema<T> {
             if (values.isEmpty()) {
                 @Suppress("UNCHECKED_CAST")
@@ -23,32 +22,22 @@ class ZodLiteral<T> private constructor(
             }
         }
     }
-    
+
     val literalValue: T get() = value
-    
-    override fun parse(input: Any?): T {
-        val result = safeParse(input)
-        return when (result) {
-            is ZodResult.Success -> result.data
-            is ZodResult.Failure -> throw IllegalArgumentException("Validation failed: ${result.error.errors.joinToString(", ")}")
-        }
-    }
-    
+
     override fun safeParse(input: Any?): ZodResult<T> {
         if (!zodEquals(input, value)) {
-            return ZodResult.Failure(ZodError("Expected literal $value, received $input"))
+            return ZodResult.Failure(
+                ZodError(
+                    ZodIssue(
+                        ZodIssueCode.INVALID_LITERAL,
+                        "Expected literal $value, received $input",
+                        expected = value.toString(),
+                        received = input.toString()
+                    )
+                )
+            )
         }
-
-        val errors = mutableListOf<String>()
-
-        for (validation in validations) {
-            validation(value)?.let { errors.addAll(it.errors) }
-        }
-
-        return if (errors.isEmpty()) {
-            ZodResult.Success(value)
-        } else {
-            ZodResult.Failure(ZodError(errors))
-        }
+        return ZodResult.Success(value)
     }
 }

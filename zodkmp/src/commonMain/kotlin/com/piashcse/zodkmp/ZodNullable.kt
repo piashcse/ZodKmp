@@ -7,8 +7,6 @@ package com.piashcse.zodkmp
 class ZodNullable<T>(
     private val schema: ZodSchema<T>
 ) : ZodSchema<T?> {
-    override fun parse(input: Any?): T? = if (input == null) null else schema.parse(input)
-
     override fun safeParse(input: Any?): ZodResult<T?> =
         if (input == null) ZodResult.Success(null) else schema.safeParse(input)
 

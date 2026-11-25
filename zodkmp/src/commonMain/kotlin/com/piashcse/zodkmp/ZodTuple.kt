@@ -1,91 +1,73 @@
 package com.piashcse.zodkmp
 
 /**
- * Schema for validating tuples (fixed-length arrays with specific types for each position)
+ * Schema for validating tuples (fixed-length arrays with a schema for each position).
  */
 class ZodTuple private constructor(
-    private val elementSchemas: List<ZodSchema<*>>,
-    private val validations: List<(List<Any?>) -> ZodError?>
+    private val elementSchemas: List<ZodSchema<*>>
 ) : ZodSchema<List<Any?>> {
     companion object {
-        fun schema(vararg schemas: ZodSchema<*>): ZodTuple = ZodTuple(schemas.toList(), emptyList())
-        fun schema(schemas: List<ZodSchema<*>>): ZodTuple = ZodTuple(schemas, emptyList())
+        fun schema(vararg schemas: ZodSchema<*>): ZodTuple = ZodTuple(schemas.toList())
+        fun schema(schemas: List<ZodSchema<*>>): ZodTuple = ZodTuple(schemas)
     }
-    
-    override fun parse(input: Any?): List<Any?> {
-        val result = safeParse(input)
-        return when (result) {
-            is ZodResult.Success -> result.data
-            is ZodResult.Failure -> throw IllegalArgumentException("Validation failed: ${result.error.errors.joinToString(", ")}")
-        }
-    }
-    
+
     override fun safeParse(input: Any?): ZodResult<List<Any?>> {
         val listInput = input.asListOrNull()
-            ?: return ZodResult.Failure(ZodError("Expected tuple (array), received ${input.typeName()}"))
-        
+            ?: return ZodResult.Failure(typeError("tuple (array)", input))
+
         if (listInput.size != elementSchemas.size) {
-            return ZodResult.Failure(ZodError("Tuple must have exactly ${elementSchemas.size} element(s), received ${listInput.size}"))
+            return ZodResult.Failure(
+                ZodError(
+                    ZodIssue(
+                        ZodIssueCode.TOO_SMALL,
+                        "Tuple must have exactly ${elementSchemas.size} element(s), received ${listInput.size}"
+                    )
+                )
+            )
         }
-        
+
         val parsedElements = mutableListOf<Any?>()
-        val errors = mutableListOf<String>()
-        
+        val issues = mutableListOf<ZodIssue>()
+
         for ((index, element) in listInput.withIndex()) {
-            val schema = elementSchemas[index]
-            val elementResult = schema.safeParse(element)
-            when (elementResult) {
+            when (val elementResult = elementSchemas[index].safeParse(element)) {
                 is ZodResult.Success -> parsedElements.add(elementResult.data)
-                is ZodResult.Failure -> {
-                    elementResult.error.errors.forEach { error ->
-                        errors.add("[$index]: $error")
-                    }
-                }
+                is ZodResult.Failure -> issues.addAll(
+                    elementResult.error.issues.prepend(ZodPathSegment.Index(index))
+                )
             }
         }
-        
-        if (errors.isNotEmpty()) {
-            return ZodResult.Failure(ZodError(errors))
-        }
-        
-        // Apply tuple-level validations
-        for (validation in validations) {
-            val error = validation(parsedElements)
-            if (error != null) {
-                return ZodResult.Failure(error)
-            }
-        }
-        
-        return ZodResult.Success(parsedElements)
+
+        return if (issues.isEmpty()) ZodResult.Success(parsedElements) else ZodResult.Failure(ZodError(issues))
     }
 
     override suspend fun safeParseSuspend(input: Any?): ZodResult<List<Any?>> {
         val listInput = input.asListOrNull()
-            ?: return ZodResult.Failure(ZodError("Expected tuple (array), received ${input.typeName()}"))
+            ?: return ZodResult.Failure(typeError("tuple (array)", input))
 
         if (listInput.size != elementSchemas.size) {
-            return ZodResult.Failure(ZodError("Tuple must have exactly ${elementSchemas.size} element(s), received ${listInput.size}"))
+            return ZodResult.Failure(
+                ZodError(
+                    ZodIssue(
+                        ZodIssueCode.TOO_SMALL,
+                        "Tuple must have exactly ${elementSchemas.size} element(s), received ${listInput.size}"
+                    )
+                )
+            )
         }
 
         val parsedElements = mutableListOf<Any?>()
-        val errors = mutableListOf<String>()
+        val issues = mutableListOf<ZodIssue>()
 
         for ((index, element) in listInput.withIndex()) {
-            val elementResult = elementSchemas[index].safeParseSuspend(element)
-            when (elementResult) {
+            when (val elementResult = elementSchemas[index].safeParseSuspend(element)) {
                 is ZodResult.Success -> parsedElements.add(elementResult.data)
-                is ZodResult.Failure -> elementResult.error.errors.forEach { error -> errors.add("[$index]: $error") }
+                is ZodResult.Failure -> issues.addAll(
+                    elementResult.error.issues.prepend(ZodPathSegment.Index(index))
+                )
             }
         }
 
-        if (errors.isNotEmpty()) {
-            return ZodResult.Failure(ZodError(errors))
-        }
-
-        for (validation in validations) {
-            validation(parsedElements)?.let { return ZodResult.Failure(it) }
-        }
-
-        return ZodResult.Success(parsedElements)
+        return if (issues.isEmpty()) ZodResult.Success(parsedElements) else ZodResult.Failure(ZodError(issues))
     }
 }

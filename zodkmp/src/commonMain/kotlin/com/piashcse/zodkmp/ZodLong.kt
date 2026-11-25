@@ -7,41 +7,33 @@ package com.piashcse.zodkmp
  * accepted through [Zod.coerce].
  */
 class ZodLong private constructor(
-    private val validations: List<(Long) -> ZodError?>,
+    private val validations: List<(Long) -> ZodIssue?>,
     private val coerce: Boolean
 ) : ZodSchema<Long> {
     companion object {
         fun schema(coerce: Boolean = false): ZodLong = ZodLong(emptyList(), coerce)
     }
 
-    private fun withValidation(validation: (Long) -> ZodError?): ZodLong =
+    private fun withValidation(validation: (Long) -> ZodIssue?): ZodLong =
         ZodLong(validations + validation, coerce)
 
     fun min(value: Long, message: String = "Number must be greater than or equal to $value"): ZodLong =
-        withValidation { number -> if (number < value) ZodError(message) else null }
+        withValidation { number -> if (number < value) issue(ZodIssueCode.TOO_SMALL, message) else null }
 
     fun max(value: Long, message: String = "Number must be less than or equal to $value"): ZodLong =
-        withValidation { number -> if (number > value) ZodError(message) else null }
+        withValidation { number -> if (number > value) issue(ZodIssueCode.TOO_BIG, message) else null }
 
     fun positive(message: String = "Number must be positive"): ZodLong =
-        withValidation { number -> if (number <= 0) ZodError(message) else null }
+        withValidation { number -> if (number <= 0) issue(ZodIssueCode.TOO_SMALL, message) else null }
 
     fun negative(message: String = "Number must be negative"): ZodLong =
-        withValidation { number -> if (number >= 0) ZodError(message) else null }
+        withValidation { number -> if (number >= 0) issue(ZodIssueCode.TOO_BIG, message) else null }
 
     fun nonNegative(message: String = "Number must be non-negative"): ZodLong =
-        withValidation { number -> if (number < 0) ZodError(message) else null }
+        withValidation { number -> if (number < 0) issue(ZodIssueCode.TOO_SMALL, message) else null }
 
     fun nonPositive(message: String = "Number must be non-positive"): ZodLong =
-        withValidation { number -> if (number > 0) ZodError(message) else null }
-
-    override fun parse(input: Any?): Long {
-        val result = safeParse(input)
-        return when (result) {
-            is ZodResult.Success -> result.data
-            is ZodResult.Failure -> throw IllegalArgumentException("Validation failed: ${result.error.errors.joinToString(", ")}")
-        }
-    }
+        withValidation { number -> if (number > 0) issue(ZodIssueCode.TOO_BIG, message) else null }
 
     override fun safeParse(input: Any?): ZodResult<Long> {
         val longInput = when (input) {
@@ -66,14 +58,23 @@ class ZodLong private constructor(
 
         if (longInput == null) {
             val hint = if (input is String && !coerce) " (use Zod.coerce.long() to accept numeric strings)" else ""
-            return ZodResult.Failure(ZodError("Expected long, received ${input.typeName()}$hint"))
+            return ZodResult.Failure(
+                ZodError(
+                    ZodIssue(
+                        ZodIssueCode.INVALID_TYPE,
+                        "Expected long, received ${input.typeName()}$hint",
+                        expected = "long",
+                        received = input.typeName()
+                    )
+                )
+            )
         }
 
-        val errors = mutableListOf<String>()
+        val issues = mutableListOf<ZodIssue>()
         for (validation in validations) {
-            validation(longInput)?.let { errors.addAll(it.errors) }
+            validation(longInput)?.let { issues.add(it) }
         }
 
-        return if (errors.isEmpty()) ZodResult.Success(longInput) else ZodResult.Failure(ZodError(errors))
+        return if (issues.isEmpty()) ZodResult.Success(longInput) else ZodResult.Failure(ZodError(issues))
     }
 }

@@ -13,10 +13,6 @@ class ZodPreprocess<I> internal constructor(
             ZodPreprocess(schema, preprocessor)
     }
     
-    override fun parse(input: Any?): I {
-        return schema.parse(preprocessor(input))
-    }
-    
     override fun safeParse(input: Any?): ZodResult<I> {
         return schema.safeParse(preprocessor(input))
     }

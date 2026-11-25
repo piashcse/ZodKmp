@@ -7,95 +7,101 @@ package com.piashcse.zodkmp
 class ZodMap<K, V> private constructor(
     private val keySchema: ZodSchema<K>,
     private val valueSchema: ZodSchema<V>,
-    private val validations: List<(Map<K, V>) -> ZodError?>
+    private val validations: List<(Map<K, V>) -> ZodIssue?>
 ) : ZodSchema<Map<K, V>> {
     companion object {
-        fun <K, V> schema(keySchema: ZodSchema<K>, valueSchema: ZodSchema<V>): ZodMap<K, V> 
-            = ZodMap(keySchema, valueSchema, emptyList())
+        fun <K, V> schema(keySchema: ZodSchema<K>, valueSchema: ZodSchema<V>): ZodMap<K, V> =
+            ZodMap(keySchema, valueSchema, emptyList())
     }
-    
-    fun min(minSize: Int, message: String = "Map must contain at least $minSize entry/entries"): ZodMap<K, V> {
-        val validation: (Map<K, V>) -> ZodError? = { value ->
-            if (value.size < minSize) ZodError(message) else null
-        }
-        return ZodMap(keySchema, valueSchema, validations + validation)
-    }
-    
-    fun max(maxSize: Int, message: String = "Map must contain at most $maxSize entry/entries"): ZodMap<K, V> {
-        val validation: (Map<K, V>) -> ZodError? = { value ->
-            if (value.size > maxSize) ZodError(message) else null
-        }
-        return ZodMap(keySchema, valueSchema, validations + validation)
-    }
-    
-    override fun parse(input: Any?): Map<K, V> {
-        val result = safeParse(input)
-        return when (result) {
-            is ZodResult.Success -> result.data
-            is ZodResult.Failure -> throw IllegalArgumentException("Validation failed: ${result.error.errors.joinToString(", ")}")
-        }
-    }
-    
+
+    private fun withValidation(validation: (Map<K, V>) -> ZodIssue?): ZodMap<K, V> =
+        ZodMap(keySchema, valueSchema, validations + validation)
+
+    fun min(minSize: Int, message: String = "Map must contain at least $minSize entry/entries"): ZodMap<K, V> =
+        withValidation { value -> if (value.size < minSize) issue(ZodIssueCode.TOO_SMALL, message) else null }
+
+    fun max(maxSize: Int, message: String = "Map must contain at most $maxSize entry/entries"): ZodMap<K, V> =
+        withValidation { value -> if (value.size > maxSize) issue(ZodIssueCode.TOO_BIG, message) else null }
+
     override fun safeParse(input: Any?): ZodResult<Map<K, V>> {
         val mapInput = input as? Map<*, *>
-            ?: return ZodResult.Failure(ZodError("Expected map, received ${input.typeName()}"))
+            ?: return ZodResult.Failure(typeError("map", input))
 
         val parsedEntries = mutableMapOf<K, V>()
-        val errors = mutableListOf<String>()
+        val issues = mutableListOf<ZodIssue>()
 
         for ((rawKey, rawValue) in mapInput) {
             val keyResult = keySchema.safeParse(rawKey)
             val valueResult = valueSchema.safeParse(rawValue)
 
-            keyResult.errorOrNull()?.errors?.forEach { error -> errors.add("key $rawKey: $error") }
-            valueResult.errorOrNull()?.errors?.forEach { error -> errors.add("value for '$rawKey': $error") }
+            if (keyResult is ZodResult.Failure) {
+                issues.add(
+                    ZodIssue(
+                        ZodIssueCode.INVALID_KEY,
+                        "Invalid key: ${keyResult.error.errors.joinToString(", ")}"
+                    )
+                )
+            }
+            if (valueResult is ZodResult.Failure) {
+                issues.addAll(
+                    valueResult.error.issues.prepend(ZodPathSegment.Property(rawKey.toString()))
+                )
+            }
 
             if (keyResult is ZodResult.Success && valueResult is ZodResult.Success) {
                 parsedEntries[keyResult.data] = valueResult.data
             }
         }
-        
-        if (errors.isNotEmpty()) {
-            return ZodResult.Failure(ZodError(errors))
+
+        if (issues.isNotEmpty()) {
+            return ZodResult.Failure(ZodError(issues))
         }
-        
-        for (validation in validations) {
-            val error = validation(parsedEntries)
-            if (error != null) {
-                return ZodResult.Failure(error)
-            }
-        }
-        
-        return ZodResult.Success(parsedEntries)
+
+        return applyValidations(parsedEntries)
     }
 
     override suspend fun safeParseSuspend(input: Any?): ZodResult<Map<K, V>> {
         val mapInput = input as? Map<*, *>
-            ?: return ZodResult.Failure(ZodError("Expected map, received ${input.typeName()}"))
+            ?: return ZodResult.Failure(typeError("map", input))
 
         val parsedEntries = mutableMapOf<K, V>()
-        val errors = mutableListOf<String>()
+        val issues = mutableListOf<ZodIssue>()
 
         for ((rawKey, rawValue) in mapInput) {
             val keyResult = keySchema.safeParseSuspend(rawKey)
             val valueResult = valueSchema.safeParseSuspend(rawValue)
 
-            keyResult.errorOrNull()?.errors?.forEach { error -> errors.add("key $rawKey: $error") }
-            valueResult.errorOrNull()?.errors?.forEach { error -> errors.add("value for '$rawKey': $error") }
+            if (keyResult is ZodResult.Failure) {
+                issues.add(
+                    ZodIssue(
+                        ZodIssueCode.INVALID_KEY,
+                        "Invalid key: ${keyResult.error.errors.joinToString(", ")}"
+                    )
+                )
+            }
+            if (valueResult is ZodResult.Failure) {
+                issues.addAll(
+                    valueResult.error.issues.prepend(ZodPathSegment.Property(rawKey.toString()))
+                )
+            }
 
             if (keyResult is ZodResult.Success && valueResult is ZodResult.Success) {
                 parsedEntries[keyResult.data] = valueResult.data
             }
         }
 
-        if (errors.isNotEmpty()) {
-            return ZodResult.Failure(ZodError(errors))
+        if (issues.isNotEmpty()) {
+            return ZodResult.Failure(ZodError(issues))
         }
 
+        return applyValidations(parsedEntries)
+    }
+
+    private fun applyValidations(entries: Map<K, V>): ZodResult<Map<K, V>> {
+        val issues = mutableListOf<ZodIssue>()
         for (validation in validations) {
-            validation(parsedEntries)?.let { return ZodResult.Failure(it) }
+            validation(entries)?.let { issues.add(it) }
         }
-
-        return ZodResult.Success(parsedEntries)
+        return if (issues.isEmpty()) ZodResult.Success(entries) else ZodResult.Failure(ZodError(issues))
     }
 }

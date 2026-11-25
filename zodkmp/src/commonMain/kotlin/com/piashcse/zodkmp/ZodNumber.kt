@@ -11,14 +11,14 @@ import kotlin.math.round
  * accepting numeric strings.
  */
 class ZodNumber private constructor(
-    private val validations: List<(Double) -> ZodError?>,
+    private val validations: List<(Double) -> ZodIssue?>,
     private val coerce: Boolean
 ) : ZodSchema<Double> {
     companion object {
         fun schema(coerce: Boolean = false): ZodNumber = ZodNumber(emptyList(), coerce)
     }
 
-    private fun withValidation(validation: (Double) -> ZodError?): ZodNumber =
+    private fun withValidation(validation: (Double) -> ZodIssue?): ZodNumber =
         ZodNumber(validations + validation, coerce)
 
     fun min(value: Double, message: String = "Number must be greater than or equal to $value"): ZodNumber =
@@ -28,16 +28,16 @@ class ZodNumber private constructor(
         lte(value, message)
 
     fun gt(value: Double, message: String = "Number must be greater than $value"): ZodNumber =
-        withValidation { number -> if (number <= value) ZodError(message) else null }
+        withValidation { number -> if (number <= value) issue(ZodIssueCode.TOO_SMALL, message) else null }
 
     fun gte(value: Double, message: String = "Number must be greater than or equal to $value"): ZodNumber =
-        withValidation { number -> if (number < value) ZodError(message) else null }
+        withValidation { number -> if (number < value) issue(ZodIssueCode.TOO_SMALL, message) else null }
 
     fun lt(value: Double, message: String = "Number must be less than $value"): ZodNumber =
-        withValidation { number -> if (number >= value) ZodError(message) else null }
+        withValidation { number -> if (number >= value) issue(ZodIssueCode.TOO_BIG, message) else null }
 
     fun lte(value: Double, message: String = "Number must be less than or equal to $value"): ZodNumber =
-        withValidation { number -> if (number > value) ZodError(message) else null }
+        withValidation { number -> if (number > value) issue(ZodIssueCode.TOO_BIG, message) else null }
 
     /**
      * Validates that the number is an integer multiple of [value].
@@ -52,40 +52,39 @@ class ZodNumber private constructor(
             val rounded = round(quotient)
             val tolerance = 1e-9 * maxOf(1.0, abs(quotient))
             val valid = quotient.isFinite() && abs(quotient - rounded) <= tolerance
-            if (valid) null else ZodError(message)
+            if (valid) null else issue(ZodIssueCode.NOT_MULTIPLE_OF, message)
         }
     }
 
     fun int(message: String = "Number must be an integer"): ZodNumber =
         withValidation { number ->
-            if (!number.isFinite() || number != floor(number)) ZodError(message) else null
+            if (!number.isFinite() || number != floor(number)) issue(ZodIssueCode.CUSTOM, message) else null
         }
 
     fun positive(message: String = "Number must be positive"): ZodNumber =
-        withValidation { number -> if (number <= 0) ZodError(message) else null }
+        withValidation { number -> if (number <= 0) issue(ZodIssueCode.TOO_SMALL, message) else null }
 
     fun negative(message: String = "Number must be negative"): ZodNumber =
-        withValidation { number -> if (number >= 0) ZodError(message) else null }
+        withValidation { number -> if (number >= 0) issue(ZodIssueCode.TOO_BIG, message) else null }
 
     fun nonPositive(message: String = "Number must be non-positive (less than or equal to zero)"): ZodNumber =
-        withValidation { number -> if (number > 0) ZodError(message) else null }
+        withValidation { number -> if (number > 0) issue(ZodIssueCode.TOO_BIG, message) else null }
 
     fun nonNegative(message: String = "Number must be non-negative"): ZodNumber =
-        withValidation { number -> if (number < 0) ZodError(message) else null }
+        withValidation { number -> if (number < 0) issue(ZodIssueCode.TOO_SMALL, message) else null }
 
     fun range(min: Double, max: Double, message: String = "Number must be between $min and $max"): ZodNumber =
-        withValidation { number -> if (number < min || number > max) ZodError(message) else null }
+        withValidation { number ->
+            if (number < min || number > max) issue(ZodIssueCode.CUSTOM, message) else null
+        }
 
     fun finite(message: String = "Number must be finite"): ZodNumber =
-        withValidation { number -> if (!number.isFinite()) ZodError(message) else null }
+        withValidation { number -> if (!number.isFinite()) issue(ZodIssueCode.NOT_FINITE, message) else null }
 
-    override fun parse(input: Any?): Double {
-        val result = safeParse(input)
-        return when (result) {
-            is ZodResult.Success -> result.data
-            is ZodResult.Failure -> throw IllegalArgumentException("Validation failed: ${result.error.errors.joinToString(", ")}")
+    fun refine(predicate: (Double) -> Boolean, message: (Double) -> String = { "Invalid value: $it" }): ZodNumber =
+        withValidation { value ->
+            if (predicate(value)) null else issue(ZodIssueCode.CUSTOM, message(value))
         }
-    }
 
     override fun safeParse(input: Any?): ZodResult<Double> {
         val numberInput = when (input) {
@@ -96,18 +95,23 @@ class ZodNumber private constructor(
 
         if (numberInput == null) {
             val hint = if (input is String && !coerce) " (use Zod.coerce.number() to accept numeric strings)" else ""
-            return ZodResult.Failure(ZodError("Expected number, received ${input.typeName()}$hint"))
+            return ZodResult.Failure(
+                ZodError(
+                    ZodIssue(
+                        ZodIssueCode.INVALID_TYPE,
+                        "Expected number, received ${input.typeName()}$hint",
+                        expected = "number",
+                        received = input.typeName()
+                    )
+                )
+            )
         }
 
-        val errors = mutableListOf<String>()
+        val issues = mutableListOf<ZodIssue>()
         for (validation in validations) {
-            validation(numberInput)?.let { errors.addAll(it.errors) }
+            validation(numberInput)?.let { issues.add(it) }
         }
 
-        return if (errors.isEmpty()) {
-            ZodResult.Success(numberInput)
-        } else {
-            ZodResult.Failure(ZodError(errors))
-        }
+        return if (issues.isEmpty()) ZodResult.Success(numberInput) else ZodResult.Failure(ZodError(issues))
     }
 }
