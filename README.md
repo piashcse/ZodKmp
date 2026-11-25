@@ -285,6 +285,35 @@ node = Zod.lazy {
 }
 ```
 
+### Code generation (KSP)
+
+The optional `zodkmp-ksp` processor generates schemas and parsers for data classes:
+
+```kotlin
+// build.gradle.kts
+plugins {
+    id("com.google.devtools.ksp") version "2.3.14"
+}
+
+dependencies {
+    implementation("io.github.piashcse:zodkmp:1.4.0")
+    ksp("io.github.piashcse:zodkmp-ksp:1.4.0")
+}
+```
+
+```kotlin
+import com.piashcse.zodkmp.ZodModel
+
+@ZodModel(strict = true)
+data class User(val name: String, val age: Int, val nickname: String?)
+
+val result = UserZod.schema.safeParse(input)
+```
+
+Supported types: `String`, `Int`, `Long`, `Double`, `Float`, `Boolean`, enums, other
+`@ZodModel` classes, nullable variants and `List<T>`. Unknown types fall back to `Zod.any()`
+and emit a KSP warning. Strict mode rejects unknown keys.
+
 ### JSON interop
 
 ```kotlin
@@ -316,7 +345,13 @@ schema.safeParse(input).fold(onSuccess = { it }, onFailure = { it.errors.size })
 ```
 
 Paths are structured (`ZodPathSegment.Property` / `ZodPathSegment.Index`) and render as
-`address.city` or `tags[1]`.
+`address.city` or `tags[1]`. Use `ZodConfig.errorMap = { issue -> ... }` to localize messages.
+
+`toJsonSchema()` converts a schema to a structural JSON Schema object:
+
+```kotlin
+val jsonSchema = userSchema.toJsonSchema()
+```
 
 ## Building
 

@@ -21,7 +21,7 @@ class ZodBooleanTest {
         assertFailsWith<IllegalArgumentException> {
             basicBooleanSchema.parse("not a boolean")
         }
-        
+
         assertFailsWith<IllegalArgumentException> {
             basicBooleanSchema.parse(123)
         }
@@ -32,7 +32,7 @@ class ZodBooleanTest {
         val result = basicBooleanSchema.safeParse(true)
         assertTrue(result is ZodResult.Success)
         assertEquals(true, result.data)
-        
+
         val result2 = basicBooleanSchema.safeParse("false")
         assertTrue(result2 is ZodResult.Failure, "plain boolean schemas must not coerce strings")
     }
@@ -41,16 +41,20 @@ class ZodBooleanTest {
     fun `safeParse should return Failure with non-boolean input`() {
         val result = basicBooleanSchema.safeParse("not a boolean")
         assertTrue(result is ZodResult.Failure)
-        assertTrue(result.error.errors.first().contains("Expected boolean"))
+        assertTrue(
+            result.error.errors
+                .first()
+                .contains("Expected boolean"),
+        )
     }
 
     @Test
     fun `isEqual validation should work`() {
         val schema = basicBooleanSchema.isEqual(true)
-        
+
         // Should pass
         assertEquals(true, schema.parse(true))
-        
+
         // Should fail
         val result = schema.safeParse(false)
         assertTrue(result is ZodResult.Failure)
@@ -62,7 +66,7 @@ class ZodBooleanTest {
         val result1 = Zod.coerce.boolean().safeParse("True")
         assertTrue(result1 is ZodResult.Success)
         assertEquals(true, result1.data)
-        
+
         val result2 = Zod.coerce.boolean().safeParse("FALSE")
         assertTrue(result2 is ZodResult.Success)
         assertEquals(false, result2.data)

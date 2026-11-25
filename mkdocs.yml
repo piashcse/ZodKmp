@@ -31,6 +31,7 @@ nav:
   - Home: index.md
   - Getting Started: getting-started.md
   - Advanced Usage: advanced-usage.md
+  - Code Generation: codegen.md
   - API Reference:
     - Primitives: api/primitives.md
     - Objects: api/objects.md

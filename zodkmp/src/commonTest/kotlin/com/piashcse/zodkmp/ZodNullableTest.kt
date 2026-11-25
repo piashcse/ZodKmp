@@ -38,7 +38,7 @@ class ZodNullableTest {
     @Test
     fun `safeParse should return Failure when input is not null but invalid`() {
         val schema = Zod.string().nullable()
-        val result = schema.safeParse(123)  // Not a string
+        val result = schema.safeParse(123) // Not a string
         assertTrue(result is ZodResult.Failure)
     }
 
@@ -46,15 +46,15 @@ class ZodNullableTest {
     fun `nullable should work with complex schemas`() {
         val stringWithMin = Zod.string().min(3)
         val nullableSchema = stringWithMin.nullable()
-        
+
         // With null input, should return null
         assertEquals(null, nullableSchema.parse(null))
-        
+
         // With valid input, should parse normally
         assertEquals("hello", nullableSchema.parse("hello"))
-        
+
         // With invalid input, should fail validation
-        val result = nullableSchema.safeParse("hi")  // Too short
+        val result = nullableSchema.safeParse("hi") // Too short
         assertTrue(result is ZodResult.Failure)
     }
 
@@ -64,12 +64,12 @@ class ZodNullableTest {
         val stringSchema = Zod.string().nullable()
         assertEquals(null, stringSchema.parse(null))
         assertEquals("test", stringSchema.parse("test"))
-        
+
         // Number
         val numberSchema = Zod.number().nullable()
         assertEquals(null, numberSchema.parse(null))
         assertEquals(42.0, numberSchema.parse(42))
-        
+
         // Boolean
         val boolSchema = Zod.boolean().nullable()
         assertEquals(null, boolSchema.parse(null))

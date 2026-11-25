@@ -37,16 +37,20 @@ class ZodNumberTest {
     fun `safeParse should return Failure with non-number input`() {
         val result = basicNumberSchema.safeParse("not a number")
         assertTrue(result is ZodResult.Failure)
-        assertTrue(result.error.errors.first().contains("Expected number"))
+        assertTrue(
+            result.error.errors
+                .first()
+                .contains("Expected number"),
+        )
     }
 
     @Test
     fun `min validation should work`() {
         val schema = basicNumberSchema.min(10.0)
-        
+
         // Should pass
         assertEquals(15.0, schema.parse(15.0))
-        
+
         // Should fail
         val result = schema.safeParse(5.0)
         assertTrue(result is ZodResult.Failure)
@@ -56,10 +60,10 @@ class ZodNumberTest {
     @Test
     fun `max validation should work`() {
         val schema = basicNumberSchema.max(10.0)
-        
+
         // Should pass
         assertEquals(5.0, schema.parse(5.0))
-        
+
         // Should fail
         val result = schema.safeParse(15.0)
         assertTrue(result is ZodResult.Failure)
@@ -69,10 +73,10 @@ class ZodNumberTest {
     @Test
     fun `int validation should work`() {
         val schema = basicNumberSchema.int()
-        
+
         // Should pass
         assertEquals(5.0, schema.parse(5))
-        
+
         // Should fail
         val result = schema.safeParse(5.5)
         assertTrue(result is ZodResult.Failure)
@@ -82,10 +86,10 @@ class ZodNumberTest {
     @Test
     fun `positive validation should work`() {
         val schema = basicNumberSchema.positive()
-        
+
         // Should pass
         assertEquals(5.0, schema.parse(5))
-        
+
         // Should fail
         val result = schema.safeParse(-5)
         assertTrue(result is ZodResult.Failure)
@@ -95,10 +99,10 @@ class ZodNumberTest {
     @Test
     fun `negative validation should work`() {
         val schema = basicNumberSchema.negative()
-        
+
         // Should pass
         assertEquals(-5.0, schema.parse(-5))
-        
+
         // Should fail
         val result = schema.safeParse(5)
         assertTrue(result is ZodResult.Failure)
@@ -108,11 +112,11 @@ class ZodNumberTest {
     @Test
     fun `nonNegative validation should work`() {
         val schema = basicNumberSchema.nonNegative()
-        
+
         // Should pass
-        assertEquals(0.0, schema.parse(0))  // Zero is non-negative
+        assertEquals(0.0, schema.parse(0)) // Zero is non-negative
         assertEquals(5.0, schema.parse(5))
-        
+
         // Should fail
         val result = schema.safeParse(-5)
         assertTrue(result is ZodResult.Failure)
@@ -121,24 +125,25 @@ class ZodNumberTest {
 
     @Test
     fun `chained validations should work`() {
-        val schema = basicNumberSchema
-            .min(0.0)
-            .max(100.0)
-            .int()
-        
+        val schema =
+            basicNumberSchema
+                .min(0.0)
+                .max(100.0)
+                .int()
+
         // Should pass
         assertEquals(50.0, schema.parse(50.0))
-        
+
         // Should fail - negative
         val result1 = schema.safeParse(-5.0)
         assertTrue(result1 is ZodResult.Failure)
         assertTrue(result1.error.errors.any { it.contains("greater than or equal to 0") })
-        
+
         // Should fail - too large
         val result2 = schema.safeParse(101.0)
         assertTrue(result2 is ZodResult.Failure)
         assertTrue(result2.error.errors.any { it.contains("less than or equal to 100") })
-        
+
         // Should fail - not integer
         val result3 = schema.safeParse(50.5)
         assertTrue(result3 is ZodResult.Failure)
@@ -148,13 +153,13 @@ class ZodNumberTest {
     @Test
     fun `nonPositive validation should work`() {
         val schema = basicNumberSchema.nonPositive()
-        
+
         // Zero should pass
         assertEquals(0.0, schema.parse(0.0))
-        
+
         // Negative should pass
         assertEquals(-5.0, schema.parse(-5.0))
-        
+
         // Positive should fail
         val result = schema.safeParse(5.0)
         assertTrue(result is ZodResult.Failure)
@@ -164,13 +169,13 @@ class ZodNumberTest {
     @Test
     fun `nonNegative validation should work - second test`() {
         val schema = basicNumberSchema.nonNegative()
-        
+
         // Zero should pass
         assertEquals(0.0, schema.parse(0.0))
-        
+
         // Positive should pass
         assertEquals(5.0, schema.parse(5.0))
-        
+
         // Negative should fail
         val result = schema.safeParse(-5.0)
         assertTrue(result is ZodResult.Failure)
@@ -180,18 +185,18 @@ class ZodNumberTest {
     @Test
     fun `range validation should work`() {
         val schema = basicNumberSchema.range(1.0, 10.0)
-        
+
         // Within range should pass
         assertEquals(5.0, schema.parse(5.0))
-        
+
         // At boundaries should pass
         assertEquals(1.0, schema.parse(1.0))
         assertEquals(10.0, schema.parse(10.0))
-        
+
         // Outside range should fail
         val result1 = schema.safeParse(0.0)
         assertTrue(result1 is ZodResult.Failure)
-        
+
         val result2 = schema.safeParse(11.0)
         assertTrue(result2 is ZodResult.Failure)
     }

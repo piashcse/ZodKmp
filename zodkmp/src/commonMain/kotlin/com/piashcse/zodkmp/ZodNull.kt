@@ -3,9 +3,9 @@ package com.piashcse.zodkmp
 /**
  * Schema for validating null values.
  */
-class ZodNull private constructor() : ZodSchema<Any?> {
-    companion object {
-        fun schema(): ZodNull = ZodNull()
+public class ZodNull private constructor() : ZodSchema<Any?> {
+    public companion object {
+        public fun schema(): ZodNull = ZodNull()
     }
 
     override fun safeParse(input: Any?): ZodResult<Any?> {

@@ -9,6 +9,7 @@ A correctness and API release. See [the full changelog](https://github.com/piash
 - Result helpers (`getOrNull`, `getOrThrow`, `map`, `fold`).
 - Explicit coercion (`Zod.coerce.*`), `Zod.lazy`, JSON interop and `Zod.date()`.
 - Typed `refine()` on string, number, boolean, array, set, object and date schemas.
+- `toJsonSchema()`, configurable error maps and `@ZodModel` KSP code generation.
 - Gradle 9.4.1, JDK 21 toolchain, Dokka, Kover, API compatibility checks and hardened CI.
 
 ### Fixed

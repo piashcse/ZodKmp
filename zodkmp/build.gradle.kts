@@ -7,9 +7,11 @@ plugins {
     alias(libs.plugins.dokka)
     alias(libs.plugins.kover)
     alias(libs.plugins.binaryCompatibilityValidator)
+    alias(libs.plugins.ktlint)
 }
 
 kotlin {
+    explicitApi()
     jvmToolchain(21)
 
     androidTarget {
@@ -17,27 +19,27 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     jvm("desktop") {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     js {
         browser()
         nodejs()
     }
-    
+
     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
     wasmJs {
         browser()
     }
-    
+
     listOf(
         iosArm64(),
         iosX64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ZodKmp"
@@ -48,14 +50,14 @@ kotlin {
     // Add macOS targets
     macosX64()
     macosArm64()
-    
+
     // Add Linux targets
     linuxX64()
     linuxArm64()
-    
+
     // Add Windows targets
     mingwX64()
-    
+
     sourceSets {
         commonMain.dependencies {
             api(libs.kotlinx.datetime)
@@ -70,10 +72,16 @@ kotlin {
 
 android {
     namespace = "com.piashcse.zodkmp.lib"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk =
+        libs.versions.android.compileSdk
+            .get()
+            .toInt()
 
     defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
     }
     packaging {
         resources {
@@ -89,8 +97,8 @@ android {
 // Configure publishing with vanniktech plugin for Maven Central
 mavenPublishing {
     coordinates(
-        artifactId = findProperty("POM_ARTIFACT_ID")?.toString() ?: "zodkmp", 
-        version = version.toString()
+        artifactId = findProperty("POM_ARTIFACT_ID")?.toString() ?: "zodkmp",
+        version = version.toString(),
     )
 
     pom {

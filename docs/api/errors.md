@@ -52,6 +52,22 @@ result.isSuccess
 result.isFailure
 ```
 
+## Localized / custom messages
+
+Set a process-wide error map to override messages by issue code, path or any other field:
+
+```kotlin
+ZodConfig.errorMap = { issue ->
+    when (issue.code) {
+        ZodIssueCode.REQUIRED -> "Campo obligatorio"
+        ZodIssueCode.INVALID_TYPE -> "Tipo no válido"
+        else -> null
+    }
+}
+```
+
+Returning `null` keeps the built-in message. Call `ZodConfig.reset()` in tests.
+
 ## JSON
 
 `JsonElement` values can be validated directly; objects and arrays are converted to plain

@@ -34,7 +34,7 @@ class ZodDateTest {
         assertFailsWith<IllegalArgumentException> {
             ZodDate.schema(coerce = true).parse("not-a-date")
         }
-        
+
         assertFailsWith<IllegalArgumentException> {
             ZodDate.schema().parse(123)
         }
@@ -60,17 +60,21 @@ class ZodDateTest {
     fun `safeParse should return Failure with invalid input`() {
         val result = ZodDate.schema(coerce = true).safeParse("not-a-date")
         assertTrue(result is ZodResult.Failure)
-        assertTrue(result.error.errors.first().contains("Expected date"))
+        assertTrue(
+            result.error.errors
+                .first()
+                .contains("Expected date"),
+        )
     }
 
     @Test
     fun `min validation should work`() {
         val schema = ZodDate.schema().min(LocalDateTime(2023, Month.JANUARY, 1, 0, 0, 0))
-        
+
         // Should pass
         val validDate = LocalDateTime(2023, Month.JANUARY, 2, 12, 0, 0)
         assertEquals(validDate, schema.parse(validDate))
-        
+
         // Should fail
         val invalidDate = LocalDateTime(2022, Month.DECEMBER, 31, 12, 0, 0)
         val result = schema.safeParse(invalidDate)
@@ -81,11 +85,11 @@ class ZodDateTest {
     @Test
     fun `max validation should work`() {
         val schema = ZodDate.schema().max(LocalDateTime(2023, Month.JANUARY, 31, 23, 59, 59))
-        
+
         // Should pass
         val validDate = LocalDateTime(2023, Month.JANUARY, 15, 12, 0, 0)
         assertEquals(validDate, schema.parse(validDate))
-        
+
         // Should fail
         val invalidDate = LocalDateTime(2023, Month.FEBRUARY, 1, 12, 0, 0)
         val result = schema.safeParse(invalidDate)
@@ -95,18 +99,20 @@ class ZodDateTest {
 
     @Test
     fun `chained date validations should work`() {
-        val schema = ZodDate.schema()
-            .min(LocalDateTime(2023, Month.JANUARY, 1, 0, 0, 0))
-            .max(LocalDateTime(2023, Month.DECEMBER, 31, 23, 59, 59))
-        
+        val schema =
+            ZodDate
+                .schema()
+                .min(LocalDateTime(2023, Month.JANUARY, 1, 0, 0, 0))
+                .max(LocalDateTime(2023, Month.DECEMBER, 31, 23, 59, 59))
+
         // Should pass
         val validDate = LocalDateTime(2023, Month.JULY, 1, 12, 0, 0)
         assertEquals(validDate, schema.parse(validDate))
-        
+
         // Should fail - too early
         val result1 = schema.safeParse(LocalDateTime(2022, Month.JANUARY, 1, 12, 0, 0))
         assertTrue(result1 is ZodResult.Failure)
-        
+
         // Should fail - too late
         val result2 = schema.safeParse(LocalDateTime(2024, Month.JANUARY, 1, 12, 0, 0))
         assertTrue(result2 is ZodResult.Failure)

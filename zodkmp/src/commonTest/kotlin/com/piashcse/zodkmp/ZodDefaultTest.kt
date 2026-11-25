@@ -38,10 +38,10 @@ class ZodDefaultTest {
     @Test
     fun `default with lambda should work`() {
         val schema = Zod.number().default { 42.0 }
-        
+
         // With null input, should return lambda result
         assertEquals(42.0, schema.parse(null))
-        
+
         // With actual input, should parse the input
         assertEquals(10.0, schema.parse(10))
     }
@@ -49,16 +49,16 @@ class ZodDefaultTest {
     @Test
     fun `default value should work with complex schemas`() {
         val stringWithMin = Zod.string().min(3)
-        val schema = stringWithMin.default { "hello" }  // Default meets min length requirement
-        
+        val schema = stringWithMin.default { "hello" } // Default meets min length requirement
+
         // With null input, should return default
         assertEquals("hello", schema.parse(null))
-        
+
         // With valid input, should parse normally
         assertEquals("world", schema.parse("world"))
-        
+
         // With invalid input, should still validate
-        val result = schema.safeParse("hi")  // Too short
+        val result = schema.safeParse("hi") // Too short
         assertTrue(result is ZodResult.Failure)
     }
 
@@ -67,11 +67,11 @@ class ZodDefaultTest {
         // String
         val stringSchema = Zod.string().default { "default" }
         assertEquals("default", stringSchema.parse(null))
-        
+
         // Number
         val numberSchema = Zod.number().default { 100.0 }
         assertEquals(100.0, numberSchema.parse(null))
-        
+
         // Boolean
         val boolSchema = Zod.boolean().default { false }
         assertEquals(false, boolSchema.parse(null))

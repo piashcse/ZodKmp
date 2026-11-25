@@ -3,10 +3,7 @@ package com.piashcse.zodkmp
 /**
  * A suspend (async) refinement definition.
  */
-data class SuspendRefinement<T>(
-    val refinement: suspend (T) -> Boolean,
-    val errorMessage: suspend (T) -> String = { "Invalid value: $it" }
-)
+public data class SuspendRefinement<T>(val refinement: suspend (T) -> Boolean, val errorMessage: suspend (T) -> String = { "Invalid value: $it" })
 
 /**
  * Schema wrapper that runs suspend (async) refinements after validating against a base schema.
@@ -15,17 +12,11 @@ data class SuspendRefinement<T>(
  * Kotlin Multiplatform, those methods throw [IllegalStateException]; use
  * [safeParseSuspend]/[parseSuspend] instead.
  */
-class ZodSuspendRefinement<T> internal constructor(
-    private val baseSchema: ZodSchema<T>,
-    private val refinements: List<SuspendRefinement<T>>
-) : ZodSchema<T> {
-    override fun parse(input: Any?): T {
-        throw IllegalStateException("This schema contains suspend refinements. Use parseSuspend() instead.")
-    }
+public class ZodSuspendRefinement<T> internal constructor(private val baseSchema: ZodSchema<T>, private val refinements: List<SuspendRefinement<T>>) :
+    ZodSchema<T> {
+    override fun parse(input: Any?): T = throw IllegalStateException("This schema contains suspend refinements. Use parseSuspend() instead.")
 
-    override fun safeParse(input: Any?): ZodResult<T> {
-        throw IllegalStateException("This schema contains suspend refinements. Use safeParseSuspend() instead.")
-    }
+    override fun safeParse(input: Any?): ZodResult<T> = throw IllegalStateException("This schema contains suspend refinements. Use safeParseSuspend() instead.")
 
     override suspend fun safeParseSuspend(input: Any?): ZodResult<T> {
         val baseResult = baseSchema.safeParseSuspend(input)
@@ -47,7 +38,7 @@ class ZodSuspendRefinement<T> internal constructor(
     }
 }
 
-fun <T> ZodSchema<T>.refineSuspend(
+public fun <T> ZodSchema<T>.refineSuspend(
     refinement: suspend (T) -> Boolean,
-    errorMessage: suspend (T) -> String = { "Invalid value: $it" }
+    errorMessage: suspend (T) -> String = { "Invalid value: $it" },
 ): ZodSuspendRefinement<T> = ZodSuspendRefinement(this, listOf(SuspendRefinement(refinement, errorMessage)))

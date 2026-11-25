@@ -14,6 +14,9 @@ The full, per-release history lives in [docs/changelog.md](docs/changelog.md).
 - `Zod.lazy { ... }` for recursive schemas.
 - `JsonElement` interop: `parseJson`, `safeParseJson`, `toZodValue`.
 - `Zod.date()` factory.
+- `toJsonSchema()` for structural JSON Schema generation.
+- `ZodConfig.errorMap` for custom/localized messages.
+- Optional `zodkmp-ksp` module: `@ZodModel` code generation.
 - Typed `refine()` on string, number, boolean, array, set, object and date schemas.
 - Object intersection overload that merges shapes, and `ZodError.prepend` path support.
 
@@ -45,3 +48,4 @@ The full, per-release history lives in [docs/changelog.md](docs/changelog.md).
 - CI now checks all native targets, the API dump, Maven Local publishing and caching.
 - Release workflow tags, creates the GitHub release and publishes to Maven Central in one run.
 - Added Dependabot, SECURITY, CODE_OF_CONDUCT, issue/PR templates and `.editorconfig`.
+- Strict `explicitApi()` and ktlint checks.

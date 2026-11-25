@@ -84,6 +84,9 @@ jobs:
             :zodkmp:linuxX64Test \
             :zodkmp:koverHtmlReport \
             :zodkmp:apiCheck \
+            :zodkmp:ktlintCheck \
+            :zodkmp-ksp:ktlintCheck \
+            :codegen-test:test \
             --stacktrace --console=plain
 
       - name: Compile remaining native targets

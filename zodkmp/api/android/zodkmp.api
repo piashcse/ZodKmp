@@ -73,7 +73,7 @@ public final class com/piashcse/zodkmp/ZodAny$Companion {
 
 public final class com/piashcse/zodkmp/ZodArray : com/piashcse/zodkmp/ZodSchema {
 	public static final field Companion Lcom/piashcse/zodkmp/ZodArray$Companion;
-	public synthetic fun <init> (Lcom/piashcse/zodkmp/ZodSchema;Ljava/util/List;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lcom/piashcse/zodkmp/ZodSchema;Ljava/util/List;Ljava/util/Map;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getElementSchema ()Lcom/piashcse/zodkmp/ZodSchema;
 	public final fun length (ILjava/lang/String;)Lcom/piashcse/zodkmp/ZodArray;
 	public static synthetic fun length$default (Lcom/piashcse/zodkmp/ZodArray;ILjava/lang/String;ILjava/lang/Object;)Lcom/piashcse/zodkmp/ZodArray;
@@ -134,6 +134,14 @@ public final class com/piashcse/zodkmp/ZodCatch$Companion {
 public final class com/piashcse/zodkmp/ZodCatchKt {
 	public static final fun catch (Lcom/piashcse/zodkmp/ZodSchema;Ljava/lang/Object;)Lcom/piashcse/zodkmp/ZodCatch;
 	public static final fun catch (Lcom/piashcse/zodkmp/ZodSchema;Lkotlin/jvm/functions/Function1;)Lcom/piashcse/zodkmp/ZodCatch;
+}
+
+public final class com/piashcse/zodkmp/ZodConfig {
+	public static final field INSTANCE Lcom/piashcse/zodkmp/ZodConfig;
+	public final fun getErrorMap ()Lkotlin/jvm/functions/Function1;
+	public final fun message (Lcom/piashcse/zodkmp/ZodIssue;)Ljava/lang/String;
+	public final fun reset ()V
+	public final fun setErrorMap (Lkotlin/jvm/functions/Function1;)V
 }
 
 public final class com/piashcse/zodkmp/ZodCoreKt {
@@ -312,6 +320,10 @@ public final class com/piashcse/zodkmp/ZodJsonKt {
 	public static final fun toZodValue (Lkotlinx/serialization/json/JsonElement;)Ljava/lang/Object;
 }
 
+public final class com/piashcse/zodkmp/ZodJsonSchemaKt {
+	public static final fun toJsonSchema (Lcom/piashcse/zodkmp/ZodSchema;)Lkotlinx/serialization/json/JsonObject;
+}
+
 public final class com/piashcse/zodkmp/ZodLazy : com/piashcse/zodkmp/ZodSchema {
 	public fun parse (Ljava/lang/Object;)Ljava/lang/Object;
 	public fun parseSuspend (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -367,7 +379,7 @@ public final class com/piashcse/zodkmp/ZodLong$Companion {
 
 public final class com/piashcse/zodkmp/ZodMap : com/piashcse/zodkmp/ZodSchema {
 	public static final field Companion Lcom/piashcse/zodkmp/ZodMap$Companion;
-	public synthetic fun <init> (Lcom/piashcse/zodkmp/ZodSchema;Lcom/piashcse/zodkmp/ZodSchema;Ljava/util/List;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lcom/piashcse/zodkmp/ZodSchema;Lcom/piashcse/zodkmp/ZodSchema;Ljava/util/List;Ljava/util/Map;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun max (ILjava/lang/String;)Lcom/piashcse/zodkmp/ZodMap;
 	public static synthetic fun max$default (Lcom/piashcse/zodkmp/ZodMap;ILjava/lang/String;ILjava/lang/Object;)Lcom/piashcse/zodkmp/ZodMap;
 	public final fun min (ILjava/lang/String;)Lcom/piashcse/zodkmp/ZodMap;
@@ -381,6 +393,10 @@ public final class com/piashcse/zodkmp/ZodMap : com/piashcse/zodkmp/ZodSchema {
 
 public final class com/piashcse/zodkmp/ZodMap$Companion {
 	public final fun schema (Lcom/piashcse/zodkmp/ZodSchema;Lcom/piashcse/zodkmp/ZodSchema;)Lcom/piashcse/zodkmp/ZodMap;
+}
+
+public abstract interface annotation class com/piashcse/zodkmp/ZodModel : java/lang/annotation/Annotation {
+	public abstract fun strict ()Z
 }
 
 public final class com/piashcse/zodkmp/ZodNever : com/piashcse/zodkmp/ZodSchema {
@@ -422,7 +438,7 @@ public final class com/piashcse/zodkmp/ZodNullableKt {
 
 public final class com/piashcse/zodkmp/ZodNumber : com/piashcse/zodkmp/ZodSchema {
 	public static final field Companion Lcom/piashcse/zodkmp/ZodNumber$Companion;
-	public synthetic fun <init> (Ljava/util/List;ZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/util/List;ZLjava/util/Map;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun finite (Ljava/lang/String;)Lcom/piashcse/zodkmp/ZodNumber;
 	public static synthetic fun finite$default (Lcom/piashcse/zodkmp/ZodNumber;Ljava/lang/String;ILjava/lang/Object;)Lcom/piashcse/zodkmp/ZodNumber;
 	public final fun gt (DLjava/lang/String;)Lcom/piashcse/zodkmp/ZodNumber;
@@ -676,7 +692,7 @@ public final class com/piashcse/zodkmp/ZodSchemaWithRefinement : com/piashcse/zo
 
 public final class com/piashcse/zodkmp/ZodSet : com/piashcse/zodkmp/ZodSchema {
 	public static final field Companion Lcom/piashcse/zodkmp/ZodSet$Companion;
-	public synthetic fun <init> (Lcom/piashcse/zodkmp/ZodSchema;Ljava/util/List;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lcom/piashcse/zodkmp/ZodSchema;Ljava/util/List;Ljava/util/Map;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getElementSchema ()Lcom/piashcse/zodkmp/ZodSchema;
 	public final fun max (ILjava/lang/String;)Lcom/piashcse/zodkmp/ZodSet;
 	public static synthetic fun max$default (Lcom/piashcse/zodkmp/ZodSet;ILjava/lang/String;ILjava/lang/Object;)Lcom/piashcse/zodkmp/ZodSet;
@@ -699,7 +715,6 @@ public final class com/piashcse/zodkmp/ZodSet$Companion {
 
 public final class com/piashcse/zodkmp/ZodString : com/piashcse/zodkmp/ZodSchema {
 	public static final field Companion Lcom/piashcse/zodkmp/ZodString$Companion;
-	public synthetic fun <init> (Ljava/util/List;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun base64 (Ljava/lang/String;)Lcom/piashcse/zodkmp/ZodString;
 	public static synthetic fun base64$default (Lcom/piashcse/zodkmp/ZodString;Ljava/lang/String;ILjava/lang/Object;)Lcom/piashcse/zodkmp/ZodString;
 	public final fun base64url (Ljava/lang/String;)Lcom/piashcse/zodkmp/ZodString;

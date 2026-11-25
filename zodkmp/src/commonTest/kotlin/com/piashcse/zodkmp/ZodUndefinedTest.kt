@@ -19,11 +19,11 @@ class ZodUndefinedTest {
         assertFailsWith<IllegalArgumentException> {
             basicUndefinedSchema.parse("not undefined")
         }
-        
+
         assertFailsWith<IllegalArgumentException> {
             basicUndefinedSchema.parse(123)
         }
-        
+
         assertFailsWith<IllegalArgumentException> {
             basicUndefinedSchema.parse(true)
         }
@@ -40,6 +40,10 @@ class ZodUndefinedTest {
     fun `safeParse should return Failure with non-null input`() {
         val result = basicUndefinedSchema.safeParse("not undefined")
         assertTrue(result is ZodResult.Failure)
-        assertTrue(result.error.errors.first().contains("Expected undefined"))
+        assertTrue(
+            result.error.errors
+                .first()
+                .contains("Expected undefined"),
+        )
     }
 }

@@ -6,7 +6,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class ZodSuspendRefinementTest {
-
     @Test
     fun `refineSuspend should run base validation synchronously through safeParseSuspend`() = runTest {
         val schema = Zod.string().min(3).refineSuspend({ it != "blocked" })
@@ -20,7 +19,11 @@ class ZodSuspendRefinementTest {
         val schema = Zod.string().refineSuspend({ it != "blocked" }, { "value is blocked" })
         val result = schema.safeParseSuspend("blocked")
         assertTrue(result is ZodResult.Failure)
-        assertTrue(result.error.errors.first().contains("blocked"))
+        assertTrue(
+            result.error.errors
+                .first()
+                .contains("blocked"),
+        )
     }
 
     @Test

@@ -6,37 +6,39 @@ package com.piashcse.zodkmp
  * Extra keys are stripped by default; use [strict] to reject them or [passthrough] to keep
  * them. The most recent call wins.
  */
-class ZodObjectSchema<T> private constructor(
-    val shape: Map<String, ZodSchema<*>>,
+public class ZodObjectSchema<T> private constructor(
+    public val shape: Map<String, ZodSchema<*>>,
     private val parser: (Map<String, Any?>) -> T,
     private val strict: Boolean,
     private val passthrough: Boolean,
-    private val validations: List<(T) -> ZodIssue?>
+    private val validations: List<(T) -> ZodIssue?>,
 ) : ZodSchema<T> {
+    internal fun isStrict(): Boolean = strict
 
-    fun strict(): ZodObjectSchema<T> = ZodObjectSchema(shape, parser, strict = true, passthrough = false, validations)
+    internal fun isPassthrough(): Boolean = passthrough
 
-    fun strip(): ZodObjectSchema<T> = ZodObjectSchema(shape, parser, strict = false, passthrough = false, validations)
+    public fun strict(): ZodObjectSchema<T> = ZodObjectSchema(shape, parser, strict = true, passthrough = false, validations)
 
-    fun passthrough(): ZodObjectSchema<T> =
-        ZodObjectSchema(shape, parser, strict = false, passthrough = true, validations)
+    public fun strip(): ZodObjectSchema<T> = ZodObjectSchema(shape, parser, strict = false, passthrough = false, validations)
 
-    fun pick(vararg keys: String): ZodObjectSchema<Map<String, Any?>> {
+    public fun passthrough(): ZodObjectSchema<T> = ZodObjectSchema(shape, parser, strict = false, passthrough = true, validations)
+
+    public fun pick(vararg keys: String): ZodObjectSchema<Map<String, Any?>> {
         val selected = shape.filterKeys { it in keys }
         return ZodObjectSchema(selected, { it }, strict, passthrough, emptyList())
     }
 
-    fun omit(vararg keys: String): ZodObjectSchema<Map<String, Any?>> {
+    public fun omit(vararg keys: String): ZodObjectSchema<Map<String, Any?>> {
         val remaining = shape.filterKeys { it !in keys }
         return ZodObjectSchema(remaining, { it }, strict, passthrough, emptyList())
     }
 
-    fun partial(): ZodObjectSchema<Map<String, Any?>> {
+    public fun partial(): ZodObjectSchema<Map<String, Any?>> {
         val newShape = shape.mapValues { (_, schema) -> schema.optional() as ZodSchema<*> }
         return ZodObjectSchema(newShape, { it }, strict, passthrough, emptyList())
     }
 
-    fun deepPartial(): ZodObjectSchema<Map<String, Any?>> {
+    public fun deepPartial(): ZodObjectSchema<Map<String, Any?>> {
         val newShape = shape.mapValues { (_, schema) -> deepPartialProperty(schema) }
         return ZodObjectSchema(newShape, { it }, strict, passthrough, emptyList())
     }
@@ -45,7 +47,7 @@ class ZodObjectSchema<T> private constructor(
      * Merges [other] into this schema. Later definitions win for duplicate keys,
      * matching Zod's `merge`/`extend` behaviour.
      */
-    fun merge(other: ZodObjectSchema<*>): ZodObjectSchema<Map<String, Any?>> {
+    public fun merge(other: ZodObjectSchema<*>): ZodObjectSchema<Map<String, Any?>> {
         val merged = LinkedHashMap(shape)
         merged.putAll(other.shape)
         val mergedStrict = strict || other.strict
@@ -53,7 +55,7 @@ class ZodObjectSchema<T> private constructor(
         return ZodObjectSchema(merged, { it }, mergedStrict, mergedPassthrough, emptyList())
     }
 
-    fun extend(other: ZodObjectSchema<*>): ZodObjectSchema<Map<String, Any?>> {
+    public fun extend(other: ZodObjectSchema<*>): ZodObjectSchema<Map<String, Any?>> {
         val merged = LinkedHashMap(shape)
         merged.putAll(other.shape)
         return ZodObjectSchema(merged, { it }, strict, passthrough, emptyList())
@@ -62,20 +64,18 @@ class ZodObjectSchema<T> private constructor(
     /**
      * Adds a custom refinement while preserving the object schema type.
      */
-    fun refine(
-        predicate: (T) -> Boolean,
-        message: (T) -> String = { "Invalid value: $it" }
-    ): ZodObjectSchema<T> = ZodObjectSchema(
+    public fun refine(predicate: (T) -> Boolean, message: (T) -> String = { "Invalid value: $it" }): ZodObjectSchema<T> = ZodObjectSchema(
         shape,
         parser,
         strict,
         passthrough,
-        validations + { value -> if (predicate(value)) null else issue(ZodIssueCode.CUSTOM, message(value)) }
+        validations + { value -> if (predicate(value)) null else issue(ZodIssueCode.CUSTOM, message(value)) },
     )
 
     override fun safeParse(input: Any?): ZodResult<T> {
-        val mapInput = input as? Map<*, *>
-            ?: return ZodResult.Failure(typeError("object", input))
+        val mapInput =
+            input as? Map<*, *>
+                ?: return ZodResult.Failure(typeError("object", input))
 
         val nonStringKey = mapInput.keys.firstOrNull { it !is String }
         if (nonStringKey != null) {
@@ -84,9 +84,9 @@ class ZodObjectSchema<T> private constructor(
                     ZodIssue(
                         ZodIssueCode.INVALID_KEY,
                         "Expected object with string keys, received key of type ${nonStringKey.typeName()}",
-                        received = nonStringKey.typeName()
-                    )
-                )
+                        received = nonStringKey.typeName(),
+                    ),
+                ),
             )
         }
 
@@ -109,8 +109,8 @@ class ZodObjectSchema<T> private constructor(
                             ZodIssue(
                                 ZodIssueCode.REQUIRED,
                                 "Required",
-                                path = listOf(ZodPathSegment.Property(key))
-                            )
+                                path = listOf(ZodPathSegment.Property(key)),
+                            ),
                         )
                     }
                 }
@@ -123,25 +123,27 @@ class ZodObjectSchema<T> private constructor(
             return ZodResult.Failure(ZodError(issues))
         }
 
-        val value = try {
-            parser(parsedValues as Map<String, Any?>)
-        } catch (e: Exception) {
-            return ZodResult.Failure(
-                ZodError(
-                    ZodIssue(
-                        ZodIssueCode.CUSTOM,
-                        "Failed to construct object: ${e::class.simpleName}: ${e.message}",
-                        cause = e
-                    )
+        val value =
+            try {
+                parser(parsedValues as Map<String, Any?>)
+            } catch (e: Exception) {
+                return ZodResult.Failure(
+                    ZodError(
+                        ZodIssue(
+                            ZodIssueCode.CUSTOM,
+                            "Failed to construct object: ${e::class.simpleName}: ${e.message}",
+                            cause = e,
+                        ),
+                    ),
                 )
-            )
-        }
+            }
         return applyValidations(value)
     }
 
     override suspend fun safeParseSuspend(input: Any?): ZodResult<T> {
-        val mapInput = input as? Map<*, *>
-            ?: return ZodResult.Failure(typeError("object", input))
+        val mapInput =
+            input as? Map<*, *>
+                ?: return ZodResult.Failure(typeError("object", input))
 
         val nonStringKey = mapInput.keys.firstOrNull { it !is String }
         if (nonStringKey != null) {
@@ -150,9 +152,9 @@ class ZodObjectSchema<T> private constructor(
                     ZodIssue(
                         ZodIssueCode.INVALID_KEY,
                         "Expected object with string keys, received key of type ${nonStringKey.typeName()}",
-                        received = nonStringKey.typeName()
-                    )
-                )
+                        received = nonStringKey.typeName(),
+                    ),
+                ),
             )
         }
 
@@ -175,8 +177,8 @@ class ZodObjectSchema<T> private constructor(
                             ZodIssue(
                                 ZodIssueCode.REQUIRED,
                                 "Required",
-                                path = listOf(ZodPathSegment.Property(key))
-                            )
+                                path = listOf(ZodPathSegment.Property(key)),
+                            ),
                         )
                     }
                 }
@@ -189,34 +191,32 @@ class ZodObjectSchema<T> private constructor(
             return ZodResult.Failure(ZodError(issues))
         }
 
-        val value = try {
-            parser(parsedValues as Map<String, Any?>)
-        } catch (e: Exception) {
-            return ZodResult.Failure(
-                ZodError(
-                    ZodIssue(
-                        ZodIssueCode.CUSTOM,
-                        "Failed to construct object: ${e::class.simpleName}: ${e.message}",
-                        cause = e
-                    )
+        val value =
+            try {
+                parser(parsedValues as Map<String, Any?>)
+            } catch (e: Exception) {
+                return ZodResult.Failure(
+                    ZodError(
+                        ZodIssue(
+                            ZodIssueCode.CUSTOM,
+                            "Failed to construct object: ${e::class.simpleName}: ${e.message}",
+                            cause = e,
+                        ),
+                    ),
                 )
-            )
-        }
+            }
         return applyValidations(value)
     }
 
-    private fun extraKeyIssues(
-        stringKeyMap: Map<String, Any?>,
-        parsedValues: MutableMap<String, Any?>
-    ): List<ZodIssue> {
+    private fun extraKeyIssues(stringKeyMap: Map<String, Any?>, parsedValues: MutableMap<String, Any?>): List<ZodIssue> {
         if (strict) {
             val extraKeys = stringKeyMap.keys - shape.keys
             if (extraKeys.isNotEmpty()) {
                 return listOf(
                     ZodIssue(
                         ZodIssueCode.UNRECOGNIZED_KEYS,
-                        "Unrecognized key(s) in object: ${extraKeys.joinToString(", ")}"
-                    )
+                        "Unrecognized key(s) in object: ${extraKeys.joinToString(", ")}",
+                    ),
                 )
             }
         } else if (passthrough) {
@@ -235,28 +235,14 @@ class ZodObjectSchema<T> private constructor(
         return if (issues.isEmpty()) ZodResult.Success(value) else ZodResult.Failure(ZodError(issues))
     }
 
-    companion object {
-        fun <T> create(
-            shape: Map<String, ZodSchema<*>>,
-            parser: (Map<String, Any?>) -> T,
-            strict: Boolean = false
-        ): ZodObjectSchema<T> {
-            return ZodObjectSchema(shape, parser, strict, false, emptyList())
-        }
+    public companion object {
+        public fun <T> create(shape: Map<String, ZodSchema<*>>, parser: (Map<String, Any?>) -> T, strict: Boolean = false): ZodObjectSchema<T> =
+            ZodObjectSchema(shape, parser, strict, false, emptyList())
 
-        fun <T> create(
-            shape: Map<String, ZodSchema<*>>,
-            parser: (Map<String, Any?>) -> T,
-            strict: Boolean,
-            passthrough: Boolean
-        ): ZodObjectSchema<T> {
-            return ZodObjectSchema(shape, parser, strict, passthrough, emptyList())
-        }
+        public fun <T> create(shape: Map<String, ZodSchema<*>>, parser: (Map<String, Any?>) -> T, strict: Boolean, passthrough: Boolean): ZodObjectSchema<T> =
+            ZodObjectSchema(shape, parser, strict, passthrough, emptyList())
 
-        fun <T> build(
-            shapeBuilder: ZodObjectShapeBuilder.() -> Unit,
-            parser: (Map<String, Any?>) -> T
-        ): ZodObjectSchema<T> {
+        public fun <T> build(shapeBuilder: ZodObjectShapeBuilder.() -> Unit, parser: (Map<String, Any?>) -> T): ZodObjectSchema<T> {
             val builder = ZodObjectShapeBuilder()
             builder.shapeBuilder()
             return ZodObjectSchema(builder.shape, parser, false, false, emptyList())
@@ -282,40 +268,40 @@ private fun deepPartialElement(schema: ZodSchema<*>): ZodSchema<*> = when (schem
     else -> schema
 }
 
-infix fun <T, U> ZodObjectSchema<T>.and(other: ZodObjectSchema<U>): ZodObjectSchema<Map<String, Any?>> = merge(other)
+public infix fun <T, U> ZodObjectSchema<T>.and(other: ZodObjectSchema<U>): ZodObjectSchema<Map<String, Any?>> = merge(other)
 
-class ZodObjectShapeBuilder {
-    val shape: MutableMap<String, ZodSchema<*>> = mutableMapOf()
+public class ZodObjectShapeBuilder {
+    public val shape: MutableMap<String, ZodSchema<*>> = mutableMapOf()
 
-    fun string(name: String, schema: ZodString = ZodString.schema()) {
+    public fun string(name: String, schema: ZodString = ZodString.schema()) {
         shape[name] = schema
     }
 
-    fun number(name: String, schema: ZodNumber = ZodNumber.schema()) {
+    public fun number(name: String, schema: ZodNumber = ZodNumber.schema()) {
         shape[name] = schema
     }
 
-    fun boolean(name: String, schema: ZodBoolean = ZodBoolean.schema()) {
+    public fun boolean(name: String, schema: ZodBoolean = ZodBoolean.schema()) {
         shape[name] = schema
     }
 
-    fun <T> field(name: String, schema: ZodSchema<T>) {
+    public fun <T> field(name: String, schema: ZodSchema<T>) {
         shape[name] = schema
     }
 }
 
-fun ZodObjectShapeBuilder.optionalString(name: String, schema: ZodString = ZodString.schema()) {
+public fun ZodObjectShapeBuilder.optionalString(name: String, schema: ZodString = ZodString.schema()) {
     shape[name] = schema.optional()
 }
 
-fun ZodObjectShapeBuilder.optionalNumber(name: String, schema: ZodNumber = ZodNumber.schema()) {
+public fun ZodObjectShapeBuilder.optionalNumber(name: String, schema: ZodNumber = ZodNumber.schema()) {
     shape[name] = schema.optional()
 }
 
-fun ZodObjectShapeBuilder.optionalBoolean(name: String, schema: ZodBoolean = ZodBoolean.schema()) {
+public fun ZodObjectShapeBuilder.optionalBoolean(name: String, schema: ZodBoolean = ZodBoolean.schema()) {
     shape[name] = schema.optional()
 }
 
-fun <T> ZodObjectShapeBuilder.optionalField(name: String, schema: ZodSchema<T>) {
+public fun <T> ZodObjectShapeBuilder.optionalField(name: String, schema: ZodSchema<T>) {
     shape[name] = schema.optional()
 }

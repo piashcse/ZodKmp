@@ -33,5 +33,7 @@ dependencyResolutionManagement {
 
 include(
     ":composeApp",
-    ":zodkmp"
+    ":zodkmp",
+    ":zodkmp-ksp",
+    ":codegen-test"
 )

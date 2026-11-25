@@ -10,25 +10,30 @@ package com.piashcse.zodkmp
  * - [looseSchema] with a key schema validates every value and validates keys that match the
  *   key schema; keys that do not match the key schema never produce errors.
  */
-class ZodRecord<T> private constructor(
-    private val keySchema: ZodSchema<String>?,
-    private val valueSchema: ZodSchema<T>,
-    private val strict: Boolean
-) : ZodSchema<Map<String, T>> {
-    companion object {
-        fun <T> schema(valueSchema: ZodSchema<T>): ZodRecord<T> = ZodRecord(null, valueSchema, false)
-        fun <T> schema(keySchema: ZodSchema<String>, valueSchema: ZodSchema<T>): ZodRecord<T> =
-            ZodRecord(keySchema, valueSchema, true)
-        fun <T> looseSchema(valueSchema: ZodSchema<T>): ZodRecord<T> = ZodRecord(null, valueSchema, false)
-        fun <T> looseSchema(keySchema: ZodSchema<String>, valueSchema: ZodSchema<T>): ZodRecord<T> =
-            ZodRecord(keySchema, valueSchema, false)
-        fun <T> strictSchema(keySchema: ZodSchema<String>, valueSchema: ZodSchema<T>): ZodRecord<T> =
-            ZodRecord(keySchema, valueSchema, true)
+public class ZodRecord<T> private constructor(private val keySchema: ZodSchema<String>?, private val valueSchema: ZodSchema<T>, private val strict: Boolean) :
+    ZodSchema<Map<String, T>> {
+    internal fun key(): ZodSchema<String>? = keySchema
+
+    internal fun value(): ZodSchema<T> = valueSchema
+
+    internal fun isStrict(): Boolean = strict
+
+    public companion object {
+        public fun <T> schema(valueSchema: ZodSchema<T>): ZodRecord<T> = ZodRecord(null, valueSchema, false)
+
+        public fun <T> schema(keySchema: ZodSchema<String>, valueSchema: ZodSchema<T>): ZodRecord<T> = ZodRecord(keySchema, valueSchema, true)
+
+        public fun <T> looseSchema(valueSchema: ZodSchema<T>): ZodRecord<T> = ZodRecord(null, valueSchema, false)
+
+        public fun <T> looseSchema(keySchema: ZodSchema<String>, valueSchema: ZodSchema<T>): ZodRecord<T> = ZodRecord(keySchema, valueSchema, false)
+
+        public fun <T> strictSchema(keySchema: ZodSchema<String>, valueSchema: ZodSchema<T>): ZodRecord<T> = ZodRecord(keySchema, valueSchema, true)
     }
 
     override fun safeParse(input: Any?): ZodResult<Map<String, T>> {
-        val mapInput = input as? Map<*, *>
-            ?: return ZodResult.Failure(typeError("record (object)", input))
+        val mapInput =
+            input as? Map<*, *>
+                ?: return ZodResult.Failure(typeError("record (object)", input))
 
         val nonStringKey = mapInput.keys.firstOrNull { it !is String }
         if (nonStringKey != null) {
@@ -36,9 +41,9 @@ class ZodRecord<T> private constructor(
                 ZodError(
                     ZodIssue(
                         ZodIssueCode.INVALID_KEY,
-                        "Expected record with string keys, received key of type ${nonStringKey.typeName()}"
-                    )
-                )
+                        "Expected record with string keys, received key of type ${nonStringKey.typeName()}",
+                    ),
+                ),
             )
         }
 
@@ -54,8 +59,8 @@ class ZodRecord<T> private constructor(
                         ZodIssue(
                             ZodIssueCode.INVALID_KEY,
                             "Invalid key",
-                            path = listOf(ZodPathSegment.Property(key))
-                        )
+                            path = listOf(ZodPathSegment.Property(key)),
+                        ),
                     )
                     continue
                 }
@@ -63,9 +68,10 @@ class ZodRecord<T> private constructor(
 
             when (val valueResult = valueSchema.safeParse(value)) {
                 is ZodResult.Success -> parsedValues[key] = valueResult.data
-                is ZodResult.Failure -> issues.addAll(
-                    valueResult.error.issues.prepend(ZodPathSegment.Property(key))
-                )
+                is ZodResult.Failure ->
+                    issues.addAll(
+                        valueResult.error.issues.prepend(ZodPathSegment.Property(key)),
+                    )
             }
         }
 
@@ -73,8 +79,9 @@ class ZodRecord<T> private constructor(
     }
 
     override suspend fun safeParseSuspend(input: Any?): ZodResult<Map<String, T>> {
-        val mapInput = input as? Map<*, *>
-            ?: return ZodResult.Failure(typeError("record (object)", input))
+        val mapInput =
+            input as? Map<*, *>
+                ?: return ZodResult.Failure(typeError("record (object)", input))
 
         val nonStringKey = mapInput.keys.firstOrNull { it !is String }
         if (nonStringKey != null) {
@@ -82,9 +89,9 @@ class ZodRecord<T> private constructor(
                 ZodError(
                     ZodIssue(
                         ZodIssueCode.INVALID_KEY,
-                        "Expected record with string keys, received key of type ${nonStringKey.typeName()}"
-                    )
-                )
+                        "Expected record with string keys, received key of type ${nonStringKey.typeName()}",
+                    ),
+                ),
             )
         }
 
@@ -100,8 +107,8 @@ class ZodRecord<T> private constructor(
                         ZodIssue(
                             ZodIssueCode.INVALID_KEY,
                             "Invalid key",
-                            path = listOf(ZodPathSegment.Property(key))
-                        )
+                            path = listOf(ZodPathSegment.Property(key)),
+                        ),
                     )
                     continue
                 }
@@ -109,9 +116,10 @@ class ZodRecord<T> private constructor(
 
             when (val valueResult = valueSchema.safeParseSuspend(value)) {
                 is ZodResult.Success -> parsedValues[key] = valueResult.data
-                is ZodResult.Failure -> issues.addAll(
-                    valueResult.error.issues.prepend(ZodPathSegment.Property(key))
-                )
+                is ZodResult.Failure ->
+                    issues.addAll(
+                        valueResult.error.issues.prepend(ZodPathSegment.Property(key)),
+                    )
             }
         }
 

@@ -14,13 +14,10 @@ package com.piashcse.zodkmp
  * }
  * ```
  */
-class ZodLazy<T> internal constructor(
-    private val schemaFactory: () -> ZodSchema<T>
-) : ZodSchema<T> {
+public class ZodLazy<T> internal constructor(private val schemaFactory: () -> ZodSchema<T>) : ZodSchema<T> {
     override fun safeParse(input: Any?): ZodResult<T> = schemaFactory().safeParse(input)
 
-    override suspend fun safeParseSuspend(input: Any?): ZodResult<T> =
-        schemaFactory().safeParseSuspend(input)
+    override suspend fun safeParseSuspend(input: Any?): ZodResult<T> = schemaFactory().safeParseSuspend(input)
 }
 
-fun <T> Zod.lazy(schemaFactory: () -> ZodSchema<T>): ZodLazy<T> = ZodLazy(schemaFactory)
+public fun <T> Zod.lazy(schemaFactory: () -> ZodSchema<T>): ZodLazy<T> = ZodLazy(schemaFactory)
