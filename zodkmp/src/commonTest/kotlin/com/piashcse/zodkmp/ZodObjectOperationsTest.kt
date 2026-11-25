@@ -76,14 +76,14 @@ class ZodObjectOperationsTest {
     }
 
     @Test
-    fun `merge should fail on key conflicts`() {
+    fun `merge should let later keys override earlier ones`() {
         val a = baseObject()
         val bBuilder = ZodObjectShapeBuilder()
-        bBuilder.string("name")
+        bBuilder.number("age")
         val b = ZodObjectSchema.create(shape = bBuilder.shape, parser = { it })
 
-        val thrown = runCatching { a.merge(b) }
-        assertTrue(thrown.isFailure)
+        val merged = a.merge(b)
+        assertTrue(merged.safeParse(mapOf("name" to "John", "age" to 30, "active" to true)) is ZodResult.Success)
     }
 
     @Test

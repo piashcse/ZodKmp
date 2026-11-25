@@ -12,8 +12,8 @@ class ZodBooleanTest {
     fun `parse should succeed with valid boolean`() {
         assertEquals(true, basicBooleanSchema.parse(true))
         assertEquals(false, basicBooleanSchema.parse(false))
-        assertEquals(true, basicBooleanSchema.parse("true"))
-        assertEquals(false, basicBooleanSchema.parse("false"))
+        assertEquals(true, Zod.coerce.boolean().parse("true"))
+        assertEquals(false, Zod.coerce.boolean().parse("false"))
     }
 
     @Test
@@ -34,8 +34,7 @@ class ZodBooleanTest {
         assertEquals(true, result.data)
         
         val result2 = basicBooleanSchema.safeParse("false")
-        assertTrue(result2 is ZodResult.Success)
-        assertEquals(false, result2.data)
+        assertTrue(result2 is ZodResult.Failure, "plain boolean schemas must not coerce strings")
     }
 
     @Test
@@ -59,13 +58,19 @@ class ZodBooleanTest {
     }
 
     @Test
-    fun `case insensitive string boolean parsing should work`() {
-        val result1 = basicBooleanSchema.safeParse("True")
+    fun `case insensitive string boolean parsing should work with coercion`() {
+        val result1 = Zod.coerce.boolean().safeParse("True")
         assertTrue(result1 is ZodResult.Success)
         assertEquals(true, result1.data)
         
-        val result2 = basicBooleanSchema.safeParse("FALSE")
+        val result2 = Zod.coerce.boolean().safeParse("FALSE")
         assertTrue(result2 is ZodResult.Success)
         assertEquals(false, result2.data)
+    }
+
+    @Test
+    fun `plain boolean should reject strings without coercion`() {
+        assertTrue(basicBooleanSchema.safeParse("true") is ZodResult.Failure)
+        assertTrue(Zod.coerce.boolean().safeParse("true") is ZodResult.Success)
     }
 }

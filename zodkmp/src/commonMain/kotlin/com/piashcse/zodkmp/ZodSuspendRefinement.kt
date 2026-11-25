@@ -28,7 +28,7 @@ class ZodSuspendRefinement<T> internal constructor(
     }
     
     override suspend fun safeParseSuspend(input: Any?): ZodResult<T> {
-        val baseResult = baseSchema.safeParse(input)
+        val baseResult = baseSchema.safeParseSuspend(input)
         if (baseResult is ZodResult.Failure) {
             return baseResult
         }

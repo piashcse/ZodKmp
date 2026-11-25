@@ -12,6 +12,8 @@ class ZodDescribe<T> internal constructor(
     override fun parse(input: Any?): T = schema.parse(input)
     
     override fun safeParse(input: Any?): ZodResult<T> = schema.safeParse(input)
+
+    override suspend fun safeParseSuspend(input: Any?): ZodResult<T> = schema.safeParseSuspend(input)
 }
 
 fun <T> ZodSchema<T>.describe(description: String): ZodDescribe<T> =

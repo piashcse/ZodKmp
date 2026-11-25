@@ -27,11 +27,11 @@ class ZodEnum<T> private constructor(
             values.contains(input) -> input as T
             coerceByEnumName && input is String -> {
                 @Suppress("UNCHECKED_CAST")
-                values.firstOrNull { (it as Enum<*>).name == input } as T?
+                values.firstOrNull { (it as? Enum<*>)?.name == input } as T?
             }
             else -> null
         }
-        
+
         if (matched == null) {
             return ZodResult.Failure(ZodError("Expected enum value, received $input. Valid values: ${values.joinToString(", ")}"))
         }

@@ -21,15 +21,8 @@ class ZodTuple private constructor(
     }
     
     override fun safeParse(input: Any?): ZodResult<List<Any?>> {
-        val listInput = when (input) {
-            is List<*> -> input
-            is Array<*> -> input.toList()
-            else -> null
-        }
-        
-        if (listInput == null) {
-            return ZodResult.Failure(ZodError("Expected tuple (array), received ${input?.let { it::class.simpleName } ?: "null"}"))
-        }
+        val listInput = input.asListOrNull()
+            ?: return ZodResult.Failure(ZodError("Expected tuple (array), received ${input.typeName()}"))
         
         if (listInput.size != elementSchemas.size) {
             return ZodResult.Failure(ZodError("Tuple must have exactly ${elementSchemas.size} element(s), received ${listInput.size}"))
@@ -63,6 +56,36 @@ class ZodTuple private constructor(
             }
         }
         
+        return ZodResult.Success(parsedElements)
+    }
+
+    override suspend fun safeParseSuspend(input: Any?): ZodResult<List<Any?>> {
+        val listInput = input.asListOrNull()
+            ?: return ZodResult.Failure(ZodError("Expected tuple (array), received ${input.typeName()}"))
+
+        if (listInput.size != elementSchemas.size) {
+            return ZodResult.Failure(ZodError("Tuple must have exactly ${elementSchemas.size} element(s), received ${listInput.size}"))
+        }
+
+        val parsedElements = mutableListOf<Any?>()
+        val errors = mutableListOf<String>()
+
+        for ((index, element) in listInput.withIndex()) {
+            val elementResult = elementSchemas[index].safeParseSuspend(element)
+            when (elementResult) {
+                is ZodResult.Success -> parsedElements.add(elementResult.data)
+                is ZodResult.Failure -> elementResult.error.errors.forEach { error -> errors.add("[$index]: $error") }
+            }
+        }
+
+        if (errors.isNotEmpty()) {
+            return ZodResult.Failure(ZodError(errors))
+        }
+
+        for (validation in validations) {
+            validation(parsedElements)?.let { return ZodResult.Failure(it) }
+        }
+
         return ZodResult.Success(parsedElements)
     }
 }

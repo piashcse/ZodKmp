@@ -1,23 +1,26 @@
 package com.piashcse.zodkmp
 
-import kotlin.jvm.JvmInline
-
 /**
- * Schema for validating booleans
+ * Schema for validating booleans.
+ *
+ * By default only [Boolean] values are accepted. Use [Zod.coerce] to opt into
+ * accepting the strings `"true"` / `"false"`.
  */
-@JvmInline
-value class ZodBoolean private constructor(private val validations: List<(Boolean) -> ZodError?>) : ZodSchema<Boolean> {
+class ZodBoolean private constructor(
+    private val validations: List<(Boolean) -> ZodError?>,
+    private val coerce: Boolean
+) : ZodSchema<Boolean> {
     companion object {
-        fun schema(): ZodBoolean = ZodBoolean(emptyList())
+        fun schema(coerce: Boolean = false): ZodBoolean = ZodBoolean(emptyList(), coerce)
     }
-    
+
     fun isEqual(value: Boolean, message: String = "Boolean must be equal to $value"): ZodBoolean {
         val validation: (Boolean) -> ZodError? = { bool ->
             if (bool != value) ZodError(message) else null
         }
-        return ZodBoolean(validations + validation)
+        return ZodBoolean(validations + validation, coerce)
     }
-    
+
     override fun parse(input: Any?): Boolean {
         val result = safeParse(input)
         return when (result) {
@@ -25,33 +28,32 @@ value class ZodBoolean private constructor(private val validations: List<(Boolea
             is ZodResult.Failure -> throw IllegalArgumentException("Validation failed: ${result.error.errors.joinToString(", ")}")
         }
     }
-    
+
     override fun safeParse(input: Any?): ZodResult<Boolean> {
         val booleanInput = when (input) {
             is Boolean -> input
-            is String -> {
-                when (input.lowercase()) {
+            is String -> if (coerce) {
+                when (input.trim().lowercase()) {
                     "true" -> true
                     "false" -> false
                     else -> null
                 }
+            } else {
+                null
             }
             else -> null
         }
-        
+
         if (booleanInput == null) {
-            return ZodResult.Failure(ZodError("Expected boolean, received ${input?.let { it::class.simpleName } ?: "null"}"))
+            val hint = if (input is String && !coerce) " (use Zod.coerce.boolean() to accept \"true\"/\"false\")" else ""
+            return ZodResult.Failure(ZodError("Expected boolean, received ${input.typeName()}$hint"))
         }
-        
+
         val errors = mutableListOf<String>()
-        
         for (validation in validations) {
-            val error = validation(booleanInput)
-            if (error != null) {
-                errors.addAll(error.errors)
-            }
+            validation(booleanInput)?.let { errors.addAll(it.errors) }
         }
-        
+
         return if (errors.isEmpty()) {
             ZodResult.Success(booleanInput)
         } else {

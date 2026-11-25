@@ -17,14 +17,14 @@ class ZodDateTest {
 
     @Test
     fun `parse should succeed with valid date string`() {
-        val result = ZodDate.schema().parse("2023-01-01")
+        val result = ZodDate.schema(coerce = true).parse("2023-01-01")
         val expected = LocalDateTime(2023, Month.JANUARY, 1, 0, 0, 0)
         assertEquals(expected, result)
     }
 
     @Test
     fun `parse should succeed with valid datetime string`() {
-        val result = ZodDate.schema().parse("2023-01-01T12:30:45")
+        val result = ZodDate.schema(coerce = true).parse("2023-01-01T12:30:45")
         val expected = LocalDateTime(2023, Month.JANUARY, 1, 12, 30, 45)
         assertEquals(expected, result)
     }
@@ -32,7 +32,7 @@ class ZodDateTest {
     @Test
     fun `parse should throw with invalid input`() {
         assertFailsWith<IllegalArgumentException> {
-            ZodDate.schema().parse("not-a-date")
+            ZodDate.schema(coerce = true).parse("not-a-date")
         }
         
         assertFailsWith<IllegalArgumentException> {
@@ -50,7 +50,7 @@ class ZodDateTest {
 
     @Test
     fun `safeParse should return Success with valid date string`() {
-        val result = ZodDate.schema().safeParse("2023-01-01")
+        val result = ZodDate.schema(coerce = true).safeParse("2023-01-01")
         assertTrue(result is ZodResult.Success<*>)
         val expected = LocalDateTime(2023, Month.JANUARY, 1, 0, 0, 0)
         assertEquals(expected, result.data)
@@ -58,7 +58,7 @@ class ZodDateTest {
 
     @Test
     fun `safeParse should return Failure with invalid input`() {
-        val result = ZodDate.schema().safeParse("not-a-date")
+        val result = ZodDate.schema(coerce = true).safeParse("not-a-date")
         assertTrue(result is ZodResult.Failure)
         assertTrue(result.error.errors.first().contains("Expected date"))
     }

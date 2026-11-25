@@ -14,8 +14,9 @@ class ZodNumberTest {
         assertEquals(42.0, result1)
         val result2 = basicNumberSchema.parse(3.14)
         assertEquals(3.14, result2)
-        val result3 = basicNumberSchema.parse("42")
+        val result3 = Zod.coerce.number().parse("42")
         assertEquals(42.0, result3)
+        assertTrue(basicNumberSchema.safeParse("42") is ZodResult.Failure)
     }
 
     @Test
