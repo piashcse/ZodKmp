@@ -11,7 +11,7 @@ hide:
 ![badge-iOS](https://img.shields.io/badge/Platform-iOS-lightgray)
 ![badge-desktop](http://img.shields.io/badge/Platform-Desktop-4D76CD.svg?style=flat)
 ![badge-web](https://img.shields.io/badge/Platform-Web-blueviolet.svg?style=flat)
-[![License](https://img.shields.io/github/license/colinhacks/zod)](LICENSE)
+[![License](https://img.shields.io/github/license/piashcse/zodkmp)](LICENSE)
 <a href="https://github.com/piashcse"><img alt="License" src="https://img.shields.io/static/v1?label=GitHub&message=piashcse&color=C51162"/></a>
 
 ZodKmp is a Kotlin Multiplatform implementation of the popular [Zod](https://zod.dev/) TypeScript validation library. It provides a declarative, type-safe way to validate data in your Kotlin Multiplatform projects.
@@ -50,7 +50,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("io.github.piashcse:zodkmp:1.2.0")
+                implementation("io.github.piashcse:zodkmp:1.4.0")
             }
         }
     }
@@ -61,7 +61,7 @@ kotlin {
 
 ```toml
 [versions]
-zodkmp = "1.2.0"
+zodkmp = "1.4.0"
 
 [libraries]
 zodkmp = { module = "io.github.piashcse:zodkmp", version.ref = "zodkmp" }
@@ -78,12 +78,12 @@ import com.piashcse.zodkmp.Zod
 val userSchema = Zod.objectSchema<User>({
     string("name", Zod.string().min(2))
     string("email", Zod.string().email())
-    number("age", Zod.number().min(0).max(120))
+    number("age", Zod.number().min(0.0).max(120.0))
 }) { map ->
     User(
         name = map["name"] as String,
         email = map["email"] as String,
-        age = (map["age"] as Number).toDouble()
+        age = map["age"] as Double
     )
 }
 

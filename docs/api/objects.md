@@ -8,13 +8,13 @@ Validate complex objects:
 val userSchema = Zod.objectSchema<User>({
     string("name", Zod.string().min(2))
     string("email", Zod.string().email())
-    number("age", Zod.number().min(0).max(120))
+    number("age", Zod.number().min(0.0).max(120.0))
     field("isActive", Zod.boolean().default(true))
 }) { map ->
     User(
         name = map["name"] as String,
         email = map["email"] as String,
-        age = (map["age"] as Number).toDouble(),
+        age = map["age"] as Double,
         isActive = map["isActive"] as? Boolean ?: true
     )
 }

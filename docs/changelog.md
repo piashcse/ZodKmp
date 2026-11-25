@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.4.0]
+
+A correctness and API release. See [the full changelog](https://github.com/piashcse/zodkmp/blob/main/CHANGELOG.md) for the full list.
+
+### Added
+- Structured `ZodIssue` errors with paths, codes, `flatten()` and `ZodValidationException`.
+- Result helpers (`getOrNull`, `getOrThrow`, `map`, `fold`).
+- Explicit coercion (`Zod.coerce.*`), `Zod.lazy`, JSON interop and `Zod.date()`.
+- Typed `refine()` on string, number, boolean, array, set, object and date schemas.
+- Gradle 9.4.1, JDK 21 toolchain, Dokka, Kover, API compatibility checks and hardened CI.
+
+### Fixed
+- URL, datetime, cuid2, nanoid, emoji, regex, multipleOf, deepPartial, strict/passthrough,
+  optional/default and nested suspend-refinement bugs.
+
 ## [1.2.0] - 2025-10-06
 
 ### What's Changed

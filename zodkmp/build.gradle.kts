@@ -4,16 +4,25 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.mavenPublish)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.kover)
+    alias(libs.plugins.binaryCompatibilityValidator)
 }
 
 kotlin {
+    jvmToolchain(21)
+
     androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
     
-    jvm("desktop")
+    jvm("desktop") {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
+    }
     
     js {
         browser()
@@ -102,7 +111,8 @@ mavenPublishing {
             developer {
                 id = findProperty("POM_DEVELOPER_ID")?.toString() ?: "piashcse"
                 name = findProperty("POM_DEVELOPER_NAME")?.toString() ?: "Mehedi Hassan Piash"
-                url = findProperty("POM_URL")?.toString() ?: "https://github.com/piashcse"
+                url = findProperty("POM_URL")?.toString() ?: "https://github.com/piashcse/zodkmp"
+                email = findProperty("POM_DEVELOPER_EMAIL")?.toString() ?: "piash599@gmail.com"
             }
         }
 

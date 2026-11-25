@@ -11,7 +11,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("io.github.piashcse:zodkmp:1.2.0")
+                implementation("io.github.piashcse:zodkmp:1.4.0")
             }
         }
     }
@@ -22,7 +22,7 @@ kotlin {
 
 ```toml
 [versions]
-zodkmp = "1.2.0"
+zodkmp = "1.4.0"
 
 [libraries]
 zodkmp = { module = "io.github.piashcse:zodkmp", version.ref = "zodkmp" }
@@ -39,12 +39,12 @@ import com.piashcse.zodkmp.Zod
 val userSchema = Zod.objectSchema<User>({
     string("name", Zod.string().min(2))
     string("email", Zod.string().email())
-    number("age", Zod.number().min(0).max(120))
+    number("age", Zod.number().min(0.0).max(120.0))
 }) { map ->
     User(
         name = map["name"] as String,
         email = map["email"] as String,
-        age = (map["age"] as Number).toDouble()
+        age = map["age"] as Double
     )
 }
 

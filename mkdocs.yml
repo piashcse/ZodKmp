@@ -40,6 +40,7 @@ nav:
     - Intersections: api/intersections.md
     - Transformations: api/transformations.md
     - Refinements: api/refinements.md
+    - Errors: api/errors.md
   - Changelog: changelog.md
   - Contributing: contributing.md
   - License: license.md

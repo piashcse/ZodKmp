@@ -14,8 +14,8 @@ val complexUnion = Zod.union(
         number("y", Zod.number())
     }) { map ->
         Point(
-            x = (map["x"] as Number).toDouble(),
-            y = (map["y"] as Number).toDouble()
+            x = map["x"] as Double,
+            y = map["y"] as Double
         )
     }
 )

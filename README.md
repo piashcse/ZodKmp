@@ -1,524 +1,341 @@
 # ZodKmp: Kotlin Multiplatform Validation
 
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.piashcse/zodkmp.svg)](https://central.sonatype.com/artifact/io.github.piashcse/zodkmp)
+[![Kotlin Version](https://img.shields.io/badge/kotlin-2.4.0-blue.svg?logo=kotlin)](https://kotlinlang.org)
+![Android](https://img.shields.io/badge/Platform-Android-brightgreen)
+![iOS](https://img.shields.io/badge/Platform-iOS-lightgray)
+![JVM](https://img.shields.io/badge/Platform-JVM-4D76CD)
+![Web](https://img.shields.io/badge/Platform-Web-blueviolet)
+[![License](https://img.shields.io/github/license/piashcse/zodkmp)](LICENSE)
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.piashcse/zodkmp.svg)](https://search.maven.org/artifact/io.github.piashcse/zodkmp)
-[![Kotlin Version](https://img.shields.io/badge/kotlin-2.4.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
-![badge-Android](https://img.shields.io/badge/Platform-Android-brightgreen)
-![badge-iOS](https://img.shields.io/badge/Platform-iOS-lightgray)
-![badge-desktop](http://img.shields.io/badge/Platform-Desktop-4D76CD.svg?style=flat)
-![badge-web](https://img.shields.io/badge/Platform-Web-blueviolet.svg?style=flat)
-[![License](https://img.shields.io/github/license/colinhacks/zod)](LICENSE)
-<a href="https://github.com/piashcse"><img alt="License" src="https://img.shields.io/static/v1?label=GitHub&message=piashcse&color=C51162"/></a>
+ZodKmp is a Kotlin Multiplatform implementation of the [Zod](https://zod.dev/) validation
+library. It provides declarative, type-safe schemas that run on Android, iOS, JVM, JS, Wasm
+and native targets.
 
-ZodKmp is a Kotlin Multiplatform implementation of the popular [Zod](https://zod.dev/) TypeScript validation library. It provides a declarative, type-safe way to validate data in your Kotlin Multiplatform projects. For detail [documentation ](https://piashcse.github.io/ZodKmp/).
+Full documentation: <https://piashcse.github.io/ZodKmp/>
 
+## Platform support
 
-## Platform Support
-
-ZodKmp supports the following platforms:
-
-- Android (JVM)
-- iOS (Native)
-- JVM
-- JS (JavaScript)
-- Native (Linux, Windows, macOS)
-
+Android, iOS, JVM/desktop, JS (browser and Node.js), Wasm (browser), Linux, macOS and Windows.
 
 ## Installation
-
-### Gradle
-
-Add the following to your `build.gradle.kts`:
 
 ```kotlin
 kotlin {
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation("io.github.piashcse:zodkmp:1.3.0")
-            }
+        commonMain.dependencies {
+            implementation("io.github.piashcse:zodkmp:1.4.0")
         }
     }
 }
 ```
 
-### Version Catalog (libs.versions.toml)
+Version catalog:
 
 ```toml
 [versions]
-zodkmp = "1.3.0"
+zodkmp = "1.4.0"
 
 [libraries]
 zodkmp = { module = "io.github.piashcse:zodkmp", version.ref = "zodkmp" }
 ```
 
-
-## Table of Contents
-
-- [Features](#features)
-- [Installation](#installation)
-- [Getting Started](#getting-started)
-- [API Reference](#api-reference)
-  - [Primitives](#primitives)
-  - [Literals](#literals)
-  - [Strings](#strings)
-  - [Numbers](#numbers)
-  - [Booleans](#booleans)
-  - [Dates](#dates)
-  - [Arrays](#arrays)
-  - [Objects](#objects)
-  - [Unions](#unions)
-  - [Enums](#enums)
-  - [Tuples](#tuples)
-  - [Records](#records)
-  - [Intersections](#intersections)
-  - [Nullables](#nullables)
-  - [Optionals](#optionals)
-  - [Transformations](#transformations)
-  - [Refinements](#refinements)
-  - [Defaults](#defaults)
-- [Advanced Usage](#advanced-usage)
-- [Platform Support](#platform-support)
-- [Contributing](#contributing)
-- [License](#license)
-
-## Features
-
-- ✅ **Declarative Schema Definition** - Define validation rules upfront
-- ✅ **Compile-Time Safety** - Schemas build on Kotlin's strong type system with type-safe outputs
-- ✅ **Immutable Architecture** - Immutable schemas that return new instances
-- ✅ **Kotlin Multiplatform** - Works on Android, iOS, and other Kotlin targets
-- ✅ **Comprehensive API** - Supports all major Zod validation features
-- ✅ **Extensible** - Easy to extend with custom validations
-- ✅ **Minimal Dependencies** - Single lightweight dependency (kotlinx-datetime)
-- ✅ **Excellent Error Messages** - Detailed, customizable error reporting
-- 
-## Getting Started
-
-ZodKmp allows you to define validation schemas and use them to validate data:
+## Quick start
 
 ```kotlin
-import com.piashcse.zodkmp.Zod
+import com.piashcse.zodkmp.*
 
-// Define a schema
+data class User(val name: String, val email: String, val age: Double, val isActive: Boolean)
+
 val userSchema = Zod.objectSchema<User>({
     string("name", Zod.string().min(2))
     string("email", Zod.string().email())
-    number("age", Zod.number().min(0).max(120))
-}) { map ->
-    User(
-        name = map["name"] as String,
-        email = map["email"] as String,
-        age = (map["age"] as Number).toDouble()
-    )
-}
-
-// Use the schema
-val userData = mapOf(
-    "name" to "John Doe",
-    "email" to "john@example.com",
-    "age" to 30.0
-)
-
-val result = userSchema.safeParse(userData)
-when (result) {
-    is ZodResult.Success -> println("Valid user: ${result.data}")
-    is ZodResult.Failure -> println("Validation errors: ${result.error.errors}")
-}
-```
-
-## API Reference
-
-### Primitives
-
-#### String
-Validate string values with various constraints:
-
-```kotlin
-val stringSchema = Zod.string()
-
-// With constraints
-val constrainedString = Zod.string()
-    .min(5, "String must be at least 5 characters")
-    .max(100, "String must be at most 100 characters")
-    .length(10, "String must be exactly 10 characters")
-    .email("Must be a valid email address")
-    .url("Must be a valid URL")
-    .regex(Regex("^[A-Za-z]+$"), "Must contain only letters")
-    .startsWith("Hello", "Must start with 'Hello'")
-    .endsWith("World", "Must end with 'World'")
-    .includes("test", "Must contain 'test'")
-    .toLowerCase()
-    .toUpperCase()
-    .trim()
-```
-
-#### Number
-Validate numeric values:
-
-```kotlin
-val numberSchema = Zod.number()
-
-// With constraints
-val constrainedNumber = Zod.number()
-    .gt(0, "Must be greater than 0")
-    .gte(5, "Must be greater than or equal to 5")
-    .lt(100, "Must be less than 100")
-    .lte(50, "Must be less than or equal to 50")
-    .min(10, "Must be at least 10")
-    .max(90, "Must be at most 90")
-    .int("Must be an integer")
-    .positive("Must be positive")
-    .negative("Must be negative")
-    .nonPositive("Must be non-positive")
-    .nonNegative("Must be non-negative")
-    .multipleOf(5, "Must be a multiple of 5")
-```
-
-#### Boolean
-Validate boolean values:
-
-```kotlin
-val booleanSchema = Zod.boolean()
-```
-
-#### Date
-Validate date values:
-
-```kotlin
-val dateSchema = Zod.date()
-
-// With constraints
-val constrainedDate = Zod.date()
-    .min(LocalDateTime(2020, 1, 1, 0, 0), "Date must be after 2020")
-    .max(LocalDateTime(2030, 12, 31, 23, 59), "Date must be before 2030")
-```
-
-#### Null & Undefined
-Validate null and undefined values:
-
-```kotlin
-val nullSchema = Zod.nullType()
-val undefinedSchema = Zod.undefined()
-```
-
-### Literals
-
-Validate exact literal values:
-
-```kotlin
-val literalSchema = Zod.literal("admin")
-val numberLiteral = Zod.literal(42)
-val booleanLiteral = Zod.literal(true)
-```
-
-### Arrays
-
-Validate array values with constraints:
-
-```kotlin
-val stringArray = Zod.array(Zod.string())
-
-// With constraints
-val constrainedArray = Zod.array(Zod.string())
-    .min(2, "Array must have at least 2 elements")
-    .max(10, "Array must have at most 10 elements")
-    .length(5, "Array must have exactly 5 elements")
-    .nonempty("Array must not be empty")
-```
-
-### Objects
-
-Validate complex objects:
-
-```kotlin
-val userSchema = Zod.objectSchema<User>({
-    string("name", Zod.string().min(2))
-    string("email", Zod.string().email())
-    number("age", Zod.number().min(0).max(120))
+    number("age", Zod.number().min(0.0).max(120.0).int())
     field("isActive", Zod.boolean().default(true))
 }) { map ->
     User(
         name = map["name"] as String,
         email = map["email"] as String,
-        age = (map["age"] as Number).toDouble(),
-        isActive = map["isActive"] as? Boolean ?: true
+        age = map["age"] as Double,
+        isActive = map["isActive"] as Boolean
     )
 }
 
-// Strict objects (reject unknown keys)
-val strictUserSchema = Zod.objectSchema<User>({
-    string("name", Zod.string().min(2))
-    string("email", Zod.string().email())
-}) { map ->
-    User(
-        name = map["name"] as String,
-        email = map["email"] as String
-    )
-}.strict()
-```
-
-### Enums
-
-Validate enum values:
-
-```kotlin
-// String enums
-val roleSchema = Zod.enum("admin", "user", "guest")
-
-// Using collections
-val roles = listOf("admin", "user", "guest")
-val roleSchema = Zod.enum(roles)
-```
-
-### Unions
-
-Validate values that match any of multiple schemas:
-
-```kotlin
-val stringOrNumber = Zod.union(Zod.string(), Zod.number())
-val complexUnion = Zod.union(
-    Zod.string(),
-    Zod.number(),
-    Zod.objectSchema<Point>({
-        number("x", Zod.number())
-        number("y", Zod.number())
-    }) { map ->
-        Point(
-            x = (map["x"] as Number).toDouble(),
-            y = (map["y"] as Number).toDouble()
-        )
+when (val result = userSchema.safeParse(input)) {
+    is ZodResult.Success -> println(result.data)
+    is ZodResult.Failure -> result.error.issues.forEach { issue ->
+        println("${issue.path.renderPath()}: ${issue.message} (${issue.code})")
     }
-)
-```
-
-### Tuples
-
-Validate fixed-length arrays with specific types for each position:
-
-```kotlin
-val coordinates = Zod.tuple(listOf(Zod.number(), Zod.number()))
-
-// Usage
-val result = coordinates.safeParse(listOf(10.0, 20.0))
-```
-
-### Records
-
-Validate objects with string keys and uniform value types:
-
-```kotlin
-val stringRecord = Zod.record(Zod.string())
-val numberRecord = Zod.record(Zod.number())
-
-// Usage
-val userData = mapOf("name" to "John", "city" to "NYC")
-val result = stringRecord.safeParse(userData)
-```
-
-### Intersections
-
-Validate values that must satisfy multiple schemas:
-
-```kotlin
-val personSchema = Zod.objectSchema<Person>({
-    string("name", Zod.string())
-}) { map ->
-    Person(name = map["name"] as String)
 }
+```
 
-val employeeSchema = Zod.objectSchema<Employee>({
-    string("employeeId", Zod.string())
-}) { map ->
-    Employee(employeeId = map["employeeId"] as String)
+`parse` throws `ZodValidationException` instead of a plain `IllegalArgumentException`:
+
+```kotlin
+val user = try {
+    userSchema.parse(input)
+} catch (e: ZodValidationException) {
+    println(e.error.flatten()) // formErrors + fieldErrors
+    throw e
 }
-
-val personEmployeeSchema = Zod.intersection(personSchema, employeeSchema)
 ```
 
-### Nullables
+## API reference
 
-Mark schemas as accepting null values:
+### Primitives
 
 ```kotlin
-val nullableString = Zod.string().nullable()
-
-// Usage
-val result1 = nullableString.safeParse("hello") // Success
-val result2 = nullableString.safeParse(null)   // Success
-val result3 = nullableString.safeParse(42)       // Failure
+Zod.string()
+Zod.number()
+Zod.boolean()
+Zod.date()            // kotlinx.datetime.LocalDateTime
+Zod.long()
+Zod.nullType()        // or Zod.`null`()
+Zod.undefined()
+Zod.any()
+Zod.unknown()
+Zod.never()
+Zod.void()
 ```
 
-### Optionals
-
-Mark schemas as accepting undefined values:
+### Strings
 
 ```kotlin
-val optionalString = Zod.string().optional()
-
-// Usage
-val result1 = optionalString.safeParse("hello") // Success
-val result2 = optionalString.safeParse(null)     // Success (undefined)
+Zod.string()
+    .min(2)
+    .max(100)
+    .email()
+    .url()
+    .uuid()
+    .ipv4()
+    .ipv6()
+    .ip()
+    .emoji()
+    .cuid()
+    .cuid2()          // exactly 24 chars by default
+    .ulid()
+    .nanoid()         // exactly 21 chars by default
+    .base64()
+    .base64url()
+    .datetime()       // ISO-8601 date-time, offsets allowed, date-only rejected
+    .regex(Regex("^[A-Z]+$"))
+    .startsWith("A")
+    .endsWith("Z")
+    .includes("mid")
+    .trim()
+    .toLowerCase()
+    .toUpperCase()
+    .refine({ !it.contains(" ") }) { "must not contain spaces" }
 ```
 
-### Transformations
+Checks run in declaration order, so `min(4).trim()` validates the untrimmed value while
+`trim().min(4)` validates the trimmed value. Lengths are counted in Unicode code points.
+`.regex()` matches anywhere in the string, like Zod.
 
-Transform values during validation:
+### Numbers and coercion
 
 ```kotlin
-val uppercaseString = Zod.string().transform { it.uppercase() }
-val toString = Zod.number().transform { it.toInt().toString() }
-
-// Usage
-val result = toString.safeParse(42.5) // Success with "42"
+Zod.number()
+    .min(0.0)
+    .max(100.0)
+    .gt(0.0)
+    .gte(1.0)
+    .lt(100.0)
+    .lte(99.0)
+    .int()
+    .positive()
+    .negative()
+    .nonPositive()
+    .nonNegative()
+    .multipleOf(0.5)
+    .finite()
 ```
 
-### Refinements
-
-Add custom validation rules:
+Numeric strings are **not** accepted implicitly:
 
 ```kotlin
-val evenNumber = Zod.number().refine({ it.toInt() % 2 == 0 }) { "Number must be even" }
-val strongPassword = Zod.string().refine({ it.length >= 8 && it.any { char -> char.isDigit() } }) { "Password must be at least 8 characters with numbers" }
+Zod.number().safeParse("42")      // Failure
+Zod.coerce.number().parse("42")   // 42.0
 ```
 
-### Defaults
+Coercion is opt-in for numbers, booleans, longs and dates: `Zod.coerce.number()`,
+`Zod.coerce.boolean()`, `Zod.coerce.long()`, `Zod.coerce.date()`.
 
-Provide default values for schemas:
+### Arrays, sets, tuples and maps
 
 ```kotlin
-val stringWithDefault = Zod.string().default("unknown")
-val numberWithDefault = Zod.number().default { 0.0 }
-
-// Usage
-val result1 = stringWithDefault.safeParse(null)     // Success with "unknown"
-val result2 = stringWithDefault.safeParse("hello")  // Success with "hello"
+Zod.array(Zod.string()).min(1).max(10).unique()
+Zod.set(Zod.number()).min(1)                 // requires a Set, lists are rejected
+Zod.tuple(Zod.string(), Zod.number())        // exactly two positions
+Zod.map(Zod.string(), Zod.number())          // typed keys and values
+Zod.record(Zod.number())                     // Map<String, Double>
+Zod.record(Zod.string().min(1), Zod.number())// strict key validation
+Zod.looseRecord(Zod.string(), Zod.number())  // keys are not rejected
 ```
 
-## Advanced Usage
+Primitive arrays (`IntArray`, `DoubleArray`, ...) are accepted by `Zod.array`.
 
-### Nested Object Validation
+### Objects
 
 ```kotlin
-val addressSchema = Zod.objectSchema<Address>({
-    string("street", Zod.string().min(5))
-    string("city", Zod.string().min(2))
-    string("zipCode", Zod.string().regex(Regex("\\d{5}"))
-}) { map ->
-    Address(
-        street = map["street"] as String,
-        city = map["city"] as String,
-        zipCode = map["zipCode"] as String
-    )
-}
-
-val userWithAddressSchema = Zod.objectSchema<UserWithAddress>({
+val schema = Zod.objectSchema<User>({
     string("name", Zod.string().min(2))
+    optionalString("nickname")
     field("address", addressSchema)
-}) { map ->
-    UserWithAddress(
-        name = map["name"] as String,
-        address = map["address"] as Address
-    )
+}) { map -> /* construct User */ }
+
+schema.strict()       // reject unknown keys
+schema.strip()        // drop unknown keys (default)
+schema.passthrough()  // keep unknown keys
+
+schema.pick("name")
+schema.omit("nickname")
+schema.partial()      // all fields optional
+schema.deepPartial()  // nested objects optional too, collection constraints preserved
+schema.merge(other)   // later keys win
+schema.extend(other)
+schema and other
+```
+
+The last call to `strict`, `strip` or `passthrough` wins. Missing required properties produce a
+`REQUIRED` issue with the property path.
+
+### Unions and intersections
+
+```kotlin
+val id = Zod.union(Zod.string(), Zod.number())
+
+val a = Zod.objectSchema<Map<String, Any?>>({ string("a") }) { it }
+val b = Zod.objectSchema<Map<String, Any?>>({ string("b") }) { it }
+val merged = Zod.intersection(a, b) // single merged object schema
+```
+
+For non-object schemas, `Zod.intersection(left, right)` returns a `Pair<T, U>`.
+
+### Discriminated unions
+
+```kotlin
+sealed interface Animal {
+    data class Dog(val name: String, val goodBoy: Boolean) : Animal
+    data class Cat(val name: String, val lives: Double) : Animal
+}
+
+val dog = Zod.objectSchema<Animal.Dog>({
+    field("type", Zod.literal("dog"))
+    string("name")
+    boolean("goodBoy")
+}) { map -> Animal.Dog(map["name"] as String, map["goodBoy"] as Boolean) }
+
+val cat = Zod.objectSchema<Animal.Cat>({
+    field("type", Zod.literal("cat"))
+    string("name")
+    number("lives")
+}) { map -> Animal.Cat(map["name"] as String, map["lives"] as Double) }
+
+val animal = Zod.discriminatedUnion<Animal>("type", dog, cat)
+```
+
+Every option must declare a `ZodLiteral` for the discriminator, and discriminator values must
+be unique. Unknown discriminators fail immediately.
+
+### Enums and literals
+
+```kotlin
+Zod.enum("admin", "user", "guest")
+Zod.enum(listOf("admin", "user"))
+Zod.enum(Role::class)              // accepts enum names as strings
+Zod.literal("admin")
+Zod.literal(1, 2, 3)               // union of literals
+```
+
+Numeric literals match across Kotlin numeric types (`Zod.literal(1)` accepts `1L`).
+
+### Optional, nullable, defaults
+
+```kotlin
+Zod.string().optional()            // missing property or null -> null
+Zod.string().nullable()            // null allowed, missing property still required
+Zod.string().default("unknown")    // default for missing properties
+Zod.string().optional().default("fallback") // explicit null stays null
+```
+
+### Transforms, refinements and pipes
+
+```kotlin
+Zod.string().trim().transform { it.uppercase() }
+Zod.number().refine({ it % 2.0 == 0.0 }) { "must be even" } // keeps ZodNumber type
+Zod.string().refineSuspend({ api.isAvailable(it) })          // use safeParseSuspend
+Zod.string().pipe(Zod.coerce.number())
+Zod.preprocess({ (it as? String)?.trim() }, Zod.string().min(1))
+Zod.string().describe("Display name")
+```
+
+`refine` on string, number, boolean, array, set, object and date schemas returns the same
+concrete schema type, so further checks can be chained.
+
+### Recursive schemas
+
+```kotlin
+lateinit var node: ZodSchema<Map<String, Any?>>
+node = Zod.lazy {
+    Zod.objectSchema<Map<String, Any?>>({
+        string("name")
+        field("children", Zod.array(node))
+    }) { it }
 }
 ```
 
-### Conditional Validation
+### JSON interop
 
 ```kotlin
-// Custom validation based on other fields
-val conditionalSchema = Zod.objectSchema<Conditional>({
-    string("type", Zod.enum("email", "phone"))
-    string("value", Zod.string())
-}) { map ->
-    Conditional(
-        type = map["type"] as String,
-        value = map["value"] as String
-    )
-}.refine({ obj ->
-    when (obj.type) {
-        "email" -> obj.value.contains("@")
-        "phone" -> obj.value.all { it.isDigit() || it == '-' }
-        else -> true
-    }
-}) { "Value must match the selected type" }
+val json = buildJsonObject {
+    put("name", "Ada")
+    put("age", 30)
+}
+
+val result = userSchema.safeParseJson(json) // JsonObject/JsonArray become plain Kotlin values
 ```
 
-### Error Handling
-
-ZodKmp provides detailed error information:
+### Errors and results
 
 ```kotlin
-val userSchema = Zod.objectSchema<User>({
-    string("name", Zod.string().min(2))
-    string("email", Zod.string().email())
-}) { map ->
-    User(
-        name = map["name"] as String,
-        email = map["email"] as String
-    )
+val result = schema.safeParse(input)
+
+if (result is ZodResult.Failure) {
+    result.error.issues.forEach { issue ->
+        println("${issue.path.renderPath()}: ${issue.message} [${issue.code}]")
+    }
+    result.error.errors       // List<String>, path-prefixed messages
+    result.error.flatten()    // formErrors / fieldErrors
 }
 
-val result = userSchema.safeParse(mapOf("name" to "A", "email" to "invalid-email"))
+schema.safeParse(input).getOrNull()
+schema.safeParse(input).getOrThrow()
+schema.safeParse(input).map { /* ... */ }
+schema.safeParse(input).fold(onSuccess = { it }, onFailure = { it.errors.size })
+```
 
-when (result) {
-    is ZodResult.Success -> {
-        println("Valid data: ${result.data}")
-    }
-    is ZodResult.Failure -> {
-        result.error.errors.forEach { error ->
-            println("Validation error: $error")
-        }
-    }
-}
+Paths are structured (`ZodPathSegment.Property` / `ZodPathSegment.Index`) and render as
+`address.city` or `tags[1]`.
+
+## Building
+
+The build requires JDK 21. Gradle 9.4.1 provisions the toolchain automatically through the
+Foojay resolver.
+
+```bash
+./gradlew :zodkmp:desktopTest     # common tests on the JVM
+./gradlew :zodkmp:apiCheck        # binary compatibility check
+./gradlew :zodkmp:apiDump         # update api/*.api after intentional API changes
+./gradlew :zodkmp:dokkaGenerateHtml
+./gradlew :zodkmp:koverHtmlReport
 ```
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 👨 Developed By
-
-<a href="https://twitter.com/piashcse" target="_blank">
-  <img src="https://avatars.githubusercontent.com/piashcse" width="90" align="left">
-</a>
-
-**Mehedi Hassan Piash**
-
-[![Twitter](https://img.shields.io/badge/-Twitter-1DA1F2?logo=x&logoColor=white&style=for-the-badge)](https://twitter.com/piashcse)
-[![Medium](https://img.shields.io/badge/-Medium-00AB6C?logo=medium&logoColor=white&style=for-the-badge)](https://medium.com/@piashcse)
-[![Linkedin](https://img.shields.io/badge/-LinkedIn-0077B5?logo=linkedin&logoColor=white&style=for-the-badge)](https://www.linkedin.com/in/piashcse/)
-[![Web](https://img.shields.io/badge/-Web-0073E6?logo=appveyor&logoColor=white&style=for-the-badge)](https://piashcse.github.io/)
-[![Blog](https://img.shields.io/badge/-Blog-0077B5?logo=readme&logoColor=white&style=for-the-badge)](https://piashcse.blogspot.com)
+See [docs/contributing.md](docs/contributing.md). Please run the tests and `apiDump` before
+opening a pull request.
 
 ## License
 
-```
-MIT License
-
-Copyright (c) 2025 Mehedi Hassan Piash
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
+MIT — see [LICENSE](LICENSE). Copyright (c) 2025 Mehedi Hassan Piash.

@@ -4,52 +4,97 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to release (e.g., 1.0.0)'
+        description: 'Version to release (e.g., 1.4.0)'
         required: true
-        default: '1.0.0'
       release_title:
         description: 'Release title'
         required: true
         default: 'Release'
       release_body:
-        description: 'Release description'
+        description: 'Release notes (leave empty to auto-generate)'
         required: false
-        default: 'Automated release'
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 jobs:
-  create-release:
+  release:
+    name: Tag and create GitHub release
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
     steps:
-      - name: Checkout
+      - name: Check out code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Update library version in gradle.properties
+      - name: Update version in gradle.properties
         run: |
-          sed -i.bak "s/library.version=.*/library.version=${{ github.event.inputs.version }}/" gradle.properties
-          cat gradle.properties
+          sed -i "s/^library.version=.*/library.version=${{ github.event.inputs.version }}/" gradle.properties
+          grep '^library.version=' gradle.properties
 
       - name: Configure Git
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          
-      - name: Commit version changes
+
+      - name: Commit version and create tag
+        id: tag
         run: |
+          TAG="v${{ github.event.inputs.version }}"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists" >&2
+            exit 1
+          fi
           git add gradle.properties
-          git commit -m "Bump version to ${{ github.event.inputs.version }}"
-          
-      - name: Create tag and push
-        run: |
-          git tag v${{ github.event.inputs.version }}
-          git push origin main --tags
-          
-      - name: Create GitHub Release
-        uses: actions/create-release@v1
+          git commit -m "chore: release $TAG"
+          git tag "$TAG"
+          git push origin HEAD:main --tags
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.tag.outputs.tag }}
+          TITLE: ${{ github.event.inputs.release_title }}
+          BODY: ${{ github.event.inputs.release_body }}
+        run: |
+          if [ -n "$BODY" ]; then
+            gh release create "$TAG" --title "$TITLE $TAG" --notes "$BODY"
+          else
+            gh release create "$TAG" --title "$TITLE $TAG" --generate-notes
+          fi
+
+  publish:
+    name: Publish release to Maven Central
+    needs: release
+    runs-on: macos-14
+    steps:
+      - name: Check out release tag
+        uses: actions/checkout@v4
         with:
-          tag_name: v${{ github.event.inputs.version }}
-          release_name: ${{ github.event.inputs.release_title }} v${{ github.event.inputs.version }}
-          body: ${{ github.event.inputs.release_body }}
-          draft: false
-          prerelease: false
+          ref: ${{ needs.release.outputs.tag }}
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Publish to Maven Central
+        run: ./gradlew publishToMavenCentral --no-configuration-cache --stacktrace --console=plain
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY_CONTENTS }}

@@ -1,0 +1,39 @@
+name: Bug report
+description: Report a defect in ZodKmp
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Please include a minimal reproduction and the target you used.
+  - type: input
+    id: version
+    attributes:
+      label: ZodKmp version
+      placeholder: 1.4.0
+    validations:
+      required: true
+  - type: dropdown
+    id: target
+    attributes:
+      label: Target
+      options: [JVM/Android, iOS, JS, Wasm, Linux, macOS, Windows]
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: Include the schema, input, and verification output if possible.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      render: kotlin
