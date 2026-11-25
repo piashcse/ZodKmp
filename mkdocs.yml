@@ -1,4 +1,6 @@
 site_name: ZodKmp
+site_url: https://piashcse.github.io/ZodKmp/
+site_author: Mehedi Hassan Piash
 site_description: ZodKmp is a Kotlin Multiplatform implementation of the popular Zod TypeScript validation library. It provides a declarative, type-safe way to validate data in your Kotlin Multiplatform projects.
 
 theme:
