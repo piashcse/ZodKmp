@@ -25,8 +25,6 @@ public class ZodMap<K, V> private constructor(
         validation: (Map<K, V>) -> ZodIssue?,
     ): ZodMap<K, V> = ZodMap(keySchema, valueSchema, validations + validation, hints + newHints)
 
-    internal fun keySchemaRef(): ZodSchema<K> = keySchema
-
     internal fun valueSchemaRef(): ZodSchema<V> = valueSchema
 
     internal fun jsonHints(): Map<String, JsonElement> = hints

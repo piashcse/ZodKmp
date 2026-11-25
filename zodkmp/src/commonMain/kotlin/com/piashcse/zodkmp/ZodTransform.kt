@@ -37,7 +37,13 @@ public class ZodTransform<I, O> internal constructor(
             ZodResult.Success(transform(value))
         } catch (e: Exception) {
             ZodResult.Failure(
-                ZodError("Transformation failed: ${e::class.simpleName}: ${e.message}"),
+                ZodError(
+                    ZodIssue(
+                        code = ZodIssueCode.CUSTOM,
+                        message = "Transformation failed: ${e::class.simpleName}: ${e.message}",
+                        cause = e,
+                    ),
+                ),
             )
         }
 }

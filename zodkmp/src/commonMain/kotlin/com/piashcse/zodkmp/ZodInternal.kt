@@ -26,8 +26,6 @@ internal fun zodEquals(
     return left == right
 }
 
-internal fun <T> ZodResult<T>.errorOrNull(): ZodError? = (this as? ZodResult.Failure)?.error
-
 internal fun Any?.asListOrNull(): List<*>? =
     when (this) {
         is List<*> -> this

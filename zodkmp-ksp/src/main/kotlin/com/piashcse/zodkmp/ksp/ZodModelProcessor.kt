@@ -147,7 +147,7 @@ public class ZodModelProcessor(
                 when (qualified) {
                     "kotlin.String" -> "string(\"$name\", $effectiveSchema)"
                     "kotlin.Boolean" -> "boolean(\"$name\", $effectiveSchema)"
-                    "kotlin.Int", "kotlin.Long", "kotlin.Double", "kotlin.Float" -> "number(\"$name\", $effectiveSchema)"
+                    "kotlin.Int", "kotlin.Double", "kotlin.Float" -> "number(\"$name\", $effectiveSchema)"
                     else -> "field(\"$name\", $effectiveSchema)"
                 }
             }

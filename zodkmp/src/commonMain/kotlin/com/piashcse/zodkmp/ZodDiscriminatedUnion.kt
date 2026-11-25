@@ -12,8 +12,6 @@ public class ZodDiscriminatedUnion<T> private constructor(
     private val discriminator: String,
     private val options: List<ZodObjectSchema<*>>,
 ) : ZodSchema<T> {
-    internal fun discriminatorKey(): String = discriminator
-
     internal fun optionSchemas(): List<ZodObjectSchema<*>> = options
 
     public companion object {

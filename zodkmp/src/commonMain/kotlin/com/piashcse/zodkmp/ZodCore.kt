@@ -200,11 +200,6 @@ internal fun issue(
     message: String,
 ): ZodIssue = ZodIssue(code, message)
 
-/**
- * Compatibility factory for the historical `List<String>` error shape.
- */
-internal fun zodError(errors: List<String>): ZodError = ZodError(errors.map { ZodIssue(ZodIssueCode.CUSTOM, it) })
-
 internal fun List<ZodIssue>.prepend(segment: ZodPathSegment): List<ZodIssue> = prepend(listOf(segment))
 
 internal fun List<ZodIssue>.prepend(segments: List<ZodPathSegment>): List<ZodIssue> {

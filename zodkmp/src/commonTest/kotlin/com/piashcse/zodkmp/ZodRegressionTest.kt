@@ -12,7 +12,7 @@ import kotlin.test.assertTrue
  */
 class ZodRegressionTest {
     @Test
-    fun `url accepts query strings, ports, localhost and mixed case`() {
+    fun `url accepts query strings ports localhost and mixed case`() {
         val schema = Zod.string().url()
         listOf(
             "https://example.com?q=1&lang=en",
@@ -247,7 +247,7 @@ class ZodRegressionTest {
     }
 
     @Test
-    fun `suspend refinements compose through objects, arrays and wrappers`() =
+    fun `suspend refinements compose through objects arrays and wrappers`() =
         runTest {
             val nested =
                 Zod.objectSchema<Map<String, Any?>>({

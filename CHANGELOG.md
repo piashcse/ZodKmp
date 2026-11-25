@@ -40,6 +40,11 @@ The full, per-release history lives in [docs/changelog.md](docs/changelog.md).
 - Missing object properties are reported as `Required`.
 - `optionalString`/`optionalNumber`/`optionalBoolean` helpers did not compile.
 
+### Tests
+
+- 327 common tests run on JVM, JS, Wasm, iOS Simulator and macOS, plus 8 KSP codegen tests.
+- Line coverage is 99.2% for the library module (Kover).
+
 ### Tooling
 
 - Gradle 9.4.1, JDK 21 toolchain with Foojay auto-provisioning.

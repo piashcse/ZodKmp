@@ -29,7 +29,7 @@ class ZodJsonSchemaTest {
     }
 
     @Test
-    fun `numbers, integers and multiples are described`() {
+    fun `numbers integers and multiples are described`() {
         val json =
             Zod
                 .number()
@@ -39,9 +39,9 @@ class ZodJsonSchemaTest {
                 .multipleOf(5.0)
                 .toJsonSchema()
         assertEquals("integer", json["type"]!!.jsonPrimitive.content)
-        assertEquals("0.0", json["minimum"]!!.jsonPrimitive.content)
-        assertEquals("100.0", json["maximum"]!!.jsonPrimitive.content)
-        assertEquals("5.0", json["multipleOf"]!!.jsonPrimitive.content)
+        assertEquals(0.0, json["minimum"]!!.jsonPrimitive.content.toDouble())
+        assertEquals(100.0, json["maximum"]!!.jsonPrimitive.content.toDouble())
+        assertEquals(5.0, json["multipleOf"]!!.jsonPrimitive.content.toDouble())
     }
 
     @Test

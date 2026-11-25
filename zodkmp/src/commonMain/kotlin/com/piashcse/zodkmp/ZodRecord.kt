@@ -15,11 +15,7 @@ public class ZodRecord<T> private constructor(
     private val valueSchema: ZodSchema<T>,
     private val strict: Boolean,
 ) : ZodSchema<Map<String, T>> {
-    internal fun key(): ZodSchema<String>? = keySchema
-
     internal fun value(): ZodSchema<T> = valueSchema
-
-    internal fun isStrict(): Boolean = strict
 
     public companion object {
         public fun <T> schema(valueSchema: ZodSchema<T>): ZodRecord<T> = ZodRecord(null, valueSchema, false)

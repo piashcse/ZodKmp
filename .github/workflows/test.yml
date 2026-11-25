@@ -89,11 +89,13 @@ jobs:
             :codegen-test:jvmTest \
             --stacktrace --console=plain
 
-      - name: Compile remaining native targets
+      - name: Compile remaining native and Android targets
         run: |
           ./gradlew \
             :zodkmp:compileKotlinLinuxArm64 \
             :zodkmp:compileKotlinMingwX64 \
+            :zodkmp:compileDebugKotlinAndroid \
+            :zodkmp:compileReleaseKotlinAndroid \
             --stacktrace --console=plain
 
       - name: Publish to Maven Local (smoke test)
@@ -108,3 +110,22 @@ jobs:
             zodkmp/build/reports/tests/**
             zodkmp/build/test-results/**
             zodkmp/build/reports/kover/**
+
+  test-windows:
+    name: Test (Windows - MinGW native)
+    runs-on: windows-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Run MinGW tests
+        run: ./gradlew.bat :zodkmp:mingwX64Test --stacktrace --console=plain
