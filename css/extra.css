@@ -1,0 +1,13 @@
+/* Custom CSS for ZodKmp documentation */
+
+/* Custom styling for the documentation site */
+.md-typeset__table {
+  width: 100%;
+  display: block;
+}
+
+.md-typeset table:not([class]) {
+  display: table;
+}
+
+/* Additional customizations can be added here */
