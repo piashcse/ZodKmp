@@ -13,14 +13,6 @@ class ZodCatch<T> internal constructor(
             ZodCatch(schema, fallback)
     }
 
-    override fun parse(input: Any?): T {
-        val result = schema.safeParse(input)
-        return when (result) {
-            is ZodResult.Success -> result.data
-            is ZodResult.Failure -> fallback(publicInput(input))
-        }
-    }
-
     override fun safeParse(input: Any?): ZodResult<T> {
         val result = schema.safeParse(input)
         return when (result) {

@@ -1,71 +1,62 @@
 package com.piashcse.zodkmp
 
 /**
- * Schema for validating intersection types (value must satisfy both schemas)
+ * Schema for validating intersection types (a value must satisfy both schemas).
+ *
+ * For two object schemas prefer [Zod.intersection]'s object overload, which merges the
+ * shapes into a single object schema. This generic schema returns both parsed values.
  */
 class ZodIntersection<T, U> private constructor(
     private val leftSchema: ZodSchema<T>,
-    private val rightSchema: ZodSchema<U>,
-    private val validations: List<(Pair<T, U>) -> ZodError?>
+    private val rightSchema: ZodSchema<U>
 ) : ZodSchema<Pair<T, U>> {
     companion object {
-        fun <T, U> schema(leftSchema: ZodSchema<T>, rightSchema: ZodSchema<U>): ZodIntersection<T, U> 
-            = ZodIntersection(leftSchema, rightSchema, emptyList())
+        fun <T, U> schema(leftSchema: ZodSchema<T>, rightSchema: ZodSchema<U>): ZodIntersection<T, U> =
+            ZodIntersection(leftSchema, rightSchema)
     }
-    
-    override fun parse(input: Any?): Pair<T, U> {
-        val result = safeParse(input)
-        return when (result) {
-            is ZodResult.Success -> result.data
-            is ZodResult.Failure -> throw IllegalArgumentException("Validation failed: ${result.error.errors.joinToString(", ")}")
-        }
-    }
-    
+
     override fun safeParse(input: Any?): ZodResult<Pair<T, U>> {
-        // Parse with left schema
         val leftResult = leftSchema.safeParse(input)
-        if (leftResult is ZodResult.Failure) {
-            return ZodResult.Failure(ZodError("Left schema validation failed: ${leftResult.error.errors.joinToString(", ")}"))
-        }
-        
-        // Parse with right schema
         val rightResult = rightSchema.safeParse(input)
-        if (rightResult is ZodResult.Failure) {
-            return ZodResult.Failure(ZodError("Right schema validation failed: ${rightResult.error.errors.joinToString(", ")}"))
-        }
-        
-        @Suppress("UNCHECKED_CAST")
-        val pairResult = Pair((leftResult as ZodResult.Success<T>).data, (rightResult as ZodResult.Success<U>).data)
-        
-        // Apply intersection-level validations
-        for (validation in validations) {
-            val error = validation(pairResult)
-            if (error != null) {
-                return ZodResult.Failure(error)
-            }
-        }
-        
-        return ZodResult.Success(pairResult)
+        return combine(leftResult, rightResult)
     }
 
     override suspend fun safeParseSuspend(input: Any?): ZodResult<Pair<T, U>> {
         val leftResult = leftSchema.safeParseSuspend(input)
-        if (leftResult is ZodResult.Failure) {
-            return ZodResult.Failure(ZodError("Left schema validation failed: ${leftResult.error.errors.joinToString(", ")}"))
-        }
-
         val rightResult = rightSchema.safeParseSuspend(input)
+        return combine(leftResult, rightResult)
+    }
+
+    private fun combine(
+        leftResult: ZodResult<T>,
+        rightResult: ZodResult<U>
+    ): ZodResult<Pair<T, U>> {
+        val issues = mutableListOf<ZodIssue>()
+        if (leftResult is ZodResult.Failure) {
+            issues.add(
+                ZodIssue(
+                    ZodIssueCode.INVALID_INTERSECTION,
+                    "Left schema validation failed: ${leftResult.error.errors.joinToString(", ")}"
+                )
+            )
+        }
         if (rightResult is ZodResult.Failure) {
-            return ZodResult.Failure(ZodError("Right schema validation failed: ${rightResult.error.errors.joinToString(", ")}"))
+            issues.add(
+                ZodIssue(
+                    ZodIssueCode.INVALID_INTERSECTION,
+                    "Right schema validation failed: ${rightResult.error.errors.joinToString(", ")}"
+                )
+            )
+        }
+        if (issues.isNotEmpty()) {
+            return ZodResult.Failure(ZodError(issues))
         }
 
         @Suppress("UNCHECKED_CAST")
-        val pairResult = Pair((leftResult as ZodResult.Success<T>).data, (rightResult as ZodResult.Success<U>).data)
-
-        for (validation in validations) {
-            validation(pairResult)?.let { return ZodResult.Failure(it) }
-        }
-
-        return ZodResult.Success(pairResult)
+        val pair = Pair(
+            (leftResult as ZodResult.Success<T>).data,
+            (rightResult as ZodResult.Success<U>).data
+        )
+        return ZodResult.Success(pair)
     }
 }

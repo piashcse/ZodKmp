@@ -8,7 +8,7 @@ package com.piashcse.zodkmp
  */
 class ZodSet<T> private constructor(
     val elementSchema: ZodSchema<T>,
-    private val validations: List<(Set<T>) -> ZodError?>
+    private val validations: List<(Set<T>) -> ZodIssue?>
 ) : ZodSchema<Set<T>> {
     companion object {
         fun <T> schema(elementSchema: ZodSchema<T>): ZodSet<T> = ZodSet(elementSchema, emptyList())
@@ -16,77 +16,74 @@ class ZodSet<T> private constructor(
 
     @Suppress("UNCHECKED_CAST")
     internal fun <R> withElement(elementSchema: ZodSchema<R>): ZodSet<R> =
-        ZodSet(elementSchema, validations as List<(Set<R>) -> ZodError?>)
+        ZodSet(elementSchema, validations as List<(Set<R>) -> ZodIssue?>)
 
-    private fun withValidation(validation: (Set<T>) -> ZodError?): ZodSet<T> =
+    private fun withValidation(validation: (Set<T>) -> ZodIssue?): ZodSet<T> =
         ZodSet(elementSchema, validations + validation)
 
     fun min(minSize: Int, message: String = "Set must contain at least $minSize element(s)"): ZodSet<T> =
-        withValidation { value -> if (value.size < minSize) ZodError(message) else null }
+        withValidation { value -> if (value.size < minSize) issue(ZodIssueCode.TOO_SMALL, message) else null }
 
     fun max(maxSize: Int, message: String = "Set must contain at most $maxSize element(s)"): ZodSet<T> =
-        withValidation { value -> if (value.size > maxSize) ZodError(message) else null }
+        withValidation { value -> if (value.size > maxSize) issue(ZodIssueCode.TOO_BIG, message) else null }
 
     fun nonEmpty(message: String = "Set cannot be empty"): ZodSet<T> =
-        withValidation { value -> if (value.isEmpty()) ZodError(message) else null }
+        withValidation { value -> if (value.isEmpty()) issue(ZodIssueCode.TOO_SMALL, message) else null }
 
-    override fun parse(input: Any?): Set<T> {
-        val result = safeParse(input)
-        return when (result) {
-            is ZodResult.Success -> result.data
-            is ZodResult.Failure -> throw IllegalArgumentException("Validation failed: ${result.error.errors.joinToString(", ")}")
-        }
-    }
+    fun refine(predicate: (Set<T>) -> Boolean, message: (Set<T>) -> String = { "Invalid value: $it" }): ZodSet<T> =
+        withValidation { value -> if (predicate(value)) null else issue(ZodIssueCode.CUSTOM, message(value)) }
 
     override fun safeParse(input: Any?): ZodResult<Set<T>> {
         val setInput = input as? Set<*>
-            ?: return ZodResult.Failure(ZodError("Expected set, received ${input.typeName()}"))
+            ?: return ZodResult.Failure(typeError("set", input))
 
         val parsedElements = mutableSetOf<T>()
-        val errors = mutableListOf<String>()
+        val issues = mutableListOf<ZodIssue>()
 
-        for (element in setInput) {
-            val elementResult = elementSchema.safeParse(element)
-            when (elementResult) {
+        for ((index, element) in setInput.withIndex()) {
+            when (val elementResult = elementSchema.safeParse(element)) {
                 is ZodResult.Success -> parsedElements.add(elementResult.data)
-                is ZodResult.Failure -> errors.addAll(elementResult.error.errors)
+                is ZodResult.Failure -> issues.addAll(
+                    elementResult.error.issues.prepend(ZodPathSegment.Index(index))
+                )
             }
         }
 
-        if (errors.isNotEmpty()) {
-            return ZodResult.Failure(ZodError(errors))
+        if (issues.isNotEmpty()) {
+            return ZodResult.Failure(ZodError(issues))
         }
 
-        for (validation in validations) {
-            validation(parsedElements)?.let { return ZodResult.Failure(it) }
-        }
-
-        return ZodResult.Success(parsedElements)
+        return applyValidations(parsedElements)
     }
 
     override suspend fun safeParseSuspend(input: Any?): ZodResult<Set<T>> {
         val setInput = input as? Set<*>
-            ?: return ZodResult.Failure(ZodError("Expected set, received ${input.typeName()}"))
+            ?: return ZodResult.Failure(typeError("set", input))
 
         val parsedElements = mutableSetOf<T>()
-        val errors = mutableListOf<String>()
+        val issues = mutableListOf<ZodIssue>()
 
-        for (element in setInput) {
-            val elementResult = elementSchema.safeParseSuspend(element)
-            when (elementResult) {
+        for ((index, element) in setInput.withIndex()) {
+            when (val elementResult = elementSchema.safeParseSuspend(element)) {
                 is ZodResult.Success -> parsedElements.add(elementResult.data)
-                is ZodResult.Failure -> errors.addAll(elementResult.error.errors)
+                is ZodResult.Failure -> issues.addAll(
+                    elementResult.error.issues.prepend(ZodPathSegment.Index(index))
+                )
             }
         }
 
-        if (errors.isNotEmpty()) {
-            return ZodResult.Failure(ZodError(errors))
+        if (issues.isNotEmpty()) {
+            return ZodResult.Failure(ZodError(issues))
         }
 
+        return applyValidations(parsedElements)
+    }
+
+    private fun applyValidations(elements: Set<T>): ZodResult<Set<T>> {
+        val issues = mutableListOf<ZodIssue>()
         for (validation in validations) {
-            validation(parsedElements)?.let { return ZodResult.Failure(it) }
+            validation(elements)?.let { issues.add(it) }
         }
-
-        return ZodResult.Success(parsedElements)
+        return if (issues.isEmpty()) ZodResult.Success(elements) else ZodResult.Failure(ZodError(issues))
     }
 }

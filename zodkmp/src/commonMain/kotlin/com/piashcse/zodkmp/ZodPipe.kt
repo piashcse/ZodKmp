@@ -13,14 +13,6 @@ class ZodPipe<T, R> internal constructor(
             ZodPipe(first, second)
     }
     
-    override fun parse(input: Any?): R {
-        val result = safeParse(input)
-        return when (result) {
-            is ZodResult.Success -> result.data
-            is ZodResult.Failure -> throw IllegalArgumentException("Validation failed: ${result.error.errors.joinToString(", ")}")
-        }
-    }
-    
     override fun safeParse(input: Any?): ZodResult<R> {
         val firstResult = first.safeParse(input)
         if (firstResult is ZodResult.Failure) {

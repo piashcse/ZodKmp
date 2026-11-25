@@ -3,52 +3,6 @@ package com.piashcse.zodkmp
 import kotlinx.datetime.LocalDateTime
 
 /**
- * Base interface for all Zod schemas.
- */
-interface ZodSchema<T> {
-    fun parse(input: Any?): T
-    fun safeParse(input: Any?): ZodResult<T>
-
-    /**
-     * Suspended version of [safeParse]. Defaults to [safeParse] for schemas without
-     * suspend refinements; schemas with async refinements override this.
-     */
-    suspend fun safeParseSuspend(input: Any?): ZodResult<T> = safeParse(input)
-
-    /**
-     * Suspended version of [parse]. Defaults to [parse] for schemas without
-     * suspend refinements; schemas with async refinements override this.
-     */
-    suspend fun parseSuspend(input: Any?): T {
-        val result = safeParseSuspend(input)
-        return when (result) {
-            is ZodResult.Success -> result.data
-            is ZodResult.Failure -> throw IllegalArgumentException("Validation failed: ${result.error.errors.joinToString(", ")}")
-        }
-    }
-}
-
-/**
- * Result class for safe parsing operations.
- */
-sealed class ZodResult<out T> {
-    data class Success<T>(val data: T) : ZodResult<T>()
-    data class Failure(val error: ZodError) : ZodResult<Nothing>()
-}
-
-/**
- * Error class containing validation errors.
- */
-data class ZodError(
-    val errors: List<String> = emptyList()
-) {
-    constructor(error: String) : this(listOf(error))
-
-    fun addError(error: String): ZodError = ZodError(errors + error)
-    fun addErrors(errors: List<String>): ZodError = ZodError(this.errors + errors)
-}
-
-/**
  * Schema for validating strings.
  *
  * Checks are stored and executed in declaration order, so transforms and validations
@@ -61,7 +15,7 @@ class ZodString private constructor(
 
     private sealed interface Operation {
         class Transform(val transform: (String) -> String) : Operation
-        class Validate(val validate: (String) -> String?) : Operation
+        class Validate(val validate: (String) -> ZodIssue?) : Operation
     }
 
     companion object {
@@ -98,11 +52,9 @@ class ZodString private constructor(
             val authority = if (authorityEnd == -1) rest else rest.substring(0, authorityEnd)
             if (authority.isEmpty()) return false
 
-            // Drop userinfo.
             val hostPort = authority.substringAfterLast('@')
             if (hostPort.isEmpty()) return false
 
-            // IPv6 literal: [::1]:8080
             if (hostPort.startsWith("[")) {
                 val closing = hostPort.indexOf(']')
                 if (closing <= 1) return false
@@ -125,9 +77,6 @@ class ZodString private constructor(
             return true
         }
 
-        /**
-         * Accepts ISO-8601 date-times (with or without an offset) but rejects date-only input.
-         */
         private fun isValidDateTime(value: String): Boolean {
             if (!value.contains('T')) return false
             if (runCatching { LocalDateTime.parse(value) }.isSuccess) return true
@@ -150,17 +99,25 @@ class ZodString private constructor(
     private fun transform(transform: (String) -> String): ZodString =
         withOperation(Operation.Transform(transform))
 
-    private fun validate(validate: (String) -> String?): ZodString =
-        withOperation(Operation.Validate(validate))
+    private fun validate(
+        code: ZodIssueCode = ZodIssueCode.INVALID_FORMAT,
+        validate: (String) -> String?
+    ): ZodString = withOperation(Operation.Validate { value -> validate(value)?.let { issue(code, it) } })
 
     fun min(length: Int, message: String = "String must be at least $length characters long"): ZodString =
-        validate { if (it.codePointLength() < length) message else null }
+        validate(ZodIssueCode.TOO_SMALL) { if (it.codePointLength() < length) message else null }
 
     fun max(length: Int, message: String = "String must be at most $length characters long"): ZodString =
-        validate { if (it.codePointLength() > length) message else null }
+        validate(ZodIssueCode.TOO_BIG) { if (it.codePointLength() > length) message else null }
 
     fun length(exact: Int, message: String = "String must be exactly $exact characters long"): ZodString =
-        validate { if (it.codePointLength() != exact) message else null }
+        validate(ZodIssueCode.TOO_SMALL) {
+            when {
+                it.codePointLength() < exact -> message
+                it.codePointLength() > exact -> "String must be exactly $exact characters long"
+                else -> null
+            }
+        }
 
     fun email(message: String = "Invalid email format"): ZodString =
         validate { if (EMAIL_REGEX.matches(it)) null else message }
@@ -205,10 +162,6 @@ class ZodString private constructor(
     fun cuid(message: String = "Invalid CUID"): ZodString =
         validate { if (CUID_REGEX.matches(it)) null else message }
 
-    /**
-     * Validates a CUID2 identifier: lowercase alphanumeric, starting with a letter,
-     * exactly [length] characters long (24 by default, matching Zod).
-     */
     fun cuid2(length: Int = 24, message: String = "Invalid CUID2"): ZodString =
         validate {
             val valid = it.length == length &&
@@ -221,10 +174,6 @@ class ZodString private constructor(
     fun ulid(message: String = "Invalid ULID"): ZodString =
         validate { if (ULID_REGEX.matches(it)) null else message }
 
-    /**
-     * Validates a Nano ID: URL-safe characters, exactly [length] characters
-     * (21 by default, matching Zod).
-     */
     fun nanoid(length: Int = 21, message: String = "Invalid nanoid"): ZodString =
         validate { if (it.length == length && NANOID_REGEX.matches(it)) null else message }
 
@@ -237,38 +186,39 @@ class ZodString private constructor(
     fun datetime(message: String = "Invalid datetime format"): ZodString =
         validate { if (isValidDateTime(it)) null else message }
 
+    /**
+     * Adds a custom refinement while preserving the [ZodString] type, so further string
+     * checks can be chained after it.
+     */
+    fun refine(predicate: (String) -> Boolean, message: (String) -> String = { "Invalid value: $it" }): ZodString =
+        withOperation(Operation.Validate { value ->
+            if (predicate(value)) null else issue(ZodIssueCode.CUSTOM, message(value))
+        })
+
     fun toLowerCase(): ZodString = transform { it.lowercase() }
 
     fun toUpperCase(): ZodString = transform { it.uppercase() }
 
     fun trim(): ZodString = transform { it.trim() }
 
-    override fun parse(input: Any?): String {
-        val result = safeParse(input)
-        return when (result) {
-            is ZodResult.Success -> result.data
-            is ZodResult.Failure -> throw IllegalArgumentException("Validation failed: ${result.error.errors.joinToString(", ")}")
-        }
-    }
-
     override fun safeParse(input: Any?): ZodResult<String> {
         val stringInput = input as? String
-            ?: return ZodResult.Failure(ZodError("Expected string, received ${input.typeName()}"))
+            ?: return ZodResult.Failure(typeError("string", input))
 
         var value = stringInput
-        val errors = mutableListOf<String>()
+        val issues = mutableListOf<ZodIssue>()
 
         for (operation in operations) {
             when (operation) {
                 is Operation.Transform -> value = operation.transform(value)
-                is Operation.Validate -> operation.validate(value)?.let { errors.add(it) }
+                is Operation.Validate -> operation.validate(value)?.let { issues.add(it) }
             }
         }
 
-        return if (errors.isEmpty()) {
+        return if (issues.isEmpty()) {
             ZodResult.Success(value)
         } else {
-            ZodResult.Failure(ZodError(errors))
+            ZodResult.Failure(ZodError(issues))
         }
     }
 }
@@ -311,7 +261,6 @@ private fun String.isEmojiString(): Boolean {
                 index = next + 1
                 continue
             }
-            // A bare digit, '#' or '*' is not an emoji.
             if (!isEmojiCodePoint(codePoint)) return false
         }
         if (!isEmojiCodePoint(codePoint)) return false

@@ -7,14 +7,10 @@ package com.piashcse.zodkmp
  * provided object schemas. Every option must declare a [ZodLiteral] for the discriminator
  * key, and discriminator values must be unique. Unknown or missing discriminators fail
  * without attempting to parse the other options.
- *
- * This is the idiomatic way to map into a Kotlin `sealed class` where every option's
- * parser produces a subtype of the sealed base type.
  */
 class ZodDiscriminatedUnion<T> private constructor(
     private val discriminator: String,
-    private val options: List<ZodObjectSchema<*>>,
-    private val validations: List<(T) -> ZodError?>
+    private val options: List<ZodObjectSchema<*>>
 ) : ZodSchema<T> {
     companion object {
         fun <T> schema(
@@ -30,33 +26,37 @@ class ZodDiscriminatedUnion<T> private constructor(
                         "Invalid discriminated union option at index $index: " +
                             "missing ZodLiteral for discriminator '$discriminator'"
                     )
-                val duplicate = seen.any { (value, _) -> zodEquals(value, literal.literalValue) }
-                require(!duplicate) {
+                require(seen.none { (value, _) -> zodEquals(value, literal.literalValue) }) {
                     "Duplicate discriminator value '${literal.literalValue}' at index $index"
                 }
                 seen.add(literal.literalValue to index)
             }
 
-            return ZodDiscriminatedUnion(discriminator, options.toList(), emptyList())
-        }
-    }
-
-    override fun parse(input: Any?): T {
-        val result = safeParse(input)
-        return when (result) {
-            is ZodResult.Success -> result.data
-            is ZodResult.Failure -> throw IllegalArgumentException("Validation failed: ${result.error.errors.joinToString(", ")}")
+            return ZodDiscriminatedUnion(discriminator, options.toList())
         }
     }
 
     override fun safeParse(input: Any?): ZodResult<T> {
         val mapInput = input as? Map<*, *>
             ?: return ZodResult.Failure(
-                ZodError("Expected object with discriminator key '$discriminator', received ${input.typeName()}")
+                ZodError(
+                    ZodIssue(
+                        ZodIssueCode.INVALID_TYPE,
+                        "Expected object with discriminator key '$discriminator', received ${input.typeName()}"
+                    )
+                )
             )
 
         if (!mapInput.containsKey(discriminator)) {
-            return ZodResult.Failure(ZodError("Missing discriminator key '$discriminator'"))
+            return ZodResult.Failure(
+                ZodError(
+                    ZodIssue(
+                        ZodIssueCode.REQUIRED,
+                        "Missing discriminator key '$discriminator'",
+                        path = listOf(ZodPathSegment.Property(discriminator))
+                    )
+                )
+            )
         }
 
         val discriminatorValue = mapInput[discriminator]
@@ -65,10 +65,14 @@ class ZodDiscriminatedUnion<T> private constructor(
             literal != null && zodEquals(literal.literalValue, discriminatorValue)
         } ?: return ZodResult.Failure(
             ZodError(
-                "Invalid discriminator value '$discriminatorValue' for key '$discriminator'. " +
-                    "Valid values: ${options.joinToString(", ") { option ->
-                        ((option.shape[discriminator] as? ZodLiteral<*>)?.literalValue ?: "?").toString()
-                    }}"
+                ZodIssue(
+                    ZodIssueCode.INVALID_UNION,
+                    "Invalid discriminator value '$discriminatorValue' for key '$discriminator'. " +
+                        "Valid values: ${options.joinToString(", ") { option ->
+                            ((option.shape[discriminator] as? ZodLiteral<*>)?.literalValue ?: "?").toString()
+                        }}",
+                    path = listOf(ZodPathSegment.Property(discriminator))
+                )
             )
         )
 
@@ -78,23 +82,30 @@ class ZodDiscriminatedUnion<T> private constructor(
         }
 
         @Suppress("UNCHECKED_CAST")
-        val data = (result as ZodResult.Success<*>).data as T
-
-        for (validation in validations) {
-            validation(data)?.let { return ZodResult.Failure(it) }
-        }
-
-        return ZodResult.Success(data)
+        return ZodResult.Success((result as ZodResult.Success<*>).data as T)
     }
 
     override suspend fun safeParseSuspend(input: Any?): ZodResult<T> {
         val mapInput = input as? Map<*, *>
             ?: return ZodResult.Failure(
-                ZodError("Expected object with discriminator key '$discriminator', received ${input.typeName()}")
+                ZodError(
+                    ZodIssue(
+                        ZodIssueCode.INVALID_TYPE,
+                        "Expected object with discriminator key '$discriminator', received ${input.typeName()}"
+                    )
+                )
             )
 
         if (!mapInput.containsKey(discriminator)) {
-            return ZodResult.Failure(ZodError("Missing discriminator key '$discriminator'"))
+            return ZodResult.Failure(
+                ZodError(
+                    ZodIssue(
+                        ZodIssueCode.REQUIRED,
+                        "Missing discriminator key '$discriminator'",
+                        path = listOf(ZodPathSegment.Property(discriminator))
+                    )
+                )
+            )
         }
 
         val discriminatorValue = mapInput[discriminator]
@@ -103,10 +114,14 @@ class ZodDiscriminatedUnion<T> private constructor(
             literal != null && zodEquals(literal.literalValue, discriminatorValue)
         } ?: return ZodResult.Failure(
             ZodError(
-                "Invalid discriminator value '$discriminatorValue' for key '$discriminator'. " +
-                    "Valid values: ${options.joinToString(", ") { option ->
-                        ((option.shape[discriminator] as? ZodLiteral<*>)?.literalValue ?: "?").toString()
-                    }}"
+                ZodIssue(
+                    ZodIssueCode.INVALID_UNION,
+                    "Invalid discriminator value '$discriminatorValue' for key '$discriminator'. " +
+                        "Valid values: ${options.joinToString(", ") { option ->
+                            ((option.shape[discriminator] as? ZodLiteral<*>)?.literalValue ?: "?").toString()
+                        }}",
+                    path = listOf(ZodPathSegment.Property(discriminator))
+                )
             )
         )
 
@@ -116,12 +131,6 @@ class ZodDiscriminatedUnion<T> private constructor(
         }
 
         @Suppress("UNCHECKED_CAST")
-        val data = (result as ZodResult.Success<*>).data as T
-
-        for (validation in validations) {
-            validation(data)?.let { return ZodResult.Failure(it) }
-        }
-
-        return ZodResult.Success(data)
+        return ZodResult.Success((result as ZodResult.Success<*>).data as T)
     }
 }

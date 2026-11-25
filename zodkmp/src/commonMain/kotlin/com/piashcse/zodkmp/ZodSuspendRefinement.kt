@@ -22,32 +22,28 @@ class ZodSuspendRefinement<T> internal constructor(
     override fun parse(input: Any?): T {
         throw IllegalStateException("This schema contains suspend refinements. Use parseSuspend() instead.")
     }
-    
+
     override fun safeParse(input: Any?): ZodResult<T> {
         throw IllegalStateException("This schema contains suspend refinements. Use safeParseSuspend() instead.")
     }
-    
+
     override suspend fun safeParseSuspend(input: Any?): ZodResult<T> {
         val baseResult = baseSchema.safeParseSuspend(input)
         if (baseResult is ZodResult.Failure) {
             return baseResult
         }
-        
+
         @Suppress("UNCHECKED_CAST")
         val value = (baseResult as ZodResult.Success<T>).data
-        
-        val errors = mutableListOf<String>()
+
+        val issues = mutableListOf<ZodIssue>()
         for (refinement in refinements) {
             if (!refinement.refinement(value)) {
-                errors.add(refinement.errorMessage(value))
+                issues.add(issue(ZodIssueCode.CUSTOM, refinement.errorMessage(value)))
             }
         }
-        
-        return if (errors.isEmpty()) {
-            ZodResult.Success(value)
-        } else {
-            ZodResult.Failure(ZodError(errors))
-        }
+
+        return if (issues.isEmpty()) ZodResult.Success(value) else ZodResult.Failure(ZodError(issues))
     }
 }
 

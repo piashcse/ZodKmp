@@ -16,14 +16,6 @@ class ZodDefault<T> internal constructor(
             ZodDefault(baseSchema, defaultValue)
     }
 
-    override fun parse(input: Any?): T {
-        val result = safeParse(input)
-        return when (result) {
-            is ZodResult.Success -> result.data
-            is ZodResult.Failure -> throw IllegalArgumentException("Validation failed: ${result.error.errors.joinToString(", ")}")
-        }
-    }
-
     override fun safeParse(input: Any?): ZodResult<T> {
         if (input === ZodAbsent) return ZodResult.Success(defaultValue())
         val result = schema.safeParse(input)

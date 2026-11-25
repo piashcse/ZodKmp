@@ -11,7 +11,7 @@ import kotlinx.datetime.atTime
  * accepted. Use [Zod.coerce] to also accept ISO-8601 strings.
  */
 class ZodDate private constructor(
-    private val validations: List<(LocalDateTime) -> ZodError?>,
+    private val validations: List<(LocalDateTime) -> ZodIssue?>,
     private val coerce: Boolean
 ) : ZodSchema<LocalDateTime> {
     companion object {
@@ -35,21 +35,20 @@ class ZodDate private constructor(
         }
     }
 
-    private fun withValidation(validation: (LocalDateTime) -> ZodError?): ZodDate =
+    private fun withValidation(validation: (LocalDateTime) -> ZodIssue?): ZodDate =
         ZodDate(validations + validation, coerce)
 
     fun min(minDate: LocalDateTime, message: String = "Date must be greater than or equal to $minDate"): ZodDate =
-        withValidation { value -> if (value < minDate) ZodError(message) else null }
+        withValidation { value -> if (value < minDate) issue(ZodIssueCode.TOO_SMALL, message) else null }
 
     fun max(maxDate: LocalDateTime, message: String = "Date must be less than or equal to $maxDate"): ZodDate =
-        withValidation { value -> if (value > maxDate) ZodError(message) else null }
+        withValidation { value -> if (value > maxDate) issue(ZodIssueCode.TOO_BIG, message) else null }
 
-    override fun parse(input: Any?): LocalDateTime {
-        val result = safeParse(input)
-        return when (result) {
-            is ZodResult.Success -> result.data
-            is ZodResult.Failure -> throw IllegalArgumentException("Validation failed: ${result.error.errors.joinToString(", ")}")
-        }
+    fun refine(
+        predicate: (LocalDateTime) -> Boolean,
+        message: (LocalDateTime) -> String = { "Invalid value: $it" }
+    ): ZodDate = withValidation { value ->
+        if (predicate(value)) null else issue(ZodIssueCode.CUSTOM, message(value))
     }
 
     override fun safeParse(input: Any?): ZodResult<LocalDateTime> {
@@ -62,18 +61,23 @@ class ZodDate private constructor(
 
         if (dateInput == null) {
             val hint = if (input is String && !coerce) " (use Zod.coerce.date() to accept ISO-8601 strings)" else ""
-            return ZodResult.Failure(ZodError("Expected date, received ${input.typeName()}$hint"))
+            return ZodResult.Failure(
+                ZodError(
+                    ZodIssue(
+                        ZodIssueCode.INVALID_TYPE,
+                        "Expected date, received ${input.typeName()}$hint",
+                        expected = "date",
+                        received = input.typeName()
+                    )
+                )
+            )
         }
 
-        val errors = mutableListOf<String>()
+        val issues = mutableListOf<ZodIssue>()
         for (validation in validations) {
-            validation(dateInput)?.let { errors.addAll(it.errors) }
+            validation(dateInput)?.let { issues.add(it) }
         }
 
-        return if (errors.isEmpty()) {
-            ZodResult.Success(dateInput)
-        } else {
-            ZodResult.Failure(ZodError(errors))
-        }
+        return if (issues.isEmpty()) ZodResult.Success(dateInput) else ZodResult.Failure(ZodError(issues))
     }
 }

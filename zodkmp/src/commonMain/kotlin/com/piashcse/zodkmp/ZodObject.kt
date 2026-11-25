@@ -2,38 +2,43 @@ package com.piashcse.zodkmp
 
 /**
  * Schema for validating objects.
+ *
+ * Extra keys are stripped by default; use [strict] to reject them or [passthrough] to keep
+ * them. The most recent call wins.
  */
-data class ZodObjectSchema<T>(
+class ZodObjectSchema<T> private constructor(
     val shape: Map<String, ZodSchema<*>>,
     private val parser: (Map<String, Any?>) -> T,
-    private val strict: Boolean = false,
-    private val passthrough: Boolean = false
+    private val strict: Boolean,
+    private val passthrough: Boolean,
+    private val validations: List<(T) -> ZodIssue?>
 ) : ZodSchema<T> {
 
-    fun strict(): ZodObjectSchema<T> = copy(strict = true, passthrough = false)
+    fun strict(): ZodObjectSchema<T> = ZodObjectSchema(shape, parser, strict = true, passthrough = false, validations)
 
-    fun strip(): ZodObjectSchema<T> = copy(strict = false, passthrough = false)
+    fun strip(): ZodObjectSchema<T> = ZodObjectSchema(shape, parser, strict = false, passthrough = false, validations)
 
-    fun passthrough(): ZodObjectSchema<T> = copy(strict = false, passthrough = true)
+    fun passthrough(): ZodObjectSchema<T> =
+        ZodObjectSchema(shape, parser, strict = false, passthrough = true, validations)
 
     fun pick(vararg keys: String): ZodObjectSchema<Map<String, Any?>> {
         val selected = shape.filterKeys { it in keys }
-        return ZodObjectSchema(selected, { it }, strict, passthrough)
+        return ZodObjectSchema(selected, { it }, strict, passthrough, emptyList())
     }
 
     fun omit(vararg keys: String): ZodObjectSchema<Map<String, Any?>> {
         val remaining = shape.filterKeys { it !in keys }
-        return ZodObjectSchema(remaining, { it }, strict, passthrough)
+        return ZodObjectSchema(remaining, { it }, strict, passthrough, emptyList())
     }
 
     fun partial(): ZodObjectSchema<Map<String, Any?>> {
         val newShape = shape.mapValues { (_, schema) -> schema.optional() as ZodSchema<*> }
-        return ZodObjectSchema(newShape, { it }, strict, passthrough)
+        return ZodObjectSchema(newShape, { it }, strict, passthrough, emptyList())
     }
 
     fun deepPartial(): ZodObjectSchema<Map<String, Any?>> {
         val newShape = shape.mapValues { (_, schema) -> deepPartialProperty(schema) }
-        return ZodObjectSchema(newShape, { it }, strict, passthrough)
+        return ZodObjectSchema(newShape, { it }, strict, passthrough, emptyList())
     }
 
     /**
@@ -45,93 +50,116 @@ data class ZodObjectSchema<T>(
         merged.putAll(other.shape)
         val mergedStrict = strict || other.strict
         val mergedPassthrough = !mergedStrict && (passthrough || other.passthrough)
-        return ZodObjectSchema(merged, { it }, mergedStrict, mergedPassthrough)
+        return ZodObjectSchema(merged, { it }, mergedStrict, mergedPassthrough, emptyList())
     }
 
     fun extend(other: ZodObjectSchema<*>): ZodObjectSchema<Map<String, Any?>> {
         val merged = LinkedHashMap(shape)
         merged.putAll(other.shape)
-        return ZodObjectSchema(merged, { it }, strict, passthrough)
+        return ZodObjectSchema(merged, { it }, strict, passthrough, emptyList())
     }
 
-    override fun parse(input: Any?): T {
-        val result = safeParse(input)
-        return when (result) {
-            is ZodResult.Success -> result.data
-            is ZodResult.Failure -> throw IllegalArgumentException("Validation failed: ${result.error.errors.joinToString(", ")}")
-        }
-    }
+    /**
+     * Adds a custom refinement while preserving the object schema type.
+     */
+    fun refine(
+        predicate: (T) -> Boolean,
+        message: (T) -> String = { "Invalid value: $it" }
+    ): ZodObjectSchema<T> = ZodObjectSchema(
+        shape,
+        parser,
+        strict,
+        passthrough,
+        validations + { value -> if (predicate(value)) null else issue(ZodIssueCode.CUSTOM, message(value)) }
+    )
 
     override fun safeParse(input: Any?): ZodResult<T> {
         val mapInput = input as? Map<*, *>
-            ?: return ZodResult.Failure(ZodError("Expected object, received ${input.typeName()}"))
+            ?: return ZodResult.Failure(typeError("object", input))
 
         val nonStringKey = mapInput.keys.firstOrNull { it !is String }
         if (nonStringKey != null) {
             return ZodResult.Failure(
-                ZodError("Expected object with string keys, received key of type ${nonStringKey.typeName()}")
+                ZodError(
+                    ZodIssue(
+                        ZodIssueCode.INVALID_KEY,
+                        "Expected object with string keys, received key of type ${nonStringKey.typeName()}",
+                        received = nonStringKey.typeName()
+                    )
+                )
             )
         }
 
         @Suppress("UNCHECKED_CAST")
         val stringKeyMap = mapInput as Map<String, Any?>
 
-        val errors = mutableListOf<String>()
+        val issues = mutableListOf<ZodIssue>()
         val parsedValues = mutableMapOf<String, Any?>()
 
         for ((key, schema) in shape) {
             val present = stringKeyMap.containsKey(key)
             val value: Any? = if (present) stringKeyMap[key] else ZodAbsent
-            val result = schema.safeParse(value)
-
-            when (result) {
+            when (val result = schema.safeParse(value)) {
                 is ZodResult.Success -> parsedValues[key] = result.data
                 is ZodResult.Failure -> {
-                    val messages = if (present) result.error.errors else listOf("Required")
-                    messages.forEach { error -> errors.add("$key: $error") }
+                    if (present) {
+                        issues.addAll(result.error.issues.prepend(ZodPathSegment.Property(key)))
+                    } else {
+                        issues.add(
+                            ZodIssue(
+                                ZodIssueCode.REQUIRED,
+                                "Required",
+                                path = listOf(ZodPathSegment.Property(key))
+                            )
+                        )
+                    }
                 }
             }
         }
 
-        if (strict) {
-            val extraKeys = stringKeyMap.keys - shape.keys
-            if (extraKeys.isNotEmpty()) {
-                errors.add("Unrecognized key(s) in object: ${extraKeys.joinToString(", ")}")
-            }
-        } else if (passthrough) {
-            stringKeyMap.filterKeys { it !in shape.keys }.forEach { (key, value) ->
-                parsedValues[key] = value
-            }
+        issues.addAll(extraKeyIssues(stringKeyMap, parsedValues))
+
+        if (issues.isNotEmpty()) {
+            return ZodResult.Failure(ZodError(issues))
         }
 
-        return if (errors.isEmpty()) {
-            try {
-                ZodResult.Success(parser(parsedValues as Map<String, Any?>))
-            } catch (e: Exception) {
-                ZodResult.Failure(
-                    ZodError("Failed to construct object: ${e::class.simpleName}: ${e.message}")
+        val value = try {
+            parser(parsedValues as Map<String, Any?>)
+        } catch (e: Exception) {
+            return ZodResult.Failure(
+                ZodError(
+                    ZodIssue(
+                        ZodIssueCode.CUSTOM,
+                        "Failed to construct object: ${e::class.simpleName}: ${e.message}",
+                        cause = e
+                    )
                 )
-            }
-        } else {
-            ZodResult.Failure(ZodError(errors))
+            )
         }
+        return applyValidations(value)
     }
 
     override suspend fun safeParseSuspend(input: Any?): ZodResult<T> {
         val mapInput = input as? Map<*, *>
-            ?: return ZodResult.Failure(ZodError("Expected object, received ${input.typeName()}"))
+            ?: return ZodResult.Failure(typeError("object", input))
 
         val nonStringKey = mapInput.keys.firstOrNull { it !is String }
         if (nonStringKey != null) {
             return ZodResult.Failure(
-                ZodError("Expected object with string keys, received key of type ${nonStringKey.typeName()}")
+                ZodError(
+                    ZodIssue(
+                        ZodIssueCode.INVALID_KEY,
+                        "Expected object with string keys, received key of type ${nonStringKey.typeName()}",
+                        received = nonStringKey.typeName()
+                    )
+                )
             )
         }
 
         @Suppress("UNCHECKED_CAST")
         val stringKeyMap = mapInput as Map<String, Any?>
 
-        val errors = mutableListOf<String>()
+        val issues = mutableListOf<ZodIssue>()
         val parsedValues = mutableMapOf<String, Any?>()
 
         for ((key, schema) in shape) {
@@ -140,34 +168,71 @@ data class ZodObjectSchema<T>(
             when (val result = schema.safeParseSuspend(value)) {
                 is ZodResult.Success -> parsedValues[key] = result.data
                 is ZodResult.Failure -> {
-                    val messages = if (present) result.error.errors else listOf("Required")
-                    messages.forEach { error -> errors.add("$key: $error") }
+                    if (present) {
+                        issues.addAll(result.error.issues.prepend(ZodPathSegment.Property(key)))
+                    } else {
+                        issues.add(
+                            ZodIssue(
+                                ZodIssueCode.REQUIRED,
+                                "Required",
+                                path = listOf(ZodPathSegment.Property(key))
+                            )
+                        )
+                    }
                 }
             }
         }
 
+        issues.addAll(extraKeyIssues(stringKeyMap, parsedValues))
+
+        if (issues.isNotEmpty()) {
+            return ZodResult.Failure(ZodError(issues))
+        }
+
+        val value = try {
+            parser(parsedValues as Map<String, Any?>)
+        } catch (e: Exception) {
+            return ZodResult.Failure(
+                ZodError(
+                    ZodIssue(
+                        ZodIssueCode.CUSTOM,
+                        "Failed to construct object: ${e::class.simpleName}: ${e.message}",
+                        cause = e
+                    )
+                )
+            )
+        }
+        return applyValidations(value)
+    }
+
+    private fun extraKeyIssues(
+        stringKeyMap: Map<String, Any?>,
+        parsedValues: MutableMap<String, Any?>
+    ): List<ZodIssue> {
         if (strict) {
             val extraKeys = stringKeyMap.keys - shape.keys
             if (extraKeys.isNotEmpty()) {
-                errors.add("Unrecognized key(s) in object: ${extraKeys.joinToString(", ")}")
+                return listOf(
+                    ZodIssue(
+                        ZodIssueCode.UNRECOGNIZED_KEYS,
+                        "Unrecognized key(s) in object: ${extraKeys.joinToString(", ")}"
+                    )
+                )
             }
         } else if (passthrough) {
             stringKeyMap.filterKeys { it !in shape.keys }.forEach { (key, value) ->
                 parsedValues[key] = value
             }
         }
+        return emptyList()
+    }
 
-        return if (errors.isEmpty()) {
-            try {
-                ZodResult.Success(parser(parsedValues as Map<String, Any?>))
-            } catch (e: Exception) {
-                ZodResult.Failure(
-                    ZodError("Failed to construct object: ${e::class.simpleName}: ${e.message}")
-                )
-            }
-        } else {
-            ZodResult.Failure(ZodError(errors))
+    private fun applyValidations(value: T): ZodResult<T> {
+        val issues = mutableListOf<ZodIssue>()
+        for (validation in validations) {
+            validation(value)?.let { issues.add(it) }
         }
+        return if (issues.isEmpty()) ZodResult.Success(value) else ZodResult.Failure(ZodError(issues))
     }
 
     companion object {
@@ -176,7 +241,7 @@ data class ZodObjectSchema<T>(
             parser: (Map<String, Any?>) -> T,
             strict: Boolean = false
         ): ZodObjectSchema<T> {
-            return ZodObjectSchema(shape, parser, strict, false)
+            return ZodObjectSchema(shape, parser, strict, false, emptyList())
         }
 
         fun <T> create(
@@ -185,7 +250,7 @@ data class ZodObjectSchema<T>(
             strict: Boolean,
             passthrough: Boolean
         ): ZodObjectSchema<T> {
-            return ZodObjectSchema(shape, parser, strict, passthrough)
+            return ZodObjectSchema(shape, parser, strict, passthrough, emptyList())
         }
 
         fun <T> build(
@@ -194,7 +259,7 @@ data class ZodObjectSchema<T>(
         ): ZodObjectSchema<T> {
             val builder = ZodObjectShapeBuilder()
             builder.shapeBuilder()
-            return ZodObjectSchema(builder.shape, parser, false, false)
+            return ZodObjectSchema(builder.shape, parser, false, false, emptyList())
         }
     }
 }
