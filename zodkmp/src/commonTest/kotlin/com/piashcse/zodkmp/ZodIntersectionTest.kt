@@ -12,7 +12,7 @@ class ZodIntersectionTest {
         val positiveSchema = Zod.number().positive()
         val lessThan100Schema = Zod.number().max(100.0)
         val intersectionSchema = Zod.intersection(positiveSchema, lessThan100Schema)
-        
+
         // Should pass - positive and less than 100
         val result = intersectionSchema.parse(50)
         assertEquals(50.0, (result as Pair<*, *>).first)
@@ -24,9 +24,9 @@ class ZodIntersectionTest {
         val positiveSchema = Zod.number().positive()
         val lessThan100Schema = Zod.number().max(100.0)
         val intersectionSchema = Zod.intersection(positiveSchema, lessThan100Schema)
-        
+
         assertFailsWith<IllegalArgumentException> {
-            intersectionSchema.parse(-5)  // Fails positive check
+            intersectionSchema.parse(-5) // Fails positive check
         }
     }
 
@@ -35,9 +35,9 @@ class ZodIntersectionTest {
         val positiveSchema = Zod.number().positive()
         val lessThan100Schema = Zod.number().max(100.0)
         val intersectionSchema = Zod.intersection(positiveSchema, lessThan100Schema)
-        
+
         assertFailsWith<IllegalArgumentException> {
-            intersectionSchema.parse(150)  // Fails max check
+            intersectionSchema.parse(150) // Fails max check
         }
     }
 
@@ -46,9 +46,9 @@ class ZodIntersectionTest {
         val positiveSchema = Zod.number().positive()
         val lessThan100Schema = Zod.number().max(100.0)
         val intersectionSchema = Zod.intersection(positiveSchema, lessThan100Schema)
-        
+
         assertFailsWith<IllegalArgumentException> {
-            intersectionSchema.parse(-150)  // Fails both checks
+            intersectionSchema.parse(-150) // Fails both checks
         }
     }
 
@@ -57,7 +57,7 @@ class ZodIntersectionTest {
         val positiveSchema = Zod.number().positive()
         val lessThan100Schema = Zod.number().max(100.0)
         val intersectionSchema = Zod.intersection(positiveSchema, lessThan100Schema)
-        
+
         val result = intersectionSchema.safeParse(50)
         assertTrue(result is ZodResult.Success)
         val pairResult = result.data
@@ -70,10 +70,14 @@ class ZodIntersectionTest {
         val positiveSchema = Zod.number().positive()
         val lessThan100Schema = Zod.number().max(100.0)
         val intersectionSchema = Zod.intersection(positiveSchema, lessThan100Schema)
-        
+
         val result = intersectionSchema.safeParse(-5)
         assertTrue(result is ZodResult.Failure)
-        assertTrue(result.error.errors.first().contains("Left schema validation failed"))
+        assertTrue(
+            result.error.errors
+                .first()
+                .contains("Left schema validation failed"),
+        )
     }
 
     @Test
@@ -81,10 +85,14 @@ class ZodIntersectionTest {
         val positiveSchema = Zod.number().positive()
         val lessThan100Schema = Zod.number().max(100.0)
         val intersectionSchema = Zod.intersection(positiveSchema, lessThan100Schema)
-        
+
         val result = intersectionSchema.safeParse(150)
         assertTrue(result is ZodResult.Failure)
-        assertTrue(result.error.errors.first().contains("Right schema validation failed"))
+        assertTrue(
+            result.error.errors
+                .first()
+                .contains("Right schema validation failed"),
+        )
     }
 
     @Test
@@ -95,18 +103,18 @@ class ZodIntersectionTest {
         val stringSchema = Zod.string().min(3)
         val literalSchema = Zod.literal("hello")
         val intersectionSchema = Zod.intersection(stringSchema, literalSchema)
-        
+
         // "hello" should work for both schemas
         val result = intersectionSchema.safeParse("hello")
         assertTrue(result is ZodResult.Success)
         val pairResult = result.data
         assertEquals("hello", pairResult.first)
         assertEquals("hello", pairResult.second)
-        
+
         // "hi" fails the min(3) constraint
         val result2 = intersectionSchema.safeParse("hi")
         assertTrue(result2 is ZodResult.Failure)
-        
+
         // "world" fails the literal constraint
         val result3 = intersectionSchema.safeParse("world")
         assertTrue(result3 is ZodResult.Failure)

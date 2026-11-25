@@ -11,16 +11,15 @@ import kotlin.test.assertTrue
  * Regression tests for the correctness issues fixed in 1.4.0.
  */
 class ZodRegressionTest {
-
     @Test
-    fun `url accepts query strings, ports, localhost and mixed case`() {
+    fun `url accepts query strings ports localhost and mixed case`() {
         val schema = Zod.string().url()
         listOf(
             "https://example.com?q=1&lang=en",
             "http://localhost:3000",
             "HTTPS://EXAMPLE.COM",
             "https://example.com/path#fragment",
-            "https://user:pass@example.com:8443/a?b=c"
+            "https://user:pass@example.com:8443/a?b=c",
         ).forEach { url ->
             assertTrue(schema.safeParse(url) is ZodResult.Success, "expected valid URL: $url")
         }
@@ -44,9 +43,22 @@ class ZodRegressionTest {
     @Test
     fun `string checks run in declaration order`() {
         // min sees the untrimmed value, then trim is applied
-        assertEquals("ab", Zod.string().min(4).trim().parse("  ab  "))
+        assertEquals(
+            "ab",
+            Zod
+                .string()
+                .min(4)
+                .trim()
+                .parse("  ab  "),
+        )
         // trim runs first, so min sees the trimmed value
-        assertTrue(Zod.string().trim().min(4).safeParse("  ab  ") is ZodResult.Failure)
+        assertTrue(
+            Zod
+                .string()
+                .trim()
+                .min(4)
+                .safeParse("  ab  ") is ZodResult.Failure,
+        )
     }
 
     @Test
@@ -87,20 +99,26 @@ class ZodRegressionTest {
 
     @Test
     fun `strict and passthrough are mutually exclusive`() {
-        val strictThenPassthrough = Zod.objectSchema<Map<String, Any?>>({ string("a") }) { it }
-            .strict()
-            .passthrough()
+        val strictThenPassthrough =
+            Zod
+                .objectSchema<Map<String, Any?>>({ string("a") }) { it }
+                .strict()
+                .passthrough()
         val passthroughResult = strictThenPassthrough.safeParse(mapOf("a" to "x", "b" to "y"))
         assertTrue(passthroughResult is ZodResult.Success, "last call wins: passthrough")
 
-        val passthroughThenStrict = Zod.objectSchema<Map<String, Any?>>({ string("a") }) { it }
-            .passthrough()
-            .strict()
+        val passthroughThenStrict =
+            Zod
+                .objectSchema<Map<String, Any?>>({ string("a") }) { it }
+                .passthrough()
+                .strict()
         assertTrue(passthroughThenStrict.safeParse(mapOf("a" to "x", "b" to "y")) is ZodResult.Failure)
 
-        val stripped = Zod.objectSchema<Map<String, Any?>>({ string("a") }) { it }
-            .passthrough()
-            .strip()
+        val stripped =
+            Zod
+                .objectSchema<Map<String, Any?>>({ string("a") }) { it }
+                .passthrough()
+                .strip()
         val result = stripped.safeParse(mapOf("a" to "x", "b" to "y"))
         assertTrue(result is ZodResult.Success)
         assertTrue(!result.data.containsKey("b"))
@@ -117,10 +135,12 @@ class ZodRegressionTest {
 
     @Test
     fun `deepPartial preserves collection constraints`() {
-        val schema = Zod.objectSchema<Map<String, Any?>>({
-            field("tags", Zod.array(Zod.string()).min(2).unique())
-        }) { it }
-            .deepPartial()
+        val schema =
+            Zod
+                .objectSchema<Map<String, Any?>>({
+                    field("tags", Zod.array(Zod.string()).min(2).unique())
+                }) { it }
+                .deepPartial()
 
         assertTrue(schema.safeParse(emptyMap<String, Any?>()) is ZodResult.Success)
         assertTrue(schema.safeParse(mapOf("tags" to listOf("a"))) is ZodResult.Failure)
@@ -137,11 +157,12 @@ class ZodRegressionTest {
 
     @Test
     fun `optional shape helpers are callable without explicit type arguments`() {
-        val schema = Zod.objectSchema<Map<String, Any?>>({
-            optionalString("nickname")
-            optionalNumber("age")
-            optionalBoolean("active")
-        }) { it }
+        val schema =
+            Zod.objectSchema<Map<String, Any?>>({
+                optionalString("nickname")
+                optionalNumber("age")
+                optionalBoolean("active")
+            }) { it }
 
         assertTrue(schema.safeParse(emptyMap<String, Any?>()) is ZodResult.Success)
     }
@@ -183,9 +204,10 @@ class ZodRegressionTest {
 
     @Test
     fun `discriminated union rejects duplicate discriminators`() {
-        fun option(type: String) = Zod.objectSchema<Map<String, Any?>>({
-            field("type", Zod.literal(type))
-        }) { it }
+        fun option(type: String) =
+            Zod.objectSchema<Map<String, Any?>>({
+                field("type", Zod.literal(type))
+            }) { it }
 
         assertFailsWith<IllegalArgumentException> {
             Zod.discriminatedUnion<Map<String, Any?>>("type", option("a"), option("a"))
@@ -194,10 +216,11 @@ class ZodRegressionTest {
 
     @Test
     fun `discriminated union does not guess among options`() {
-        val a = Zod.objectSchema<Map<String, Any?>>({
-            field("type", Zod.literal("a"))
-            string("value")
-        }) { it }
+        val a =
+            Zod.objectSchema<Map<String, Any?>>({
+                field("type", Zod.literal("a"))
+                string("value")
+            }) { it }
         val schema = Zod.discriminatedUnion<Map<String, Any?>>("type", a)
         assertTrue(schema.safeParse(mapOf("type" to "b", "value" to "x")) is ZodResult.Failure)
     }
@@ -224,20 +247,22 @@ class ZodRegressionTest {
     }
 
     @Test
-    fun `suspend refinements compose through objects, arrays and wrappers`() = runTest {
-        val nested = Zod.objectSchema<Map<String, Any?>>({
-            field("name", Zod.string().refineSuspend({ it != "blocked" }))
-            field("tags", Zod.array(Zod.string().refineSuspend({ it.isNotEmpty() })))
-        }) { it }
+    fun `suspend refinements compose through objects arrays and wrappers`() =
+        runTest {
+            val nested =
+                Zod.objectSchema<Map<String, Any?>>({
+                    field("name", Zod.string().refineSuspend({ it != "blocked" }))
+                    field("tags", Zod.array(Zod.string().refineSuspend({ it.isNotEmpty() })))
+                }) { it }
 
-        val ok = nested.safeParseSuspend(mapOf("name" to "ok", "tags" to listOf("a")))
-        assertTrue(ok is ZodResult.Success)
+            val ok = nested.safeParseSuspend(mapOf("name" to "ok", "tags" to listOf("a")))
+            assertTrue(ok is ZodResult.Success)
 
-        val blocked = nested.safeParseSuspend(mapOf("name" to "blocked", "tags" to listOf("a")))
-        assertTrue(blocked is ZodResult.Failure)
+            val blocked = nested.safeParseSuspend(mapOf("name" to "blocked", "tags" to listOf("a")))
+            assertTrue(blocked is ZodResult.Failure)
 
-        val optional = Zod.string().refineSuspend({ it != "blocked" }).optional()
-        assertTrue(optional.safeParseSuspend(null) is ZodResult.Success)
-        assertTrue(optional.safeParseSuspend("blocked") is ZodResult.Failure)
-    }
+            val optional = Zod.string().refineSuspend({ it != "blocked" }).optional()
+            assertTrue(optional.safeParseSuspend(null) is ZodResult.Success)
+            assertTrue(optional.safeParseSuspend("blocked") is ZodResult.Failure)
+        }
 }

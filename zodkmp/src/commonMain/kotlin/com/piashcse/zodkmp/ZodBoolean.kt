@@ -6,40 +6,48 @@ package com.piashcse.zodkmp
  * By default only [Boolean] values are accepted. Use [Zod.coerce] to opt into
  * accepting the strings `"true"` / `"false"`.
  */
-class ZodBoolean private constructor(
+public class ZodBoolean private constructor(
     private val validations: List<(Boolean) -> ZodIssue?>,
-    private val coerce: Boolean
+    private val coerce: Boolean,
 ) : ZodSchema<Boolean> {
-    companion object {
-        fun schema(coerce: Boolean = false): ZodBoolean = ZodBoolean(emptyList(), coerce)
+    public companion object {
+        public fun schema(coerce: Boolean = false): ZodBoolean = ZodBoolean(emptyList(), coerce)
     }
 
-    fun isEqual(value: Boolean, message: String = "Boolean must be equal to $value"): ZodBoolean =
+    public fun isEqual(
+        value: Boolean,
+        message: String = "Boolean must be equal to $value",
+    ): ZodBoolean =
         ZodBoolean(
             validations + { bool -> if (bool != value) issue(ZodIssueCode.CUSTOM, message) else null },
-            coerce
+            coerce,
         )
 
-    fun refine(predicate: (Boolean) -> Boolean, message: (Boolean) -> String = { "Invalid value: $it" }): ZodBoolean =
+    public fun refine(
+        predicate: (Boolean) -> Boolean,
+        message: (Boolean) -> String = { "Invalid value: $it" },
+    ): ZodBoolean =
         ZodBoolean(
             validations + { value -> if (predicate(value)) null else issue(ZodIssueCode.CUSTOM, message(value)) },
-            coerce
+            coerce,
         )
 
     override fun safeParse(input: Any?): ZodResult<Boolean> {
-        val booleanInput = when (input) {
-            is Boolean -> input
-            is String -> if (coerce) {
-                when (input.trim().lowercase()) {
-                    "true" -> true
-                    "false" -> false
-                    else -> null
-                }
-            } else {
-                null
+        val booleanInput =
+            when (input) {
+                is Boolean -> input
+                is String ->
+                    if (coerce) {
+                        when (input.trim().lowercase()) {
+                            "true" -> true
+                            "false" -> false
+                            else -> null
+                        }
+                    } else {
+                        null
+                    }
+                else -> null
             }
-            else -> null
-        }
 
         if (booleanInput == null) {
             val hint = if (input is String && !coerce) " (use Zod.coerce.boolean() to accept \"true\"/\"false\")" else ""
@@ -49,9 +57,9 @@ class ZodBoolean private constructor(
                         ZodIssueCode.INVALID_TYPE,
                         "Expected boolean, received ${input.typeName()}$hint",
                         expected = "boolean",
-                        received = input.typeName()
-                    )
-                )
+                        received = input.typeName(),
+                    ),
+                ),
             )
         }
 

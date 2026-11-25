@@ -5,7 +5,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class ZodObjectOperationsTest {
-
     private fun baseObject(): ZodObjectSchema<Map<String, Any?>> {
         val builder = ZodObjectShapeBuilder()
         builder.string("name")
@@ -13,7 +12,7 @@ class ZodObjectOperationsTest {
         builder.boolean("active")
         return ZodObjectSchema.create(
             shape = builder.shape,
-            parser = { it }
+            parser = { it },
         )
     }
 

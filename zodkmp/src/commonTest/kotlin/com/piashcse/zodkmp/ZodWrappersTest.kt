@@ -5,7 +5,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class ZodWrappersTest {
-
     @Test
     fun `preprocess should transform input before validation`() {
         val schema = Zod.preprocess({ (it as? String)?.trim() }, Zod.string().min(3))

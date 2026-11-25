@@ -31,6 +31,7 @@ nav:
   - Home: index.md
   - Getting Started: getting-started.md
   - Advanced Usage: advanced-usage.md
+  - Code Generation: codegen.md
   - API Reference:
     - Primitives: api/primitives.md
     - Objects: api/objects.md
@@ -40,6 +41,7 @@ nav:
     - Intersections: api/intersections.md
     - Transformations: api/transformations.md
     - Refinements: api/refinements.md
+    - Errors: api/errors.md
   - Changelog: changelog.md
   - Contributing: contributing.md
   - License: license.md

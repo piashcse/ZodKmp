@@ -3,13 +3,13 @@ package com.piashcse.zodkmp
 /**
  * Schema for validating literal values.
  */
-class ZodLiteral<T> private constructor(
-    private val value: T
+public class ZodLiteral<T> private constructor(
+    private val value: T,
 ) : ZodSchema<T> {
-    companion object {
-        fun <T> schema(value: T): ZodLiteral<T> = ZodLiteral(value)
+    public companion object {
+        public fun <T> schema(value: T): ZodLiteral<T> = ZodLiteral(value)
 
-        fun <T> schema(vararg values: T): ZodSchema<T> {
+        public fun <T> schema(vararg values: T): ZodSchema<T> {
             if (values.isEmpty()) {
                 @Suppress("UNCHECKED_CAST")
                 return ZodNever.schema() as ZodSchema<T>
@@ -23,7 +23,7 @@ class ZodLiteral<T> private constructor(
         }
     }
 
-    val literalValue: T get() = value
+    public val literalValue: T get() = value
 
     override fun safeParse(input: Any?): ZodResult<T> {
         if (!zodEquals(input, value)) {
@@ -33,9 +33,9 @@ class ZodLiteral<T> private constructor(
                         ZodIssueCode.INVALID_LITERAL,
                         "Expected literal $value, received $input",
                         expected = value.toString(),
-                        received = input.toString()
-                    )
-                )
+                        received = input.toString(),
+                    ),
+                ),
             )
         }
         return ZodResult.Success(value)

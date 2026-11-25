@@ -14,7 +14,7 @@ class ZodEnumTest {
         assertEquals("red", stringEnumSchema.parse("red"))
         assertEquals("green", stringEnumSchema.parse("green"))
         assertEquals("blue", stringEnumSchema.parse("blue"))
-        
+
         val numberEnumSchema = Zod.enum(1, 2, 3)
         assertEquals(1, numberEnumSchema.parse(1))
         assertEquals(2, numberEnumSchema.parse(2))
@@ -42,19 +42,27 @@ class ZodEnumTest {
         val stringEnumSchema = Zod.enum("red", "green", "blue")
         val result = stringEnumSchema.safeParse("yellow")
         assertTrue(result is ZodResult.Failure)
-        assertTrue(result.error.errors.first().contains("Valid values: red, green, blue"))
+        assertTrue(
+            result.error.errors
+                .first()
+                .contains("Valid values: red, green, blue"),
+        )
     }
 
     @Test
     fun `enum with collection should work`() {
         val colors = listOf("red", "green", "blue")
         val stringEnumSchema = Zod.enum(colors)
-        
+
         assertEquals("red", stringEnumSchema.parse("red"))
-        
+
         val result = stringEnumSchema.safeParse("yellow")
         assertTrue(result is ZodResult.Failure)
-        assertTrue(result.error.errors.first().contains("Valid values: red, green, blue"))
+        assertTrue(
+            result.error.errors
+                .first()
+                .contains("Valid values: red, green, blue"),
+        )
     }
 
     @Test

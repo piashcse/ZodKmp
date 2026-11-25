@@ -11,16 +11,17 @@ val stringSchema = Zod.string()
 val constrainedString = Zod.string()
     .min(5, "String must be at least 5 characters")
     .max(100, "String must be at most 100 characters")
-    .length(10, "String must be exactly 10 characters")
     .email("Must be a valid email address")
     .url("Must be a valid URL")
     .regex(Regex("^[A-Za-z]+$"), "Must contain only letters")
     .startsWith("Hello", "Must start with 'Hello'")
     .endsWith("World", "Must end with 'World'")
     .includes("test", "Must contain 'test'")
-    .toLowerCase()
-    .toUpperCase()
     .trim()
+    .toLowerCase()
+
+// Checks run in declaration order. Lengths count Unicode code points.
+val exactlyTen = Zod.string().length(10)
 ```
 
 ### String Formats
@@ -34,9 +35,9 @@ val ipv6Schema = Zod.string().ipv6()
 val ipSchema = Zod.string().ip()          // accepts IPv4 or IPv6
 val emojiSchema = Zod.string().emoji()
 val cuidSchema = Zod.string().cuid()
-val cuid2Schema = Zod.string().cuid2()
+val cuid2Schema = Zod.string().cuid2()      // exactly 24 characters by default
 val ulidSchema = Zod.string().ulid()
-val nanoidSchema = Zod.string().nanoid()
+val nanoidSchema = Zod.string().nanoid()    // exactly 21 characters by default
 val datetimeSchema = Zod.string().datetime()   // ISO-8601
 val base64Schema = Zod.string().base64()
 val base64urlSchema = Zod.string().base64url()
@@ -55,19 +56,19 @@ val numberSchema = Zod.number()
 
 // With constraints
 val constrainedNumber = Zod.number()
-    .gt(0, "Must be greater than 0")
-    .gte(5, "Must be greater than or equal to 5")
-    .lt(100, "Must be less than 100")
-    .lte(50, "Must be less than or equal to 50")
-    .min(10, "Must be at least 10")
-    .max(90, "Must be at most 90")
+    .gt(0.0, "Must be greater than 0")
+    .gte(5.0, "Must be greater than or equal to 5")
+    .lt(100.0, "Must be less than 100")
+    .lte(50.0, "Must be less than or equal to 50")
+    .max(90.0, "Must be at most 90")
     .int("Must be an integer")
-    .positive("Must be positive")
-    .negative("Must be negative")
-    .nonPositive("Must be non-positive")
     .nonNegative("Must be non-negative")
-    .multipleOf(5, "Must be a multiple of 5")
+    .multipleOf(0.5, "Must be a multiple of 0.5")
     .finite("Must be a finite number")
+
+// Numeric strings require opt-in coercion:
+Zod.number().safeParse("42")     // Failure
+Zod.coerce.number().parse("42")  // 42.0
 ```
 
 ## Long
@@ -78,10 +79,10 @@ Validate 64-bit integers (the Kotlin analog of Zod's `bigint`):
 val longSchema = Zod.long()
 val positiveId = Zod.long().positive().max(1_000_000)
 
-// Usage (accepts Long, integral numbers and numeric strings)
+// Usage (accepts Long and integral numbers; strings require Zod.coerce.long())
 val result1 = longSchema.safeParse(9223372036854775807L) // Success
 val result2 = longSchema.safeParse(42)                    // Success
-val result3 = longSchema.safeParse("7")                   // Success
+val result3 = Zod.coerce.long().safeParse("7")            // Success
 val result4 = longSchema.safeParse(3.14)                  // Failure
 ```
 
@@ -91,6 +92,10 @@ Validate boolean values:
 
 ```kotlin
 val booleanSchema = Zod.boolean()
+
+// Strings require opt-in coercion:
+Zod.boolean().safeParse("true")     // Failure
+Zod.coerce.boolean().parse("true")  // true
 ```
 
 ## Date
@@ -104,6 +109,9 @@ val dateSchema = Zod.date()
 val constrainedDate = Zod.date()
     .min(LocalDateTime(2020, 1, 1, 0, 0), "Date must be after 2020")
     .max(LocalDateTime(2030, 12, 31, 23, 59), "Date must be before 2030")
+
+// ISO-8601 strings require opt-in coercion:
+Zod.coerce.date().parse("2023-01-01T12:00:00Z")
 ```
 
 ## Null & Undefined

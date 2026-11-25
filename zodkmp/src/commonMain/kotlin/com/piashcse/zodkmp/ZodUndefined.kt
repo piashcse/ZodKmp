@@ -3,9 +3,9 @@ package com.piashcse.zodkmp
 /**
  * Schema for validating undefined values (represented as `null` or a missing property in Kotlin).
  */
-class ZodUndefined private constructor() : ZodSchema<Any?> {
-    companion object {
-        fun schema(): ZodUndefined = ZodUndefined()
+public class ZodUndefined private constructor() : ZodSchema<Any?> {
+    public companion object {
+        public fun schema(): ZodUndefined = ZodUndefined()
     }
 
     override fun safeParse(input: Any?): ZodResult<Any?> {

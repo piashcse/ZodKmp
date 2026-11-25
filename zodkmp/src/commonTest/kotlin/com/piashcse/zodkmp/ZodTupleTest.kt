@@ -23,22 +23,22 @@ class ZodTupleTest {
     @Test
     fun `parse should throw with wrong length`() {
         val tupleSchema = Zod.tuple(Zod.string(), Zod.number())
-        
+
         assertFailsWith<IllegalArgumentException> {
-            tupleSchema.parse(listOf("hello"))  // Too short
+            tupleSchema.parse(listOf("hello")) // Too short
         }
-        
+
         assertFailsWith<IllegalArgumentException> {
-            tupleSchema.parse(listOf<Any>("hello", 42, "extra"))  // Too long
+            tupleSchema.parse(listOf<Any>("hello", 42, "extra")) // Too long
         }
     }
 
     @Test
     fun `parse should throw with invalid elements`() {
         val tupleSchema = Zod.tuple(Zod.string(), Zod.number())
-        
+
         assertFailsWith<IllegalArgumentException> {
-            tupleSchema.parse(listOf<Any>(42, "hello"))  // Wrong types
+            tupleSchema.parse(listOf<Any>(42, "hello")) // Wrong types
         }
     }
 
@@ -53,18 +53,22 @@ class ZodTupleTest {
     @Test
     fun `safeParse should return Failure with wrong length`() {
         val tupleSchema = Zod.tuple(Zod.string(), Zod.number())
-        val result = tupleSchema.safeParse(listOf("hello"))  // Too short
+        val result = tupleSchema.safeParse(listOf("hello")) // Too short
         assertTrue(result is ZodResult.Failure)
-        assertTrue(result.error.errors.first().contains("exactly 2 element"))
+        assertTrue(
+            result.error.errors
+                .first()
+                .contains("exactly 2 element"),
+        )
     }
 
     @Test
     fun `safeParse should return Failure with invalid elements`() {
         val tupleSchema = Zod.tuple(Zod.string(), Zod.number())
-        val result = tupleSchema.safeParse(listOf<Any>(42, "hello"))  // Wrong types
+        val result = tupleSchema.safeParse(listOf<Any>(42, "hello")) // Wrong types
         assertTrue(result is ZodResult.Failure)
-        assertTrue(result.error.errors.any { it.contains("[0]") })  // Error at position 0
-        assertTrue(result.error.errors.any { it.contains("[1]") })  // Error at position 1
+        assertTrue(result.error.errors.any { it.contains("[0]") }) // Error at position 0
+        assertTrue(result.error.errors.any { it.contains("[1]") }) // Error at position 1
     }
 
     @Test
@@ -72,14 +76,18 @@ class ZodTupleTest {
         val tupleSchema = Zod.tuple(Zod.string(), Zod.number())
         val result = tupleSchema.safeParse("not a tuple")
         assertTrue(result is ZodResult.Failure)
-        assertTrue(result.error.errors.first().contains("Expected tuple"))
+        assertTrue(
+            result.error.errors
+                .first()
+                .contains("Expected tuple"),
+        )
     }
 
     @Test
     fun `tuple with collection should work`() {
         val schemas = listOf(Zod.string(), Zod.number())
         val tupleSchema = Zod.tuple(schemas)
-        
+
         val result = tupleSchema.safeParse(listOf<Any>("hello", 42))
         assertTrue(result is ZodResult.Success)
         assertEquals(listOf("hello", 42.0), result.data)

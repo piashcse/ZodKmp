@@ -3,26 +3,25 @@ package com.piashcse.zodkmp
 /**
  * A custom refinement definition.
  */
-data class ZodRefinement<T>(
+public data class ZodRefinement<T>(
     val refinement: (T) -> Boolean,
-    val errorMessage: (T) -> String = { "Invalid value: $it" }
+    val errorMessage: (T) -> String = { "Invalid value: $it" },
 )
 
-fun <T> ZodSchema<T>.refine(
+public fun <T> ZodSchema<T>.refine(
     refinement: (T) -> Boolean,
-    errorMessage: (T) -> String = { "Invalid value: $it" }
-): ZodSchemaWithRefinement<T> {
-    return ZodSchemaWithRefinement(this, listOf(ZodRefinement(refinement, errorMessage)))
-}
+    errorMessage: (T) -> String = { "Invalid value: $it" },
+): ZodSchemaWithRefinement<T> = ZodSchemaWithRefinement(this, listOf(ZodRefinement(refinement, errorMessage)))
 
 /**
  * Wrapper schema for adding refinements to schemas that do not expose a typed `refine`
  * method of their own (string, number, array and object schemas do).
  */
-class ZodSchemaWithRefinement<T>(
+public class ZodSchemaWithRefinement<T>(
     private val baseSchema: ZodSchema<T>,
-    private val refinements: List<ZodRefinement<T>>
+    private val refinements: List<ZodRefinement<T>>,
 ) : ZodSchema<T> {
+    internal fun base(): ZodSchema<T> = baseSchema
 
     override fun safeParse(input: Any?): ZodResult<T> {
         val baseResult = baseSchema.safeParse(input)

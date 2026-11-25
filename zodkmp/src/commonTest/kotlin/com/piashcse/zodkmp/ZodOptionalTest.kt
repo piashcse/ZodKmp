@@ -38,7 +38,7 @@ class ZodOptionalTest {
     @Test
     fun `safeParse should return Failure when input is not null but invalid`() {
         val schema = Zod.string().optional()
-        val result = schema.safeParse(123)  // Not a string
+        val result = schema.safeParse(123) // Not a string
         assertTrue(result is ZodResult.Failure)
     }
 
@@ -46,15 +46,15 @@ class ZodOptionalTest {
     fun `optional should work with complex schemas`() {
         val stringWithMin = Zod.string().min(3)
         val optionalSchema = stringWithMin.optional()
-        
+
         // With null input, should return null
         assertEquals(null, optionalSchema.parse(null))
-        
+
         // With valid input, should parse normally
         assertEquals("hello", optionalSchema.parse("hello"))
-        
+
         // With invalid input, should fail validation
-        val result = optionalSchema.safeParse("hi")  // Too short
+        val result = optionalSchema.safeParse("hi") // Too short
         assertTrue(result is ZodResult.Failure)
     }
 
@@ -64,12 +64,12 @@ class ZodOptionalTest {
         val stringSchema = Zod.string().optional()
         assertEquals(null, stringSchema.parse(null))
         assertEquals("test", stringSchema.parse("test"))
-        
+
         // Number
         val numberSchema = Zod.number().optional()
         assertEquals(null, numberSchema.parse(null))
         assertEquals(42.0, numberSchema.parse(42))
-        
+
         // Boolean
         val boolSchema = Zod.boolean().optional()
         assertEquals(null, boolSchema.parse(null))

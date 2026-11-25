@@ -3,12 +3,15 @@ package com.piashcse.zodkmp
 /**
  * Schema for validating union types (accepts values that match any of the provided schemas).
  */
-class ZodUnion private constructor(
-    private val schemas: List<ZodSchema<*>>
+public class ZodUnion private constructor(
+    private val schemas: List<ZodSchema<*>>,
 ) : ZodSchema<Any?> {
-    companion object {
-        fun schema(vararg schemas: ZodSchema<*>): ZodUnion = ZodUnion(schemas.toList())
-        fun schema(schemas: List<ZodSchema<*>>): ZodUnion = ZodUnion(schemas)
+    internal fun options(): List<ZodSchema<*>> = schemas
+
+    public companion object {
+        public fun schema(vararg schemas: ZodSchema<*>): ZodUnion = ZodUnion(schemas.toList())
+
+        public fun schema(schemas: List<ZodSchema<*>>): ZodUnion = ZodUnion(schemas)
     }
 
     override fun safeParse(input: Any?): ZodResult<Any?> {
@@ -23,9 +26,9 @@ class ZodUnion private constructor(
             ZodError(
                 ZodIssue(
                     ZodIssueCode.INVALID_UNION,
-                    "Union validation failed: ${errors.joinToString("; ")}"
-                )
-            )
+                    "Union validation failed: ${errors.joinToString("; ")}",
+                ),
+            ),
         )
     }
 
@@ -41,9 +44,9 @@ class ZodUnion private constructor(
             ZodError(
                 ZodIssue(
                     ZodIssueCode.INVALID_UNION,
-                    "Union validation failed: ${errors.joinToString("; ")}"
-                )
-            )
+                    "Union validation failed: ${errors.joinToString("; ")}",
+                ),
+            ),
         )
     }
 }

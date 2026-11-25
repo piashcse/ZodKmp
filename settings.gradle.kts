@@ -1,6 +1,3 @@
-rootProject.name = "ZodKmpApp"
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
 pluginManagement {
     repositories {
         google {
@@ -14,6 +11,12 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+
+rootProject.name = "ZodKmp"
 
 dependencyResolutionManagement {
     repositories {
@@ -30,5 +33,7 @@ dependencyResolutionManagement {
 
 include(
     ":composeApp",
-    ":zodkmp"
+    ":zodkmp",
+    ":zodkmp-ksp",
+    ":codegen-test"
 )

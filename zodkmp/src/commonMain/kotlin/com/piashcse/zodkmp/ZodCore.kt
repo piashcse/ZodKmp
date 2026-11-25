@@ -6,64 +6,78 @@ package com.piashcse.zodkmp
  * [parse] and [parseSuspend] are implemented in terms of the safe variants so every schema
  * throws the same [ZodValidationException] and no implementation has to duplicate boilerplate.
  */
-interface ZodSchema<T> {
-    fun safeParse(input: Any?): ZodResult<T>
+public interface ZodSchema<T> {
+    public fun safeParse(input: Any?): ZodResult<T>
 
-    fun parse(input: Any?): T = when (val result = safeParse(input)) {
-        is ZodResult.Success -> result.data
-        is ZodResult.Failure -> throw ZodValidationException(result.error)
-    }
+    public fun parse(input: Any?): T =
+        when (val result = safeParse(input)) {
+            is ZodResult.Success -> result.data
+            is ZodResult.Failure -> throw ZodValidationException(result.error)
+        }
 
     /**
      * Suspended version of [safeParse]. Defaults to [safeParse] for schemas without
      * suspend refinements; schemas containing suspend refinements override this.
      */
-    suspend fun safeParseSuspend(input: Any?): ZodResult<T> = safeParse(input)
+    public suspend fun safeParseSuspend(input: Any?): ZodResult<T> = safeParse(input)
 
-    suspend fun parseSuspend(input: Any?): T = when (val result = safeParseSuspend(input)) {
-        is ZodResult.Success -> result.data
-        is ZodResult.Failure -> throw ZodValidationException(result.error)
-    }
+    public suspend fun parseSuspend(input: Any?): T =
+        when (val result = safeParseSuspend(input)) {
+            is ZodResult.Success -> result.data
+            is ZodResult.Failure -> throw ZodValidationException(result.error)
+        }
 }
 
 /**
  * Result of a safe parse.
  */
-sealed class ZodResult<out T> {
-    data class Success<T>(val data: T) : ZodResult<T>()
-    data class Failure(val error: ZodError) : ZodResult<Nothing>()
+public sealed class ZodResult<out T> {
+    public data class Success<T>(
+        val data: T,
+    ) : ZodResult<T>()
 
-    val isSuccess: Boolean get() = this is Success
-    val isFailure: Boolean get() = this is Failure
+    public data class Failure(
+        val error: ZodError,
+    ) : ZodResult<Nothing>()
 
-    fun getOrNull(): T? = (this as? Success)?.data
+    public val isSuccess: Boolean get() = this is Success
+    public val isFailure: Boolean get() = this is Failure
 
-    fun getOrThrow(): T = when (this) {
-        is Success -> data
-        is Failure -> throw ZodValidationException(error)
-    }
+    public fun getOrNull(): T? = (this as? Success)?.data
 
-    inline fun <R> map(transform: (T) -> R): ZodResult<R> = when (this) {
-        is Success -> Success(transform(data))
-        is Failure -> this
-    }
+    public fun getOrThrow(): T =
+        when (this) {
+            is Success -> data
+            is Failure -> throw ZodValidationException(error)
+        }
 
-    inline fun <R> fold(onSuccess: (T) -> R, onFailure: (ZodError) -> R): R = when (this) {
-        is Success -> onSuccess(data)
-        is Failure -> onFailure(error)
-    }
+    public inline fun <R> map(transform: (T) -> R): ZodResult<R> =
+        when (this) {
+            is Success -> Success(transform(data))
+            is Failure -> this
+        }
+
+    public inline fun <R> fold(
+        onSuccess: (T) -> R,
+        onFailure: (ZodError) -> R,
+    ): R =
+        when (this) {
+            is Success -> onSuccess(data)
+            is Failure -> onFailure(error)
+        }
 }
 
 /**
  * Thrown by [ZodSchema.parse] and [ZodSchema.parseSuspend].
  * Carries the structured [ZodError] instead of only a formatted message.
  */
-class ZodValidationException(val error: ZodError) :
-    IllegalArgumentException(error.errors.joinToString(", ")) {
-    fun formatted(): String = error.errors.joinToString("\n")
+public class ZodValidationException(
+    public val error: ZodError,
+) : IllegalArgumentException(error.errors.joinToString(", ")) {
+    public fun formatted(): String = error.errors.joinToString("\n")
 }
 
-enum class ZodIssueCode {
+public enum class ZodIssueCode {
     INVALID_TYPE,
     INVALID_LITERAL,
     INVALID_FORMAT,
@@ -77,15 +91,20 @@ enum class ZodIssueCode {
     NOT_MULTIPLE_OF,
     NOT_FINITE,
     REQUIRED,
-    CUSTOM
+    CUSTOM,
 }
 
-sealed interface ZodPathSegment {
-    data class Property(val name: String) : ZodPathSegment
-    data class Index(val index: Int) : ZodPathSegment
+public sealed interface ZodPathSegment {
+    public data class Property(
+        val name: String,
+    ) : ZodPathSegment
+
+    public data class Index(
+        val index: Int,
+    ) : ZodPathSegment
 }
 
-fun List<ZodPathSegment>.renderPath(): String {
+public fun List<ZodPathSegment>.renderPath(): String {
     val builder = StringBuilder()
     for (segment in this) {
         when (segment) {
@@ -102,16 +121,18 @@ fun List<ZodPathSegment>.renderPath(): String {
 /**
  * A single validation issue, mirroring Zod's `ZodIssue`.
  */
-data class ZodIssue(
+public data class ZodIssue(
     val code: ZodIssueCode,
     val message: String,
     val path: List<ZodPathSegment> = emptyList(),
     val expected: String? = null,
     val received: String? = null,
-    val cause: Throwable? = null
+    val cause: Throwable? = null,
 ) {
-    fun formattedMessage(): String =
-        if (path.isEmpty()) message else "${path.renderPath()}: $message"
+    public fun formattedMessage(): String {
+        val localized = ZodConfig.message(this)
+        return if (path.isEmpty()) localized else "${path.renderPath()}: $localized"
+    }
 }
 
 /**
@@ -120,21 +141,21 @@ data class ZodIssue(
  * [issues] is the structured representation; [errors] keeps the historical formatted-string
  * view (now prefixed with the issue path) for source compatibility.
  */
-class ZodError(val issues: List<ZodIssue>) {
+public class ZodError(
+    public val issues: List<ZodIssue>,
+) {
+    public constructor(error: String) : this(listOf(ZodIssue(ZodIssueCode.CUSTOM, error)))
+    public constructor(issue: ZodIssue) : this(listOf(issue))
 
-    constructor(error: String) : this(listOf(ZodIssue(ZodIssueCode.CUSTOM, error)))
-    constructor(issue: ZodIssue) : this(listOf(issue))
+    public val errors: List<String> get() = issues.map { it.formattedMessage() }
 
-    val errors: List<String> get() = issues.map { it.formattedMessage() }
+    public fun addError(error: String): ZodError = ZodError(issues + ZodIssue(ZodIssueCode.CUSTOM, error))
 
-    fun addError(error: String): ZodError = ZodError(issues + ZodIssue(ZodIssueCode.CUSTOM, error))
+    public fun addErrors(errors: List<String>): ZodError = ZodError(issues + errors.map { ZodIssue(ZodIssueCode.CUSTOM, it) })
 
-    fun addErrors(errors: List<String>): ZodError =
-        ZodError(issues + errors.map { ZodIssue(ZodIssueCode.CUSTOM, it) })
+    public fun prepend(segment: ZodPathSegment): ZodError = prepend(listOf(segment))
 
-    fun prepend(segment: ZodPathSegment): ZodError = prepend(listOf(segment))
-
-    fun prepend(segments: List<ZodPathSegment>): ZodError {
+    public fun prepend(segments: List<ZodPathSegment>): ZodError {
         if (segments.isEmpty()) return this
         return ZodError(issues.map { it.copy(path = segments + it.path) })
     }
@@ -142,7 +163,7 @@ class ZodError(val issues: List<ZodIssue>) {
     /**
      * Flattens issues into top-level field errors, similar to Zod's `flatten()`.
      */
-    fun flatten(): Map<String, Any> {
+    public fun flatten(): Map<String, Any> {
         val fieldErrors = mutableMapOf<String, MutableList<String>>()
         val formErrors = mutableListOf<String>()
         for (issue in issues) {
@@ -159,25 +180,25 @@ class ZodError(val issues: List<ZodIssue>) {
     override fun toString(): String = "ZodError(issues=$issues)"
 }
 
-internal fun typeError(expected: String, received: Any?): ZodError {
+internal fun typeError(
+    expected: String,
+    received: Any?,
+): ZodError {
     val receivedName = received.typeName()
     return ZodError(
         ZodIssue(
             code = ZodIssueCode.INVALID_TYPE,
             message = "Expected $expected, received $receivedName",
             expected = expected,
-            received = receivedName
-        )
+            received = receivedName,
+        ),
     )
 }
 
-internal fun issue(code: ZodIssueCode, message: String): ZodIssue = ZodIssue(code, message)
-
-/**
- * Compatibility factory for the historical `List<String>` error shape.
- */
-internal fun zodError(errors: List<String>): ZodError =
-    ZodError(errors.map { ZodIssue(ZodIssueCode.CUSTOM, it) })
+internal fun issue(
+    code: ZodIssueCode,
+    message: String,
+): ZodIssue = ZodIssue(code, message)
 
 internal fun List<ZodIssue>.prepend(segment: ZodPathSegment): List<ZodIssue> = prepend(listOf(segment))
 

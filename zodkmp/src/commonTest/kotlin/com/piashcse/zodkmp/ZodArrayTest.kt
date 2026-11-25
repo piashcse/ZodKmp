@@ -26,7 +26,7 @@ class ZodArrayTest {
         assertFailsWith<IllegalArgumentException> {
             basicStringArraySchema.parse("not an array")
         }
-        
+
         assertFailsWith<IllegalArgumentException> {
             basicStringArraySchema.parse(123)
         }
@@ -50,7 +50,11 @@ class ZodArrayTest {
     fun `safeParse should return Failure with non-array input`() {
         val result = basicStringArraySchema.safeParse("not an array")
         assertTrue(result is ZodResult.Failure)
-        assertTrue(result.error.errors.first().contains("Expected array"))
+        assertTrue(
+            result.error.errors
+                .first()
+                .contains("Expected array"),
+        )
     }
 
     @Test
@@ -63,10 +67,10 @@ class ZodArrayTest {
     @Test
     fun `min validation should work`() {
         val schema: ZodArray<Double> = basicNumberArraySchema.min(2)
-        
+
         // Should pass
         assertEquals(listOf(1.0, 2.0, 3.0), schema.parse(listOf(1, 2, 3)))
-        
+
         // Should fail
         val result = schema.safeParse(listOf(1))
         assertTrue(result is ZodResult.Failure)
@@ -76,10 +80,10 @@ class ZodArrayTest {
     @Test
     fun `max validation should work`() {
         val schema: ZodArray<Double> = basicNumberArraySchema.max(2)
-        
+
         // Should pass
         assertEquals(listOf(1.0, 2.0), schema.parse(listOf(1, 2)))
-        
+
         // Should fail
         val result = schema.safeParse(listOf(1, 2, 3))
         assertTrue(result is ZodResult.Failure)
@@ -89,15 +93,15 @@ class ZodArrayTest {
     @Test
     fun `length validation should work`() {
         val schema: ZodArray<Double> = basicNumberArraySchema.length(3)
-        
+
         // Should pass
         assertEquals(listOf(1.0, 2.0, 3.0), schema.parse(listOf(1, 2, 3)))
-        
+
         // Should fail - too short
         val result1 = schema.safeParse(listOf(1, 2))
         assertTrue(result1 is ZodResult.Failure)
         assertTrue(result1.error.errors.any { it.contains("exactly 3 element") })
-        
+
         // Should fail - too long
         val result2 = schema.safeParse(listOf(1, 2, 3, 4))
         assertTrue(result2 is ZodResult.Failure)
@@ -107,12 +111,12 @@ class ZodArrayTest {
     @Test
     fun `nested validation should work`() {
         val schema: ZodArray<String> = ZodArray.schema(Zod.string().min(2)) // Array of strings, each at least 2 chars
-        
+
         // Should pass
         val result1 = schema.safeParse(listOf("hello", "world"))
         assertTrue(result1 is ZodResult.Success<*>)
         assertEquals(listOf("hello", "world"), result1.data)
-        
+
         // Should fail - one element too short
         val result2 = schema.safeParse(listOf("hi", "a"))
         assertTrue(result2 is ZodResult.Failure)
@@ -125,10 +129,10 @@ class ZodArrayTest {
         val stringElementSchema = Zod.string()
         val baseArraySchema = ZodArray.schema(stringElementSchema)
         val schema: ZodArray<String> = baseArraySchema.nonEmpty()
-        
+
         // Should pass - non-empty array
         assertEquals(listOf("hello"), schema.parse(listOf("hello")))
-        
+
         // Should fail - empty array
         val result = schema.safeParse(emptyList<String>())
         assertTrue(result is ZodResult.Failure)
@@ -140,10 +144,10 @@ class ZodArrayTest {
         val stringElementSchema = Zod.string()
         val baseArraySchema = ZodArray.schema(stringElementSchema)
         val schema: ZodArray<String> = baseArraySchema.nonempty()
-        
+
         // Should pass - non-empty array
         assertEquals(listOf("hello"), schema.parse(listOf("hello")))
-        
+
         // Should fail - empty array
         val result = schema.safeParse(emptyList<String>())
         assertTrue(result is ZodResult.Failure)
@@ -155,10 +159,10 @@ class ZodArrayTest {
         val stringElementSchema = Zod.string()
         val baseArraySchema = ZodArray.schema(stringElementSchema)
         val schema: ZodArray<String> = baseArraySchema.unique()
-        
+
         // Should pass - unique elements
         assertEquals(listOf("a", "b", "c"), schema.parse(listOf("a", "b", "c")))
-        
+
         // Should fail - duplicate elements
         val result = schema.safeParse(listOf("a", "b", "a"))
         assertTrue(result is ZodResult.Failure)

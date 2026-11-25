@@ -4,7 +4,6 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class ZodStringFormatTest {
-
     @Test
     fun `uuid should accept valid uuid`() {
         assertTrue(Zod.string().uuid().safeParse("123e4567-e89b-12d3-a456-426614174000") is ZodResult.Success)

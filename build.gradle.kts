@@ -6,20 +6,18 @@ plugins {
     alias(libs.plugins.composeMultiplatform) apply false
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
+    alias(libs.plugins.dokka) apply false
+    alias(libs.plugins.kover) apply false
+    alias(libs.plugins.binaryCompatibilityValidator) apply false
+    alias(libs.plugins.ktlint) apply false
+    alias(libs.plugins.kotlinJvm) apply false
+    alias(libs.plugins.ksp) apply false
 }
 
 // Set the version for the library
 allprojects {
     version = providers.gradleProperty("library.version").getOrElse("1.0.0")
     group = providers.gradleProperty("GROUP").getOrElse("io.github.piashcse")
-}
-
-// Configure repositories for publishing
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
 }
 
 // Task to bump the library version
@@ -36,7 +34,7 @@ tasks.register("bumpVersion") {
             }
         }
         
-        gradlePropertiesFile.writeText(updatedLines.joinToString(System.lineSeparator()))
+        gradlePropertiesFile.writeText(updatedLines.joinToString("\n") + "\n")
         println("Updated library.version to $newVersion in gradle.properties")
     }
 }

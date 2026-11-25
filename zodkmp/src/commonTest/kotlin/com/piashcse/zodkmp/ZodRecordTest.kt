@@ -23,11 +23,11 @@ class ZodRecordTest {
     @Test
     fun `parse should throw with non-record input`() {
         val recordSchema = Zod.record(Zod.string())
-        
+
         assertFailsWith<IllegalArgumentException> {
             recordSchema.parse("not a record")
         }
-        
+
         assertFailsWith<IllegalArgumentException> {
             recordSchema.parse(123)
         }
@@ -36,9 +36,9 @@ class ZodRecordTest {
     @Test
     fun `parse should throw with record containing invalid values`() {
         val recordSchema = Zod.record(Zod.string())
-        
+
         assertFailsWith<IllegalArgumentException> {
-            recordSchema.parse(mapOf("name" to "John", "age" to 30))  // age should be string
+            recordSchema.parse(mapOf("name" to "John", "age" to 30)) // age should be string
         }
     }
 
@@ -55,7 +55,11 @@ class ZodRecordTest {
         val recordSchema = Zod.record(Zod.string())
         val result = recordSchema.safeParse("not a record")
         assertTrue(result is ZodResult.Failure)
-        assertTrue(result.error.errors.first().contains("Expected record"))
+        assertTrue(
+            result.error.errors
+                .first()
+                .contains("Expected record"),
+        )
     }
 
     @Test
@@ -63,7 +67,7 @@ class ZodRecordTest {
         val recordSchema = Zod.record(Zod.string())
         val result = recordSchema.safeParse(mapOf("name" to "John", "age" to 30))
         assertTrue(result is ZodResult.Failure)
-        assertTrue(result.error.errors.any { it.contains("age") })  // Error should reference the 'age' key
+        assertTrue(result.error.errors.any { it.contains("age") }) // Error should reference the 'age' key
         assertTrue(result.error.errors.any { it.contains("Expected string") })
     }
 

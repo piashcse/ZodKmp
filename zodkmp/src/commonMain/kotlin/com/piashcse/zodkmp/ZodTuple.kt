@@ -3,26 +3,30 @@ package com.piashcse.zodkmp
 /**
  * Schema for validating tuples (fixed-length arrays with a schema for each position).
  */
-class ZodTuple private constructor(
-    private val elementSchemas: List<ZodSchema<*>>
+public class ZodTuple private constructor(
+    private val elementSchemas: List<ZodSchema<*>>,
 ) : ZodSchema<List<Any?>> {
-    companion object {
-        fun schema(vararg schemas: ZodSchema<*>): ZodTuple = ZodTuple(schemas.toList())
-        fun schema(schemas: List<ZodSchema<*>>): ZodTuple = ZodTuple(schemas)
+    internal fun elements(): List<ZodSchema<*>> = elementSchemas
+
+    public companion object {
+        public fun schema(vararg schemas: ZodSchema<*>): ZodTuple = ZodTuple(schemas.toList())
+
+        public fun schema(schemas: List<ZodSchema<*>>): ZodTuple = ZodTuple(schemas)
     }
 
     override fun safeParse(input: Any?): ZodResult<List<Any?>> {
-        val listInput = input.asListOrNull()
-            ?: return ZodResult.Failure(typeError("tuple (array)", input))
+        val listInput =
+            input.asListOrNull()
+                ?: return ZodResult.Failure(typeError("tuple (array)", input))
 
         if (listInput.size != elementSchemas.size) {
             return ZodResult.Failure(
                 ZodError(
                     ZodIssue(
                         ZodIssueCode.TOO_SMALL,
-                        "Tuple must have exactly ${elementSchemas.size} element(s), received ${listInput.size}"
-                    )
-                )
+                        "Tuple must have exactly ${elementSchemas.size} element(s), received ${listInput.size}",
+                    ),
+                ),
             )
         }
 
@@ -32,9 +36,10 @@ class ZodTuple private constructor(
         for ((index, element) in listInput.withIndex()) {
             when (val elementResult = elementSchemas[index].safeParse(element)) {
                 is ZodResult.Success -> parsedElements.add(elementResult.data)
-                is ZodResult.Failure -> issues.addAll(
-                    elementResult.error.issues.prepend(ZodPathSegment.Index(index))
-                )
+                is ZodResult.Failure ->
+                    issues.addAll(
+                        elementResult.error.issues.prepend(ZodPathSegment.Index(index)),
+                    )
             }
         }
 
@@ -42,17 +47,18 @@ class ZodTuple private constructor(
     }
 
     override suspend fun safeParseSuspend(input: Any?): ZodResult<List<Any?>> {
-        val listInput = input.asListOrNull()
-            ?: return ZodResult.Failure(typeError("tuple (array)", input))
+        val listInput =
+            input.asListOrNull()
+                ?: return ZodResult.Failure(typeError("tuple (array)", input))
 
         if (listInput.size != elementSchemas.size) {
             return ZodResult.Failure(
                 ZodError(
                     ZodIssue(
                         ZodIssueCode.TOO_SMALL,
-                        "Tuple must have exactly ${elementSchemas.size} element(s), received ${listInput.size}"
-                    )
-                )
+                        "Tuple must have exactly ${elementSchemas.size} element(s), received ${listInput.size}",
+                    ),
+                ),
             )
         }
 
@@ -62,9 +68,10 @@ class ZodTuple private constructor(
         for ((index, element) in listInput.withIndex()) {
             when (val elementResult = elementSchemas[index].safeParseSuspend(element)) {
                 is ZodResult.Success -> parsedElements.add(elementResult.data)
-                is ZodResult.Failure -> issues.addAll(
-                    elementResult.error.issues.prepend(ZodPathSegment.Index(index))
-                )
+                is ZodResult.Failure ->
+                    issues.addAll(
+                        elementResult.error.issues.prepend(ZodPathSegment.Index(index)),
+                    )
             }
         }
 

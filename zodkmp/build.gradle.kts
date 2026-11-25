@@ -4,31 +4,42 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.mavenPublish)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.kover)
+    alias(libs.plugins.binaryCompatibilityValidator)
+    alias(libs.plugins.ktlint)
 }
 
 kotlin {
+    explicitApi()
+    jvmToolchain(21)
+
     androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
-    jvm("desktop")
-    
+
+    jvm("desktop") {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
+    }
+
     js {
         browser()
         nodejs()
     }
-    
+
     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
     wasmJs {
         browser()
     }
-    
+
     listOf(
         iosArm64(),
         iosX64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ZodKmp"
@@ -39,14 +50,14 @@ kotlin {
     // Add macOS targets
     macosX64()
     macosArm64()
-    
+
     // Add Linux targets
     linuxX64()
     linuxArm64()
-    
+
     // Add Windows targets
     mingwX64()
-    
+
     sourceSets {
         commonMain.dependencies {
             api(libs.kotlinx.datetime)
@@ -61,10 +72,16 @@ kotlin {
 
 android {
     namespace = "com.piashcse.zodkmp.lib"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk =
+        libs.versions.android.compileSdk
+            .get()
+            .toInt()
 
     defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
     }
     packaging {
         resources {
@@ -80,8 +97,8 @@ android {
 // Configure publishing with vanniktech plugin for Maven Central
 mavenPublishing {
     coordinates(
-        artifactId = findProperty("POM_ARTIFACT_ID")?.toString() ?: "zodkmp", 
-        version = version.toString()
+        artifactId = findProperty("POM_ARTIFACT_ID")?.toString() ?: "zodkmp",
+        version = version.toString(),
     )
 
     pom {
@@ -102,7 +119,8 @@ mavenPublishing {
             developer {
                 id = findProperty("POM_DEVELOPER_ID")?.toString() ?: "piashcse"
                 name = findProperty("POM_DEVELOPER_NAME")?.toString() ?: "Mehedi Hassan Piash"
-                url = findProperty("POM_URL")?.toString() ?: "https://github.com/piashcse"
+                url = findProperty("POM_URL")?.toString() ?: "https://github.com/piashcse/zodkmp"
+                email = findProperty("POM_DEVELOPER_EMAIL")?.toString() ?: "piash599@gmail.com"
             }
         }
 

@@ -5,12 +5,18 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 sealed class Animal {
-    data class Dog(val name: String, val goodBoy: Boolean) : Animal()
-    data class Cat(val name: String, val lives: Double) : Animal()
+    data class Dog(
+        val name: String,
+        val goodBoy: Boolean,
+    ) : Animal()
+
+    data class Cat(
+        val name: String,
+        val lives: Double,
+    ) : Animal()
 }
 
 class ZodDiscriminatedUnionTest {
-
     private fun dogSchema(): ZodObjectSchema<Animal.Dog> {
         val builder = ZodObjectShapeBuilder()
         builder.field("type", Zod.literal("dog"))
@@ -33,10 +39,12 @@ class ZodDiscriminatedUnionTest {
 
     @Test
     fun `discriminatedUnion should parse dog input into dog type`() {
-        val schema = Zod.discriminatedUnion<Animal>(
-            discriminator = "type",
-            dogSchema(), catSchema()
-        )
+        val schema =
+            Zod.discriminatedUnion<Animal>(
+                discriminator = "type",
+                dogSchema(),
+                catSchema(),
+            )
 
         val result = schema.safeParse(mapOf("type" to "dog", "name" to "Rex", "goodBoy" to true))
         assertTrue(result is ZodResult.Success)
@@ -45,10 +53,11 @@ class ZodDiscriminatedUnionTest {
 
     @Test
     fun `discriminatedUnion should parse cat input into cat type`() {
-        val schema = Zod.discriminatedUnion<Animal>(
-            discriminator = "type",
-            listOf(dogSchema(), catSchema())
-        )
+        val schema =
+            Zod.discriminatedUnion<Animal>(
+                discriminator = "type",
+                listOf(dogSchema(), catSchema()),
+            )
 
         val result = schema.safeParse(mapOf("type" to "cat", "name" to "Milo", "lives" to 9.0))
         assertTrue(result is ZodResult.Success)
@@ -57,10 +66,12 @@ class ZodDiscriminatedUnionTest {
 
     @Test
     fun `discriminatedUnion should reject unknown discriminator values`() {
-        val schema = Zod.discriminatedUnion<Animal>(
-            discriminator = "type",
-            dogSchema(), catSchema()
-        )
+        val schema =
+            Zod.discriminatedUnion<Animal>(
+                discriminator = "type",
+                dogSchema(),
+                catSchema(),
+            )
 
         val result = schema.safeParse(mapOf("type" to "bird", "name" to "Tweety"))
         assertTrue(result is ZodResult.Failure)
@@ -68,10 +79,12 @@ class ZodDiscriminatedUnionTest {
 
     @Test
     fun `discriminatedUnion should reject missing discriminator key`() {
-        val schema = Zod.discriminatedUnion<Animal>(
-            discriminator = "type",
-            dogSchema(), catSchema()
-        )
+        val schema =
+            Zod.discriminatedUnion<Animal>(
+                discriminator = "type",
+                dogSchema(),
+                catSchema(),
+            )
 
         val result = schema.safeParse(mapOf("name" to "Rex"))
         assertTrue(result is ZodResult.Failure)
@@ -79,10 +92,12 @@ class ZodDiscriminatedUnionTest {
 
     @Test
     fun `discriminatedUnion should fail when matched option is invalid`() {
-        val schema = Zod.discriminatedUnion<Animal>(
-            discriminator = "type",
-            dogSchema(), catSchema()
-        )
+        val schema =
+            Zod.discriminatedUnion<Animal>(
+                discriminator = "type",
+                dogSchema(),
+                catSchema(),
+            )
 
         val result = schema.safeParse(mapOf("type" to "dog", "name" to "Rex", "goodBoy" to "not-boolean"))
         assertTrue(result is ZodResult.Failure)
