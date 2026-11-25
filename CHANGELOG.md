@@ -2,7 +2,21 @@
 
 The full, per-release history lives in [docs/changelog.md](docs/changelog.md).
 
-## 1.4.0
+## 2.0.0
+
+The first release of the rewritten validation core. It contains breaking changes.
+
+### Breaking changes
+
+- Implicit coercion was removed; use `Zod.coerce.number()/boolean()/long()/date()`.
+- `Zod.set` now requires a `Set` instead of converting lists.
+- `parse`/`parseSuspend` throw `ZodValidationException` (still an `IllegalArgumentException`).
+- `ZodError` is a class exposing structured `issues`; the old `List<String>` constructor is gone.
+- `ZodString` and `ZodObjectSchema` are no longer data classes; `ZodOptional`/`ZodNullable` are
+  no longer value classes.
+- `merge` lets later keys win instead of throwing; `strict`/`strip`/`passthrough` are last-call-wins.
+- `.regex()` matches substrings, string checks run in declaration order and lengths count code
+  points.
 
 ### Added
 

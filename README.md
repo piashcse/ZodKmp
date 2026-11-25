@@ -24,7 +24,7 @@ Android, iOS, JVM/desktop, JS (browser and Node.js), Wasm (browser), Linux, macO
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.piashcse:zodkmp:1.4.0")
+            implementation("io.github.piashcse:zodkmp:2.0.0")
         }
     }
 }
@@ -34,7 +34,7 @@ Version catalog:
 
 ```toml
 [versions]
-zodkmp = "1.4.0"
+zodkmp = "2.0.0"
 
 [libraries]
 zodkmp = { module = "io.github.piashcse:zodkmp", version.ref = "zodkmp" }
@@ -296,8 +296,8 @@ plugins {
 }
 
 dependencies {
-    implementation("io.github.piashcse:zodkmp:1.4.0")
-    ksp("io.github.piashcse:zodkmp-ksp:1.4.0")
+    implementation("io.github.piashcse:zodkmp:2.0.0")
+    ksp("io.github.piashcse:zodkmp-ksp:2.0.0")
 }
 ```
 

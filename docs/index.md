@@ -50,7 +50,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("io.github.piashcse:zodkmp:1.4.0")
+                implementation("io.github.piashcse:zodkmp:2.0.0")
             }
         }
     }
@@ -61,7 +61,7 @@ kotlin {
 
 ```toml
 [versions]
-zodkmp = "1.4.0"
+zodkmp = "2.0.0"
 
 [libraries]
 zodkmp = { module = "io.github.piashcse:zodkmp", version.ref = "zodkmp" }

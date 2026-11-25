@@ -9,7 +9,7 @@ body:
     id: version
     attributes:
       label: ZodKmp version
-      placeholder: 1.4.0
+      placeholder: 2.0.0
     validations:
       required: true
   - type: dropdown

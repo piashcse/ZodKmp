@@ -11,8 +11,8 @@ plugins {
 }
 
 dependencies {
-    implementation("io.github.piashcse:zodkmp:1.4.0")
-    ksp("io.github.piashcse:zodkmp-ksp:1.4.0")
+    implementation("io.github.piashcse:zodkmp:2.0.0")
+    ksp("io.github.piashcse:zodkmp-ksp:2.0.0")
 }
 ```
 
@@ -21,8 +21,8 @@ not expose a common-metadata task in this setup, so the processor runs per targe
 
 ```kotlin
 dependencies {
-    add("kspJvm", "io.github.piashcse:zodkmp-ksp:1.4.0")
-    add("kspAndroid", "io.github.piashcse:zodkmp-ksp:1.4.0")
+    add("kspJvm", "io.github.piashcse:zodkmp-ksp:2.0.0")
+    add("kspAndroid", "io.github.piashcse:zodkmp-ksp:2.0.0")
 }
 ```
 

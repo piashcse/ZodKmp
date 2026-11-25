@@ -1,8 +1,8 @@
 # Changelog
 
-## [1.4.0]
+## [2.0.0]
 
-A correctness and API release. See [the full changelog](https://github.com/piashcse/zodkmp/blob/main/CHANGELOG.md) for the full list.
+A major correctness and API release with breaking changes. See [the full changelog](https://github.com/piashcse/zodkmp/blob/main/CHANGELOG.md) for the full list.
 
 ### Added
 - Structured `ZodIssue` errors with paths, codes, `flatten()` and `ZodValidationException`.
