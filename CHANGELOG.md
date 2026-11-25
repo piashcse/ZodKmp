@@ -45,6 +45,15 @@ The full, per-release history lives in [docs/changelog.md](docs/changelog.md).
 - 327 common tests run on JVM, JS, Wasm, iOS Simulator and macOS, plus 8 KSP codegen tests.
 - Line coverage is 99.2% for the library module (Kover).
 
+### Dependencies
+
+- Kotlin 2.4.21, Gradle 9.9.2, AGP 9.5.3, Compose Multiplatform 1.12.2.
+- Android compile/target SDK 37.
+- AndroidX activity 1.13.0, appcompat 1.8.0, core 1.19.1, lifecycle 2.11.0.
+- binary-compatibility-validator 0.18.2; Dokka, Kover, ktlint, KSP and serialization updated
+  to their latest stable releases.
+- Example app migrated to the AutoMirrored Material icons and current Compose preview import.
+
 ### Tooling
 
 - Gradle 9.4.1, JDK 21 toolchain with Foojay auto-provisioning.
