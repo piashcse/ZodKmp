@@ -26,8 +26,15 @@ class ZodPipe<T, R> internal constructor(
         if (firstResult is ZodResult.Failure) {
             return firstResult as ZodResult<R>
         }
-        @Suppress("UNCHECKED_CAST")
         return second.safeParse((firstResult as ZodResult.Success<T>).data)
+    }
+
+    override suspend fun safeParseSuspend(input: Any?): ZodResult<R> {
+        val firstResult = first.safeParseSuspend(input)
+        if (firstResult is ZodResult.Failure) {
+            return firstResult as ZodResult<R>
+        }
+        return second.safeParseSuspend((firstResult as ZodResult.Success<T>).data)
     }
 }
 

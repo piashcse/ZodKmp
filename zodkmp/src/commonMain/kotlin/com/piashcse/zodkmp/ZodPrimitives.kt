@@ -9,7 +9,7 @@ class ZodAny private constructor(
     companion object {
         fun schema(): ZodAny = ZodAny(emptyList())
     }
-    
+
     override fun parse(input: Any?): Any? {
         val result = safeParse(input)
         return when (result) {
@@ -17,21 +17,19 @@ class ZodAny private constructor(
             is ZodResult.Failure -> throw IllegalArgumentException("Validation failed: ${result.error.errors.joinToString(", ")}")
         }
     }
-    
+
     override fun safeParse(input: Any?): ZodResult<Any?> {
+        val value = if (input === ZodAbsent) null else input
         val errors = mutableListOf<String>()
         for (validation in validations) {
-            val error = validation(input)
-            if (error != null) {
-                errors.addAll(error.errors)
-            }
+            validation(value)?.let { errors.addAll(it.errors) }
         }
-        return if (errors.isEmpty()) ZodResult.Success(input) else ZodResult.Failure(ZodError(errors))
+        return if (errors.isEmpty()) ZodResult.Success(value) else ZodResult.Failure(ZodError(errors))
     }
 }
 
 /**
- * Schema that accepts any value without type information (alias of [ZodAny] in terms of behaviour).
+ * Schema that accepts any value without type information (behaviourally identical to [ZodAny]).
  */
 class ZodUnknown private constructor(
     private val validations: List<(Any?) -> ZodError?>
@@ -39,7 +37,7 @@ class ZodUnknown private constructor(
     companion object {
         fun schema(): ZodUnknown = ZodUnknown(emptyList())
     }
-    
+
     override fun parse(input: Any?): Any? {
         val result = safeParse(input)
         return when (result) {
@@ -47,16 +45,14 @@ class ZodUnknown private constructor(
             is ZodResult.Failure -> throw IllegalArgumentException("Validation failed: ${result.error.errors.joinToString(", ")}")
         }
     }
-    
+
     override fun safeParse(input: Any?): ZodResult<Any?> {
+        val value = if (input === ZodAbsent) null else input
         val errors = mutableListOf<String>()
         for (validation in validations) {
-            val error = validation(input)
-            if (error != null) {
-                errors.addAll(error.errors)
-            }
+            validation(value)?.let { errors.addAll(it.errors) }
         }
-        return if (errors.isEmpty()) ZodResult.Success(input) else ZodResult.Failure(ZodError(errors))
+        return if (errors.isEmpty()) ZodResult.Success(value) else ZodResult.Failure(ZodError(errors))
     }
 }
 
@@ -67,13 +63,13 @@ class ZodNever private constructor() : ZodSchema<Nothing> {
     companion object {
         fun schema(): ZodNever = ZodNever()
     }
-    
+
     override fun parse(input: Any?): Nothing {
-        throw IllegalArgumentException("Expected never, received ${input?.let { it::class.simpleName } ?: "null"}")
+        throw IllegalArgumentException("Expected never, received ${input.typeName()}")
     }
-    
+
     override fun safeParse(input: Any?): ZodResult<Nothing> {
-        return ZodResult.Failure(ZodError("Expected never, received ${input?.let { it::class.simpleName } ?: "null"}"))
+        return ZodResult.Failure(ZodError("Expected never, received ${input.typeName()}"))
     }
 }
 
@@ -86,7 +82,7 @@ class ZodVoid private constructor(
     companion object {
         fun schema(): ZodVoid = ZodVoid(emptyList())
     }
-    
+
     override fun parse(input: Any?): Unit {
         val result = safeParse(input)
         return when (result) {
@@ -94,17 +90,14 @@ class ZodVoid private constructor(
             is ZodResult.Failure -> throw IllegalArgumentException("Validation failed: ${result.error.errors.joinToString(", ")}")
         }
     }
-    
+
     override fun safeParse(input: Any?): ZodResult<Unit> {
-        if (input != null) {
-            return ZodResult.Failure(ZodError("Expected void, received ${input.let { it::class.simpleName } ?: "null"}"))
+        if (input != null && input !== ZodAbsent) {
+            return ZodResult.Failure(ZodError("Expected void, received ${input.typeName()}"))
         }
         val errors = mutableListOf<String>()
         for (validation in validations) {
-            val error = validation(input)
-            if (error != null) {
-                errors.addAll(error.errors)
-            }
+            validation(null)?.let { errors.addAll(it.errors) }
         }
         return if (errors.isEmpty()) ZodResult.Success(Unit) else ZodResult.Failure(ZodError(errors))
     }

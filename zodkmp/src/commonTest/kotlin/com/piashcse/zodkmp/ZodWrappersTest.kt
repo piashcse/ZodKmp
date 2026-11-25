@@ -22,7 +22,7 @@ class ZodWrappersTest {
 
     @Test
     fun `preprocess should fail if processed input is invalid`() {
-        val schema = Zod.preprocess({ it.toString() }, Zod.number())
+        val schema = Zod.preprocess({ it.toString() }, Zod.coerce.number())
         assertTrue(schema.safeParse(42) is ZodResult.Success)
         assertTrue(schema.safeParse("not-number") is ZodResult.Failure)
     }
@@ -47,7 +47,7 @@ class ZodWrappersTest {
 
     @Test
     fun `pipe should feed first output into second schema`() {
-        val trimThenLength = Zod.string().trim().pipe(Zod.number())
+        val trimThenLength = Zod.string().trim().pipe(Zod.coerce.number())
         // First schema trims to a string; the second coerces the string to a number.
         val result = trimThenLength.safeParse("  42  ")
         assertTrue(result is ZodResult.Success)
@@ -56,7 +56,7 @@ class ZodWrappersTest {
 
     @Test
     fun `pipe should fail on first schema failure`() {
-        val schema = Zod.string().pipe(Zod.number())
+        val schema = Zod.string().pipe(Zod.coerce.number())
         assertTrue(schema.safeParse(42) is ZodResult.Failure)
     }
 

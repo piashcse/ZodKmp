@@ -1,29 +1,19 @@
 package com.piashcse.zodkmp
 
-import kotlin.jvm.JvmInline
-
 /**
- * Schema for validating nullable values
+ * Schema for nullable values: accepts `null` in addition to the wrapped schema.
+ * Unlike [ZodOptional], a missing object property is not accepted.
  */
-@JvmInline
-value class ZodNullable<T>(
+class ZodNullable<T>(
     private val schema: ZodSchema<T>
 ) : ZodSchema<T?> {
-    override fun parse(input: Any?): T? {
-        return if (input == null) null else schema.parse(input)
-    }
+    override fun parse(input: Any?): T? = if (input == null) null else schema.parse(input)
 
-    override fun safeParse(input: Any?): ZodResult<T?> {
-        return if (input == null) {
-            ZodResult.Success(null)
-        } else {
-            val result = schema.safeParse(input)
-            when (result) {
-                is ZodResult.Success -> ZodResult.Success(result.data)
-                is ZodResult.Failure -> result
-            }
-        }
-    }
+    override fun safeParse(input: Any?): ZodResult<T?> =
+        if (input == null) ZodResult.Success(null) else schema.safeParse(input)
+
+    override suspend fun safeParseSuspend(input: Any?): ZodResult<T?> =
+        if (input == null) ZodResult.Success(null) else schema.safeParseSuspend(input)
 }
 
 fun <T> ZodSchema<T>.nullable(): ZodNullable<T> = ZodNullable(this)

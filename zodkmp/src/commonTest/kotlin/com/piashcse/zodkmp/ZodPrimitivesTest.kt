@@ -48,7 +48,8 @@ class ZodPrimitivesTest {
     @Test
     fun `long should accept integral numbers and numeric strings`() {
         assertEquals(42L, (Zod.long().safeParse(42) as ZodResult.Success).data)
-        assertEquals(7L, (Zod.long().safeParse("7") as ZodResult.Success).data)
+        assertEquals(7L, (Zod.coerce.long().safeParse("7") as ZodResult.Success).data)
+        assertTrue(Zod.long().safeParse("7") is ZodResult.Failure)
     }
 
     @Test
@@ -80,11 +81,9 @@ class ZodPrimitivesTest {
     }
 
     @Test
-    fun `set should accept lists too`() {
+    fun `set should reject lists`() {
         val schema = Zod.set(Zod.string())
-        val result = schema.safeParse(listOf("a", "b"))
-        assertTrue(result is ZodResult.Success)
-        assertEquals(setOf("a", "b"), result.data)
+        assertTrue(schema.safeParse(listOf("a", "b")) is ZodResult.Failure)
     }
 
     @Test

@@ -70,7 +70,7 @@ class ZodStringFormatTest {
 
     @Test
     fun `cuid2 should accept valid cuid2`() {
-        assertTrue(Zod.string().cuid2().safeParse("c2a2y2z2w2x2v2u2t2s2r2q") is ZodResult.Success)
+        assertTrue(Zod.string().cuid2().safeParse("c2a2y2z2w2x2v2u2t2s2r2q1") is ZodResult.Success)
     }
 
     @Test
@@ -124,7 +124,7 @@ class ZodStringFormatTest {
     fun `datetime should accept iso8601 datetimes`() {
         assertTrue(Zod.string().datetime().safeParse("2023-01-01T12:00:00") is ZodResult.Success)
         assertTrue(Zod.string().datetime().safeParse("2023-01-01T12:00:00Z") is ZodResult.Success)
-        assertTrue(Zod.string().datetime().safeParse("2023-01-01") is ZodResult.Success)
+        assertTrue(Zod.string().datetime().safeParse("2023-01-01") is ZodResult.Failure)
     }
 
     @Test

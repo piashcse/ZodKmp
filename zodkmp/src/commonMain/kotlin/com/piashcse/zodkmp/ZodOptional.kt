@@ -1,29 +1,20 @@
 package com.piashcse.zodkmp
 
-import kotlin.jvm.JvmInline
-
 /**
- * Schema for validating optional (nullable) values
+ * Schema for optional values (missing properties and `null`).
  */
-@JvmInline
-value class ZodOptional<T>(
+class ZodOptional<T>(
     private val schema: ZodSchema<T>
 ) : ZodSchema<T?> {
-    override fun parse(input: Any?): T? {
-        return if (input == null) null else schema.parse(input)
-    }
+    override fun parse(input: Any?): T? = if (isAbsentOrNull(input)) null else schema.parse(input)
 
-    override fun safeParse(input: Any?): ZodResult<T?> {
-        return if (input == null) {
-            ZodResult.Success(null)
-        } else {
-            val result = schema.safeParse(input)
-            when (result) {
-                is ZodResult.Success -> ZodResult.Success(result.data)
-                is ZodResult.Failure -> result
-            }
-        }
-    }
+    override fun safeParse(input: Any?): ZodResult<T?> =
+        if (isAbsentOrNull(input)) ZodResult.Success(null) else schema.safeParse(input)
+
+    override suspend fun safeParseSuspend(input: Any?): ZodResult<T?> =
+        if (isAbsentOrNull(input)) ZodResult.Success(null) else schema.safeParseSuspend(input)
+
+    private fun isAbsentOrNull(input: Any?): Boolean = input == null || input === ZodAbsent
 }
 
 fun <T> ZodSchema<T>.optional(): ZodOptional<T> = ZodOptional(this)

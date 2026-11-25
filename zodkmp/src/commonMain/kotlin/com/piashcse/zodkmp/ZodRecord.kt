@@ -35,11 +35,17 @@ class ZodRecord<T> private constructor(
     
     override fun safeParse(input: Any?): ZodResult<Map<String, T>> {
         val mapInput = input as? Map<*, *>
-        if (mapInput == null) {
-            return ZodResult.Failure(ZodError("Expected record (object), received ${input?.let { it::class.simpleName } ?: "null"}"))
+            ?: return ZodResult.Failure(ZodError("Expected record (object), received ${input.typeName()}"))
+
+        val nonStringKey = mapInput.keys.firstOrNull { it !is String }
+        if (nonStringKey != null) {
+            return ZodResult.Failure(
+                ZodError("Expected record with string keys, received key of type ${nonStringKey.typeName()}")
+            )
         }
-        
-        val stringKeyMap = mapInput.mapKeys { it.key.toString() }
+
+        @Suppress("UNCHECKED_CAST")
+        val stringKeyMap = mapInput as Map<String, Any?>
         val parsedValues = mutableMapOf<String, T>()
         val errors = mutableListOf<String>()
         
@@ -76,6 +82,48 @@ class ZodRecord<T> private constructor(
             }
         }
         
+        return ZodResult.Success(parsedValues)
+    }
+
+    override suspend fun safeParseSuspend(input: Any?): ZodResult<Map<String, T>> {
+        val mapInput = input as? Map<*, *>
+            ?: return ZodResult.Failure(ZodError("Expected record (object), received ${input.typeName()}"))
+
+        val nonStringKey = mapInput.keys.firstOrNull { it !is String }
+        if (nonStringKey != null) {
+            return ZodResult.Failure(
+                ZodError("Expected record with string keys, received key of type ${nonStringKey.typeName()}")
+            )
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        val stringKeyMap = mapInput as Map<String, Any?>
+        val parsedValues = mutableMapOf<String, T>()
+        val errors = mutableListOf<String>()
+
+        for ((key, value) in stringKeyMap) {
+            val keyMatches = keySchema?.safeParseSuspend(key) is ZodResult.Success
+            if (keySchema != null && !keyMatches) {
+                if (strict) {
+                    errors.add("key '$key': invalid key")
+                    continue
+                }
+            }
+
+            when (val valueResult = valueSchema.safeParseSuspend(value)) {
+                is ZodResult.Success -> parsedValues[key] = valueResult.data
+                is ZodResult.Failure -> valueResult.error.errors.forEach { error -> errors.add("$key: $error") }
+            }
+        }
+
+        if (errors.isNotEmpty()) {
+            return ZodResult.Failure(ZodError(errors))
+        }
+
+        for (validation in validations) {
+            validation(parsedValues)?.let { return ZodResult.Failure(it) }
+        }
+
         return ZodResult.Success(parsedValues)
     }
 }

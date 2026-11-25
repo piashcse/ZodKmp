@@ -20,15 +20,26 @@ class ZodTransform<I, O> internal constructor(
     override fun safeParse(input: Any?): ZodResult<O> {
         val result = schema.safeParse(input)
         return when (result) {
-            is ZodResult.Success -> {
-                try {
-                    val transformedValue = transform(result.data)
-                    ZodResult.Success(transformedValue)
-                } catch (e: Exception) {
-                    ZodResult.Failure(ZodError("Transformation failed: ${e.message}"))
-                }
-            }
+            is ZodResult.Success -> applyTransform(result.data)
             is ZodResult.Failure -> result as ZodResult<O> // Safe cast due to variance
+        }
+    }
+
+    override suspend fun safeParseSuspend(input: Any?): ZodResult<O> {
+        val result = schema.safeParseSuspend(input)
+        return when (result) {
+            is ZodResult.Success -> applyTransform(result.data)
+            is ZodResult.Failure -> result as ZodResult<O>
+        }
+    }
+
+    private fun applyTransform(value: I): ZodResult<O> {
+        return try {
+            ZodResult.Success(transform(value))
+        } catch (e: Exception) {
+            ZodResult.Failure(
+                ZodError("Transformation failed: ${e::class.simpleName}: ${e.message}")
+            )
         }
     }
 }

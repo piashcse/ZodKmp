@@ -38,27 +38,20 @@ class ZodMap<K, V> private constructor(
     
     override fun safeParse(input: Any?): ZodResult<Map<K, V>> {
         val mapInput = input as? Map<*, *>
-        if (mapInput == null) {
-            return ZodResult.Failure(ZodError("Expected map, received ${input?.let { it::class.simpleName } ?: "null"}"))
-        }
-        
+            ?: return ZodResult.Failure(ZodError("Expected map, received ${input.typeName()}"))
+
         val parsedEntries = mutableMapOf<K, V>()
         val errors = mutableListOf<String>()
-        
+
         for ((rawKey, rawValue) in mapInput) {
             val keyResult = keySchema.safeParse(rawKey)
             val valueResult = valueSchema.safeParse(rawValue)
-            
-            when {
-                keyResult is ZodResult.Failure -> {
-                    keyResult.error.errors.forEach { error -> errors.add("key $rawKey: $error") }
-                }
-                valueResult is ZodResult.Failure -> {
-                    valueResult.error.errors.forEach { error -> errors.add("value for '$rawKey': $error") }
-                }
-                keyResult is ZodResult.Success && valueResult is ZodResult.Success -> {
-                    parsedEntries[keyResult.data] = valueResult.data
-                }
+
+            keyResult.errorOrNull()?.errors?.forEach { error -> errors.add("key $rawKey: $error") }
+            valueResult.errorOrNull()?.errors?.forEach { error -> errors.add("value for '$rawKey': $error") }
+
+            if (keyResult is ZodResult.Success && valueResult is ZodResult.Success) {
+                parsedEntries[keyResult.data] = valueResult.data
             }
         }
         
@@ -73,6 +66,36 @@ class ZodMap<K, V> private constructor(
             }
         }
         
+        return ZodResult.Success(parsedEntries)
+    }
+
+    override suspend fun safeParseSuspend(input: Any?): ZodResult<Map<K, V>> {
+        val mapInput = input as? Map<*, *>
+            ?: return ZodResult.Failure(ZodError("Expected map, received ${input.typeName()}"))
+
+        val parsedEntries = mutableMapOf<K, V>()
+        val errors = mutableListOf<String>()
+
+        for ((rawKey, rawValue) in mapInput) {
+            val keyResult = keySchema.safeParseSuspend(rawKey)
+            val valueResult = valueSchema.safeParseSuspend(rawValue)
+
+            keyResult.errorOrNull()?.errors?.forEach { error -> errors.add("key $rawKey: $error") }
+            valueResult.errorOrNull()?.errors?.forEach { error -> errors.add("value for '$rawKey': $error") }
+
+            if (keyResult is ZodResult.Success && valueResult is ZodResult.Success) {
+                parsedEntries[keyResult.data] = valueResult.data
+            }
+        }
+
+        if (errors.isNotEmpty()) {
+            return ZodResult.Failure(ZodError(errors))
+        }
+
+        for (validation in validations) {
+            validation(parsedEntries)?.let { return ZodResult.Failure(it) }
+        }
+
         return ZodResult.Success(parsedEntries)
     }
 }

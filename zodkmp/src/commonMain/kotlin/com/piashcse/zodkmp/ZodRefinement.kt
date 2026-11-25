@@ -56,4 +56,23 @@ class ZodSchemaWithRefinement<T>(
             ZodResult.Failure(ZodError(errors))
         }
     }
+
+    override suspend fun safeParseSuspend(input: Any?): ZodResult<T> {
+        val baseResult = baseSchema.safeParseSuspend(input)
+        if (baseResult is ZodResult.Failure) {
+            return baseResult
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        val value = (baseResult as ZodResult.Success<T>).data
+
+        val errors = mutableListOf<String>()
+        for (refinement in refinements) {
+            if (!refinement.refinement(value)) {
+                errors.add(refinement.errorMessage(value))
+            }
+        }
+
+        return if (errors.isEmpty()) ZodResult.Success(value) else ZodResult.Failure(ZodError(errors))
+    }
 }

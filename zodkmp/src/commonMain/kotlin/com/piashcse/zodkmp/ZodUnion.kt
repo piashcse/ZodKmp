@@ -46,4 +46,21 @@ class ZodUnion private constructor(
         
         return ZodResult.Failure(ZodError("Union validation failed: ${errors.joinToString("; ")}"))
     }
+
+    override suspend fun safeParseSuspend(input: Any?): ZodResult<Any?> {
+        val errors = mutableListOf<String>()
+        for ((index, schema) in schemas.withIndex()) {
+            val result = schema.safeParseSuspend(input)
+            when (result) {
+                is ZodResult.Success -> {
+                    for (validation in validations) {
+                        validation(result.data)?.let { return ZodResult.Failure(it) }
+                    }
+                    return ZodResult.Success(result.data)
+                }
+                is ZodResult.Failure -> errors.add("Option $index: ${result.error.errors.joinToString(", ")}")
+            }
+        }
+        return ZodResult.Failure(ZodError("Union validation failed: ${errors.joinToString("; ")}"))
+    }
 }

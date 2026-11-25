@@ -47,4 +47,25 @@ class ZodIntersection<T, U> private constructor(
         
         return ZodResult.Success(pairResult)
     }
+
+    override suspend fun safeParseSuspend(input: Any?): ZodResult<Pair<T, U>> {
+        val leftResult = leftSchema.safeParseSuspend(input)
+        if (leftResult is ZodResult.Failure) {
+            return ZodResult.Failure(ZodError("Left schema validation failed: ${leftResult.error.errors.joinToString(", ")}"))
+        }
+
+        val rightResult = rightSchema.safeParseSuspend(input)
+        if (rightResult is ZodResult.Failure) {
+            return ZodResult.Failure(ZodError("Right schema validation failed: ${rightResult.error.errors.joinToString(", ")}"))
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        val pairResult = Pair((leftResult as ZodResult.Success<T>).data, (rightResult as ZodResult.Success<U>).data)
+
+        for (validation in validations) {
+            validation(pairResult)?.let { return ZodResult.Failure(it) }
+        }
+
+        return ZodResult.Success(pairResult)
+    }
 }
