@@ -3,10 +3,17 @@ package com.piashcse.zodkmp
 /**
  * Schema for transforming values
  */
-public class ZodTransform<I, O> internal constructor(private val schema: ZodSchema<I>, private val transform: (I) -> O) : ZodSchema<O> {
+public class ZodTransform<I, O> internal constructor(
+    private val schema: ZodSchema<I>,
+    private val transform: (I) -> O,
+) : ZodSchema<O> {
     internal fun inputSchema(): ZodSchema<I> = schema
+
     public companion object {
-        public fun <I, O> schema(baseSchema: ZodSchema<I>, transform: (I) -> O): ZodTransform<I, O> = ZodTransform(baseSchema, transform)
+        public fun <I, O> schema(
+            baseSchema: ZodSchema<I>,
+            transform: (I) -> O,
+        ): ZodTransform<I, O> = ZodTransform(baseSchema, transform)
     }
 
     override fun safeParse(input: Any?): ZodResult<O> {
@@ -25,13 +32,14 @@ public class ZodTransform<I, O> internal constructor(private val schema: ZodSche
         }
     }
 
-    private fun applyTransform(value: I): ZodResult<O> = try {
-        ZodResult.Success(transform(value))
-    } catch (e: Exception) {
-        ZodResult.Failure(
-            ZodError("Transformation failed: ${e::class.simpleName}: ${e.message}"),
-        )
-    }
+    private fun applyTransform(value: I): ZodResult<O> =
+        try {
+            ZodResult.Success(transform(value))
+        } catch (e: Exception) {
+            ZodResult.Failure(
+                ZodError("Transformation failed: ${e::class.simpleName}: ${e.message}"),
+            )
+        }
 }
 
 public fun <I, O> ZodSchema<I>.transform(transform: (I) -> O): ZodTransform<I, O> = ZodTransform(this, transform)

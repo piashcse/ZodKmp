@@ -64,13 +64,17 @@ public class ZodObjectSchema<T> private constructor(
     /**
      * Adds a custom refinement while preserving the object schema type.
      */
-    public fun refine(predicate: (T) -> Boolean, message: (T) -> String = { "Invalid value: $it" }): ZodObjectSchema<T> = ZodObjectSchema(
-        shape,
-        parser,
-        strict,
-        passthrough,
-        validations + { value -> if (predicate(value)) null else issue(ZodIssueCode.CUSTOM, message(value)) },
-    )
+    public fun refine(
+        predicate: (T) -> Boolean,
+        message: (T) -> String = { "Invalid value: $it" },
+    ): ZodObjectSchema<T> =
+        ZodObjectSchema(
+            shape,
+            parser,
+            strict,
+            passthrough,
+            validations + { value -> if (predicate(value)) null else issue(ZodIssueCode.CUSTOM, message(value)) },
+        )
 
     override fun safeParse(input: Any?): ZodResult<T> {
         val mapInput =
@@ -208,7 +212,10 @@ public class ZodObjectSchema<T> private constructor(
         return applyValidations(value)
     }
 
-    private fun extraKeyIssues(stringKeyMap: Map<String, Any?>, parsedValues: MutableMap<String, Any?>): List<ZodIssue> {
+    private fun extraKeyIssues(
+        stringKeyMap: Map<String, Any?>,
+        parsedValues: MutableMap<String, Any?>,
+    ): List<ZodIssue> {
         if (strict) {
             val extraKeys = stringKeyMap.keys - shape.keys
             if (extraKeys.isNotEmpty()) {
@@ -236,13 +243,23 @@ public class ZodObjectSchema<T> private constructor(
     }
 
     public companion object {
-        public fun <T> create(shape: Map<String, ZodSchema<*>>, parser: (Map<String, Any?>) -> T, strict: Boolean = false): ZodObjectSchema<T> =
-            ZodObjectSchema(shape, parser, strict, false, emptyList())
+        public fun <T> create(
+            shape: Map<String, ZodSchema<*>>,
+            parser: (Map<String, Any?>) -> T,
+            strict: Boolean = false,
+        ): ZodObjectSchema<T> = ZodObjectSchema(shape, parser, strict, false, emptyList())
 
-        public fun <T> create(shape: Map<String, ZodSchema<*>>, parser: (Map<String, Any?>) -> T, strict: Boolean, passthrough: Boolean): ZodObjectSchema<T> =
-            ZodObjectSchema(shape, parser, strict, passthrough, emptyList())
+        public fun <T> create(
+            shape: Map<String, ZodSchema<*>>,
+            parser: (Map<String, Any?>) -> T,
+            strict: Boolean,
+            passthrough: Boolean,
+        ): ZodObjectSchema<T> = ZodObjectSchema(shape, parser, strict, passthrough, emptyList())
 
-        public fun <T> build(shapeBuilder: ZodObjectShapeBuilder.() -> Unit, parser: (Map<String, Any?>) -> T): ZodObjectSchema<T> {
+        public fun <T> build(
+            shapeBuilder: ZodObjectShapeBuilder.() -> Unit,
+            parser: (Map<String, Any?>) -> T,
+        ): ZodObjectSchema<T> {
             val builder = ZodObjectShapeBuilder()
             builder.shapeBuilder()
             return ZodObjectSchema(builder.shape, parser, false, false, emptyList())
@@ -254,54 +271,80 @@ public class ZodObjectSchema<T> private constructor(
  * Makes a property optional; nested object properties are made optional too, while
  * collection constraints (`min`, `max`, `unique`, ...) are preserved.
  */
-private fun deepPartialProperty(schema: ZodSchema<*>): ZodSchema<*> = when (schema) {
-    is ZodObjectSchema<*> -> schema.deepPartial().optional()
-    is ZodArray<*> -> schema.withElement(deepPartialElement(schema.elementSchema)).optional()
-    is ZodSet<*> -> schema.withElement(deepPartialElement(schema.elementSchema)).optional()
-    else -> schema.optional()
-}
+private fun deepPartialProperty(schema: ZodSchema<*>): ZodSchema<*> =
+    when (schema) {
+        is ZodObjectSchema<*> -> schema.deepPartial().optional()
+        is ZodArray<*> -> schema.withElement(deepPartialElement(schema.elementSchema)).optional()
+        is ZodSet<*> -> schema.withElement(deepPartialElement(schema.elementSchema)).optional()
+        else -> schema.optional()
+    }
 
-private fun deepPartialElement(schema: ZodSchema<*>): ZodSchema<*> = when (schema) {
-    is ZodObjectSchema<*> -> schema.deepPartial()
-    is ZodArray<*> -> schema.withElement(deepPartialElement(schema.elementSchema))
-    is ZodSet<*> -> schema.withElement(deepPartialElement(schema.elementSchema))
-    else -> schema
-}
+private fun deepPartialElement(schema: ZodSchema<*>): ZodSchema<*> =
+    when (schema) {
+        is ZodObjectSchema<*> -> schema.deepPartial()
+        is ZodArray<*> -> schema.withElement(deepPartialElement(schema.elementSchema))
+        is ZodSet<*> -> schema.withElement(deepPartialElement(schema.elementSchema))
+        else -> schema
+    }
 
 public infix fun <T, U> ZodObjectSchema<T>.and(other: ZodObjectSchema<U>): ZodObjectSchema<Map<String, Any?>> = merge(other)
 
 public class ZodObjectShapeBuilder {
     public val shape: MutableMap<String, ZodSchema<*>> = mutableMapOf()
 
-    public fun string(name: String, schema: ZodString = ZodString.schema()) {
+    public fun string(
+        name: String,
+        schema: ZodString = ZodString.schema(),
+    ) {
         shape[name] = schema
     }
 
-    public fun number(name: String, schema: ZodNumber = ZodNumber.schema()) {
+    public fun number(
+        name: String,
+        schema: ZodNumber = ZodNumber.schema(),
+    ) {
         shape[name] = schema
     }
 
-    public fun boolean(name: String, schema: ZodBoolean = ZodBoolean.schema()) {
+    public fun boolean(
+        name: String,
+        schema: ZodBoolean = ZodBoolean.schema(),
+    ) {
         shape[name] = schema
     }
 
-    public fun <T> field(name: String, schema: ZodSchema<T>) {
+    public fun <T> field(
+        name: String,
+        schema: ZodSchema<T>,
+    ) {
         shape[name] = schema
     }
 }
 
-public fun ZodObjectShapeBuilder.optionalString(name: String, schema: ZodString = ZodString.schema()) {
+public fun ZodObjectShapeBuilder.optionalString(
+    name: String,
+    schema: ZodString = ZodString.schema(),
+) {
     shape[name] = schema.optional()
 }
 
-public fun ZodObjectShapeBuilder.optionalNumber(name: String, schema: ZodNumber = ZodNumber.schema()) {
+public fun ZodObjectShapeBuilder.optionalNumber(
+    name: String,
+    schema: ZodNumber = ZodNumber.schema(),
+) {
     shape[name] = schema.optional()
 }
 
-public fun ZodObjectShapeBuilder.optionalBoolean(name: String, schema: ZodBoolean = ZodBoolean.schema()) {
+public fun ZodObjectShapeBuilder.optionalBoolean(
+    name: String,
+    schema: ZodBoolean = ZodBoolean.schema(),
+) {
     shape[name] = schema.optional()
 }
 
-public fun <T> ZodObjectShapeBuilder.optionalField(name: String, schema: ZodSchema<T>) {
+public fun <T> ZodObjectShapeBuilder.optionalField(
+    name: String,
+    schema: ZodSchema<T>,
+) {
     shape[name] = schema.optional()
 }

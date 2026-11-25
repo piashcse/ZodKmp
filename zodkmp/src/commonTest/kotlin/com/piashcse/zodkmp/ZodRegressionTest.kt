@@ -204,9 +204,10 @@ class ZodRegressionTest {
 
     @Test
     fun `discriminated union rejects duplicate discriminators`() {
-        fun option(type: String) = Zod.objectSchema<Map<String, Any?>>({
-            field("type", Zod.literal(type))
-        }) { it }
+        fun option(type: String) =
+            Zod.objectSchema<Map<String, Any?>>({
+                field("type", Zod.literal(type))
+            }) { it }
 
         assertFailsWith<IllegalArgumentException> {
             Zod.discriminatedUnion<Map<String, Any?>>("type", option("a"), option("a"))
@@ -246,21 +247,22 @@ class ZodRegressionTest {
     }
 
     @Test
-    fun `suspend refinements compose through objects, arrays and wrappers`() = runTest {
-        val nested =
-            Zod.objectSchema<Map<String, Any?>>({
-                field("name", Zod.string().refineSuspend({ it != "blocked" }))
-                field("tags", Zod.array(Zod.string().refineSuspend({ it.isNotEmpty() })))
-            }) { it }
+    fun `suspend refinements compose through objects, arrays and wrappers`() =
+        runTest {
+            val nested =
+                Zod.objectSchema<Map<String, Any?>>({
+                    field("name", Zod.string().refineSuspend({ it != "blocked" }))
+                    field("tags", Zod.array(Zod.string().refineSuspend({ it.isNotEmpty() })))
+                }) { it }
 
-        val ok = nested.safeParseSuspend(mapOf("name" to "ok", "tags" to listOf("a")))
-        assertTrue(ok is ZodResult.Success)
+            val ok = nested.safeParseSuspend(mapOf("name" to "ok", "tags" to listOf("a")))
+            assertTrue(ok is ZodResult.Success)
 
-        val blocked = nested.safeParseSuspend(mapOf("name" to "blocked", "tags" to listOf("a")))
-        assertTrue(blocked is ZodResult.Failure)
+            val blocked = nested.safeParseSuspend(mapOf("name" to "blocked", "tags" to listOf("a")))
+            assertTrue(blocked is ZodResult.Failure)
 
-        val optional = Zod.string().refineSuspend({ it != "blocked" }).optional()
-        assertTrue(optional.safeParseSuspend(null) is ZodResult.Success)
-        assertTrue(optional.safeParseSuspend("blocked") is ZodResult.Failure)
-    }
+            val optional = Zod.string().refineSuspend({ it != "blocked" }).optional()
+            assertTrue(optional.safeParseSuspend(null) is ZodResult.Success)
+            assertTrue(optional.safeParseSuspend("blocked") is ZodResult.Failure)
+        }
 }

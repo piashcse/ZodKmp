@@ -3,8 +3,11 @@ package com.piashcse.zodkmp
 /**
  * Schema for validating union types (accepts values that match any of the provided schemas).
  */
-public class ZodUnion private constructor(private val schemas: List<ZodSchema<*>>) : ZodSchema<Any?> {
+public class ZodUnion private constructor(
+    private val schemas: List<ZodSchema<*>>,
+) : ZodSchema<Any?> {
     internal fun options(): List<ZodSchema<*>> = schemas
+
     public companion object {
         public fun schema(vararg schemas: ZodSchema<*>): ZodUnion = ZodUnion(schemas.toList())
 

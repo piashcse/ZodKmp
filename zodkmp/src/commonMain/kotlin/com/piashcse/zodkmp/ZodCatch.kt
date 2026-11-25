@@ -4,10 +4,17 @@ package com.piashcse.zodkmp
  * Schema that returns a fallback value when the wrapped schema fails to parse.
  * Mirrors Zod's `.catch(fn)`.
  */
-public class ZodCatch<T> internal constructor(private val schema: ZodSchema<T>, private val fallback: (Any?) -> T) : ZodSchema<T> {
+public class ZodCatch<T> internal constructor(
+    private val schema: ZodSchema<T>,
+    private val fallback: (Any?) -> T,
+) : ZodSchema<T> {
     internal fun wrapped(): ZodSchema<T> = schema
+
     public companion object {
-        public fun <T> schema(schema: ZodSchema<T>, fallback: (Any?) -> T): ZodCatch<T> = ZodCatch(schema, fallback)
+        public fun <T> schema(
+            schema: ZodSchema<T>,
+            fallback: (Any?) -> T,
+        ): ZodCatch<T> = ZodCatch(schema, fallback)
     }
 
     override fun safeParse(input: Any?): ZodResult<T> {

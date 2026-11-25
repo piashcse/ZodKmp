@@ -14,11 +14,16 @@ public class ZodMap<K, V> private constructor(
     private val hints: Map<String, JsonElement> = emptyMap(),
 ) : ZodSchema<Map<K, V>> {
     public companion object {
-        public fun <K, V> schema(keySchema: ZodSchema<K>, valueSchema: ZodSchema<V>): ZodMap<K, V> = ZodMap(keySchema, valueSchema, emptyList(), emptyMap())
+        public fun <K, V> schema(
+            keySchema: ZodSchema<K>,
+            valueSchema: ZodSchema<V>,
+        ): ZodMap<K, V> = ZodMap(keySchema, valueSchema, emptyList(), emptyMap())
     }
 
-    private fun withValidation(newHints: Map<String, JsonElement> = emptyMap(), validation: (Map<K, V>) -> ZodIssue?): ZodMap<K, V> =
-        ZodMap(keySchema, valueSchema, validations + validation, hints + newHints)
+    private fun withValidation(
+        newHints: Map<String, JsonElement> = emptyMap(),
+        validation: (Map<K, V>) -> ZodIssue?,
+    ): ZodMap<K, V> = ZodMap(keySchema, valueSchema, validations + validation, hints + newHints)
 
     internal fun keySchemaRef(): ZodSchema<K> = keySchema
 
@@ -26,12 +31,18 @@ public class ZodMap<K, V> private constructor(
 
     internal fun jsonHints(): Map<String, JsonElement> = hints
 
-    public fun min(minSize: Int, message: String = "Map must contain at least $minSize entry/entries"): ZodMap<K, V> =
+    public fun min(
+        minSize: Int,
+        message: String = "Map must contain at least $minSize entry/entries",
+    ): ZodMap<K, V> =
         withValidation(mapOf("minProperties" to JsonPrimitive(minSize))) { value ->
             if (value.size < minSize) issue(ZodIssueCode.TOO_SMALL, message) else null
         }
 
-    public fun max(maxSize: Int, message: String = "Map must contain at most $maxSize entry/entries"): ZodMap<K, V> =
+    public fun max(
+        maxSize: Int,
+        message: String = "Map must contain at most $maxSize entry/entries",
+    ): ZodMap<K, V> =
         withValidation(mapOf("maxProperties" to JsonPrimitive(maxSize))) { value ->
             if (value.size > maxSize) issue(ZodIssueCode.TOO_BIG, message) else null
         }

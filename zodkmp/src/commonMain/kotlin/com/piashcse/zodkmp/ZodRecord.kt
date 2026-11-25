@@ -10,8 +10,11 @@ package com.piashcse.zodkmp
  * - [looseSchema] with a key schema validates every value and validates keys that match the
  *   key schema; keys that do not match the key schema never produce errors.
  */
-public class ZodRecord<T> private constructor(private val keySchema: ZodSchema<String>?, private val valueSchema: ZodSchema<T>, private val strict: Boolean) :
-    ZodSchema<Map<String, T>> {
+public class ZodRecord<T> private constructor(
+    private val keySchema: ZodSchema<String>?,
+    private val valueSchema: ZodSchema<T>,
+    private val strict: Boolean,
+) : ZodSchema<Map<String, T>> {
     internal fun key(): ZodSchema<String>? = keySchema
 
     internal fun value(): ZodSchema<T> = valueSchema
@@ -21,13 +24,22 @@ public class ZodRecord<T> private constructor(private val keySchema: ZodSchema<S
     public companion object {
         public fun <T> schema(valueSchema: ZodSchema<T>): ZodRecord<T> = ZodRecord(null, valueSchema, false)
 
-        public fun <T> schema(keySchema: ZodSchema<String>, valueSchema: ZodSchema<T>): ZodRecord<T> = ZodRecord(keySchema, valueSchema, true)
+        public fun <T> schema(
+            keySchema: ZodSchema<String>,
+            valueSchema: ZodSchema<T>,
+        ): ZodRecord<T> = ZodRecord(keySchema, valueSchema, true)
 
         public fun <T> looseSchema(valueSchema: ZodSchema<T>): ZodRecord<T> = ZodRecord(null, valueSchema, false)
 
-        public fun <T> looseSchema(keySchema: ZodSchema<String>, valueSchema: ZodSchema<T>): ZodRecord<T> = ZodRecord(keySchema, valueSchema, false)
+        public fun <T> looseSchema(
+            keySchema: ZodSchema<String>,
+            valueSchema: ZodSchema<T>,
+        ): ZodRecord<T> = ZodRecord(keySchema, valueSchema, false)
 
-        public fun <T> strictSchema(keySchema: ZodSchema<String>, valueSchema: ZodSchema<T>): ZodRecord<T> = ZodRecord(keySchema, valueSchema, true)
+        public fun <T> strictSchema(
+            keySchema: ZodSchema<String>,
+            valueSchema: ZodSchema<T>,
+        ): ZodRecord<T> = ZodRecord(keySchema, valueSchema, true)
     }
 
     override fun safeParse(input: Any?): ZodResult<Map<String, T>> {

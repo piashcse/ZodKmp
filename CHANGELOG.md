@@ -14,8 +14,8 @@ The full, per-release history lives in [docs/changelog.md](docs/changelog.md).
 - `Zod.lazy { ... }` for recursive schemas.
 - `JsonElement` interop: `parseJson`, `safeParseJson`, `toZodValue`.
 - `Zod.date()` factory.
-- `toJsonSchema()` for structural JSON Schema generation.
-- `ZodConfig.errorMap` for custom/localized messages.
+- `toJsonSchema()` for structural JSON Schema generation with `$ref`/`$defs` for recursion.
+- `ZodConfig.errorMap` for custom/localized messages, plus bundled `ZodLocales` (en/es/fr/bn).
 - Optional `zodkmp-ksp` module: `@ZodModel` code generation.
 - Typed `refine()` on string, number, boolean, array, set, object and date schemas.
 - Object intersection overload that merges shapes, and `ZodError.prepend` path support.

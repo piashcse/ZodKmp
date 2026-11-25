@@ -20,22 +20,30 @@ public class ZodSet<T> private constructor(
     @Suppress("UNCHECKED_CAST")
     internal fun <R> withElement(elementSchema: ZodSchema<R>): ZodSet<R> = ZodSet(elementSchema, validations as List<(Set<R>) -> ZodIssue?>, hints)
 
-    private fun withValidation(newHints: Map<String, JsonElement> = emptyMap(), validation: (Set<T>) -> ZodIssue?): ZodSet<T> =
-        ZodSet(elementSchema, validations + validation, hints + newHints)
+    private fun withValidation(
+        newHints: Map<String, JsonElement> = emptyMap(),
+        validation: (Set<T>) -> ZodIssue?,
+    ): ZodSet<T> = ZodSet(elementSchema, validations + validation, hints + newHints)
 
     internal fun jsonHints(): Map<String, JsonElement> = hints
 
-    public fun min(minSize: Int, message: String = "Set must contain at least $minSize element(s)"): ZodSet<T> =
-        withValidation { value -> if (value.size < minSize) issue(ZodIssueCode.TOO_SMALL, message) else null }
+    public fun min(
+        minSize: Int,
+        message: String = "Set must contain at least $minSize element(s)",
+    ): ZodSet<T> = withValidation { value -> if (value.size < minSize) issue(ZodIssueCode.TOO_SMALL, message) else null }
 
-    public fun max(maxSize: Int, message: String = "Set must contain at most $maxSize element(s)"): ZodSet<T> =
-        withValidation { value -> if (value.size > maxSize) issue(ZodIssueCode.TOO_BIG, message) else null }
+    public fun max(
+        maxSize: Int,
+        message: String = "Set must contain at most $maxSize element(s)",
+    ): ZodSet<T> = withValidation { value -> if (value.size > maxSize) issue(ZodIssueCode.TOO_BIG, message) else null }
 
     public fun nonEmpty(message: String = "Set cannot be empty"): ZodSet<T> =
         withValidation { value -> if (value.isEmpty()) issue(ZodIssueCode.TOO_SMALL, message) else null }
 
-    public fun refine(predicate: (Set<T>) -> Boolean, message: (Set<T>) -> String = { "Invalid value: $it" }): ZodSet<T> =
-        withValidation { value -> if (predicate(value)) null else issue(ZodIssueCode.CUSTOM, message(value)) }
+    public fun refine(
+        predicate: (Set<T>) -> Boolean,
+        message: (Set<T>) -> String = { "Invalid value: $it" },
+    ): ZodSet<T> = withValidation { value -> if (predicate(value)) null else issue(ZodIssueCode.CUSTOM, message(value)) }
 
     override fun safeParse(input: Any?): ZodResult<Set<T>> {
         val setInput =

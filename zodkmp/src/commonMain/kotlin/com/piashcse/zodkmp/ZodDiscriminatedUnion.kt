@@ -8,12 +8,19 @@ package com.piashcse.zodkmp
  * key, and discriminator values must be unique. Unknown or missing discriminators fail
  * without attempting to parse the other options.
  */
-public class ZodDiscriminatedUnion<T> private constructor(private val discriminator: String, private val options: List<ZodObjectSchema<*>>) : ZodSchema<T> {
+public class ZodDiscriminatedUnion<T> private constructor(
+    private val discriminator: String,
+    private val options: List<ZodObjectSchema<*>>,
+) : ZodSchema<T> {
     internal fun discriminatorKey(): String = discriminator
 
     internal fun optionSchemas(): List<ZodObjectSchema<*>> = options
+
     public companion object {
-        public fun <T> schema(discriminator: String, options: List<ZodObjectSchema<out T>>): ZodDiscriminatedUnion<T> {
+        public fun <T> schema(
+            discriminator: String,
+            options: List<ZodObjectSchema<out T>>,
+        ): ZodDiscriminatedUnion<T> {
             require(options.isNotEmpty()) { "discriminatedUnion requires at least one option" }
 
             val seen = mutableListOf<Pair<Any?, Int>>()

@@ -6,20 +6,31 @@ package com.piashcse.zodkmp
  * By default only [Boolean] values are accepted. Use [Zod.coerce] to opt into
  * accepting the strings `"true"` / `"false"`.
  */
-public class ZodBoolean private constructor(private val validations: List<(Boolean) -> ZodIssue?>, private val coerce: Boolean) : ZodSchema<Boolean> {
+public class ZodBoolean private constructor(
+    private val validations: List<(Boolean) -> ZodIssue?>,
+    private val coerce: Boolean,
+) : ZodSchema<Boolean> {
     public companion object {
         public fun schema(coerce: Boolean = false): ZodBoolean = ZodBoolean(emptyList(), coerce)
     }
 
-    public fun isEqual(value: Boolean, message: String = "Boolean must be equal to $value"): ZodBoolean = ZodBoolean(
-        validations + { bool -> if (bool != value) issue(ZodIssueCode.CUSTOM, message) else null },
-        coerce,
-    )
+    public fun isEqual(
+        value: Boolean,
+        message: String = "Boolean must be equal to $value",
+    ): ZodBoolean =
+        ZodBoolean(
+            validations + { bool -> if (bool != value) issue(ZodIssueCode.CUSTOM, message) else null },
+            coerce,
+        )
 
-    public fun refine(predicate: (Boolean) -> Boolean, message: (Boolean) -> String = { "Invalid value: $it" }): ZodBoolean = ZodBoolean(
-        validations + { value -> if (predicate(value)) null else issue(ZodIssueCode.CUSTOM, message(value)) },
-        coerce,
-    )
+    public fun refine(
+        predicate: (Boolean) -> Boolean,
+        message: (Boolean) -> String = { "Invalid value: $it" },
+    ): ZodBoolean =
+        ZodBoolean(
+            validations + { value -> if (predicate(value)) null else issue(ZodIssueCode.CUSTOM, message(value)) },
+            coerce,
+        )
 
     override fun safeParse(input: Any?): ZodResult<Boolean> {
         val booleanInput =

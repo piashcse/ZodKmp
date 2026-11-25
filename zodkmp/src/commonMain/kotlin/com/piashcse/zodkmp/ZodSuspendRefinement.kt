@@ -3,7 +3,10 @@ package com.piashcse.zodkmp
 /**
  * A suspend (async) refinement definition.
  */
-public data class SuspendRefinement<T>(val refinement: suspend (T) -> Boolean, val errorMessage: suspend (T) -> String = { "Invalid value: $it" })
+public data class SuspendRefinement<T>(
+    val refinement: suspend (T) -> Boolean,
+    val errorMessage: suspend (T) -> String = { "Invalid value: $it" },
+)
 
 /**
  * Schema wrapper that runs suspend (async) refinements after validating against a base schema.
@@ -12,8 +15,10 @@ public data class SuspendRefinement<T>(val refinement: suspend (T) -> Boolean, v
  * Kotlin Multiplatform, those methods throw [IllegalStateException]; use
  * [safeParseSuspend]/[parseSuspend] instead.
  */
-public class ZodSuspendRefinement<T> internal constructor(private val baseSchema: ZodSchema<T>, private val refinements: List<SuspendRefinement<T>>) :
-    ZodSchema<T> {
+public class ZodSuspendRefinement<T> internal constructor(
+    private val baseSchema: ZodSchema<T>,
+    private val refinements: List<SuspendRefinement<T>>,
+) : ZodSchema<T> {
     override fun parse(input: Any?): T = throw IllegalStateException("This schema contains suspend refinements. Use parseSuspend() instead.")
 
     override fun safeParse(input: Any?): ZodResult<T> = throw IllegalStateException("This schema contains suspend refinements. Use safeParseSuspend() instead.")

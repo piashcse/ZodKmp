@@ -350,6 +350,14 @@ public final class com/piashcse/zodkmp/ZodLiteral$Companion {
 	public final fun schema ([Ljava/lang/Object;)Lcom/piashcse/zodkmp/ZodSchema;
 }
 
+public final class com/piashcse/zodkmp/ZodLocales {
+	public static final field INSTANCE Lcom/piashcse/zodkmp/ZodLocales;
+	public final fun getBengali ()Lkotlin/jvm/functions/Function1;
+	public final fun getEnglish ()Lkotlin/jvm/functions/Function1;
+	public final fun getFrench ()Lkotlin/jvm/functions/Function1;
+	public final fun getSpanish ()Lkotlin/jvm/functions/Function1;
+}
+
 public final class com/piashcse/zodkmp/ZodLong : com/piashcse/zodkmp/ZodSchema {
 	public static final field Companion Lcom/piashcse/zodkmp/ZodLong$Companion;
 	public synthetic fun <init> (Ljava/util/List;ZLkotlin/jvm/internal/DefaultConstructorMarker;)V

@@ -1,15 +1,22 @@
 plugins {
-    alias(libs.plugins.kotlinJvm)
+    alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.ksp)
 }
 
 kotlin {
     jvmToolchain(21)
+    jvm()
+
+    sourceSets {
+        commonMain.dependencies {
+            implementation(project(":zodkmp"))
+        }
+        jvmTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
+    }
 }
 
 dependencies {
-    implementation(project(":zodkmp"))
-    ksp(project(":zodkmp-ksp"))
-    testImplementation(libs.kotlin.testJunit)
-    testImplementation(libs.junit)
+    add("kspJvm", project(":zodkmp-ksp"))
 }

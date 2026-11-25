@@ -9,10 +9,11 @@ package com.piashcse.zodkmp
 public interface ZodSchema<T> {
     public fun safeParse(input: Any?): ZodResult<T>
 
-    public fun parse(input: Any?): T = when (val result = safeParse(input)) {
-        is ZodResult.Success -> result.data
-        is ZodResult.Failure -> throw ZodValidationException(result.error)
-    }
+    public fun parse(input: Any?): T =
+        when (val result = safeParse(input)) {
+            is ZodResult.Success -> result.data
+            is ZodResult.Failure -> throw ZodValidationException(result.error)
+        }
 
     /**
      * Suspended version of [safeParse]. Defaults to [safeParse] for schemas without
@@ -20,46 +21,59 @@ public interface ZodSchema<T> {
      */
     public suspend fun safeParseSuspend(input: Any?): ZodResult<T> = safeParse(input)
 
-    public suspend fun parseSuspend(input: Any?): T = when (val result = safeParseSuspend(input)) {
-        is ZodResult.Success -> result.data
-        is ZodResult.Failure -> throw ZodValidationException(result.error)
-    }
+    public suspend fun parseSuspend(input: Any?): T =
+        when (val result = safeParseSuspend(input)) {
+            is ZodResult.Success -> result.data
+            is ZodResult.Failure -> throw ZodValidationException(result.error)
+        }
 }
 
 /**
  * Result of a safe parse.
  */
 public sealed class ZodResult<out T> {
-    public data class Success<T>(val data: T) : ZodResult<T>()
+    public data class Success<T>(
+        val data: T,
+    ) : ZodResult<T>()
 
-    public data class Failure(val error: ZodError) : ZodResult<Nothing>()
+    public data class Failure(
+        val error: ZodError,
+    ) : ZodResult<Nothing>()
 
     public val isSuccess: Boolean get() = this is Success
     public val isFailure: Boolean get() = this is Failure
 
     public fun getOrNull(): T? = (this as? Success)?.data
 
-    public fun getOrThrow(): T = when (this) {
-        is Success -> data
-        is Failure -> throw ZodValidationException(error)
-    }
+    public fun getOrThrow(): T =
+        when (this) {
+            is Success -> data
+            is Failure -> throw ZodValidationException(error)
+        }
 
-    public inline fun <R> map(transform: (T) -> R): ZodResult<R> = when (this) {
-        is Success -> Success(transform(data))
-        is Failure -> this
-    }
+    public inline fun <R> map(transform: (T) -> R): ZodResult<R> =
+        when (this) {
+            is Success -> Success(transform(data))
+            is Failure -> this
+        }
 
-    public inline fun <R> fold(onSuccess: (T) -> R, onFailure: (ZodError) -> R): R = when (this) {
-        is Success -> onSuccess(data)
-        is Failure -> onFailure(error)
-    }
+    public inline fun <R> fold(
+        onSuccess: (T) -> R,
+        onFailure: (ZodError) -> R,
+    ): R =
+        when (this) {
+            is Success -> onSuccess(data)
+            is Failure -> onFailure(error)
+        }
 }
 
 /**
  * Thrown by [ZodSchema.parse] and [ZodSchema.parseSuspend].
  * Carries the structured [ZodError] instead of only a formatted message.
  */
-public class ZodValidationException(public val error: ZodError) : IllegalArgumentException(error.errors.joinToString(", ")) {
+public class ZodValidationException(
+    public val error: ZodError,
+) : IllegalArgumentException(error.errors.joinToString(", ")) {
     public fun formatted(): String = error.errors.joinToString("\n")
 }
 
@@ -81,9 +95,13 @@ public enum class ZodIssueCode {
 }
 
 public sealed interface ZodPathSegment {
-    public data class Property(val name: String) : ZodPathSegment
+    public data class Property(
+        val name: String,
+    ) : ZodPathSegment
 
-    public data class Index(val index: Int) : ZodPathSegment
+    public data class Index(
+        val index: Int,
+    ) : ZodPathSegment
 }
 
 public fun List<ZodPathSegment>.renderPath(): String {
@@ -123,7 +141,9 @@ public data class ZodIssue(
  * [issues] is the structured representation; [errors] keeps the historical formatted-string
  * view (now prefixed with the issue path) for source compatibility.
  */
-public class ZodError(public val issues: List<ZodIssue>) {
+public class ZodError(
+    public val issues: List<ZodIssue>,
+) {
     public constructor(error: String) : this(listOf(ZodIssue(ZodIssueCode.CUSTOM, error)))
     public constructor(issue: ZodIssue) : this(listOf(issue))
 
@@ -160,7 +180,10 @@ public class ZodError(public val issues: List<ZodIssue>) {
     override fun toString(): String = "ZodError(issues=$issues)"
 }
 
-internal fun typeError(expected: String, received: Any?): ZodError {
+internal fun typeError(
+    expected: String,
+    received: Any?,
+): ZodError {
     val receivedName = received.typeName()
     return ZodError(
         ZodIssue(
@@ -172,7 +195,10 @@ internal fun typeError(expected: String, received: Any?): ZodError {
     )
 }
 
-internal fun issue(code: ZodIssueCode, message: String): ZodIssue = ZodIssue(code, message)
+internal fun issue(
+    code: ZodIssueCode,
+    message: String,
+): ZodIssue = ZodIssue(code, message)
 
 /**
  * Compatibility factory for the historical `List<String>` error shape.

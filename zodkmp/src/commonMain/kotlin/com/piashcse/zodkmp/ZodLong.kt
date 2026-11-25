@@ -6,18 +6,25 @@ package com.piashcse.zodkmp
  * By default accepts [Long] and integral [Number] values. Numeric strings are only
  * accepted through [Zod.coerce].
  */
-public class ZodLong private constructor(private val validations: List<(Long) -> ZodIssue?>, private val coerce: Boolean) : ZodSchema<Long> {
+public class ZodLong private constructor(
+    private val validations: List<(Long) -> ZodIssue?>,
+    private val coerce: Boolean,
+) : ZodSchema<Long> {
     public companion object {
         public fun schema(coerce: Boolean = false): ZodLong = ZodLong(emptyList(), coerce)
     }
 
     private fun withValidation(validation: (Long) -> ZodIssue?): ZodLong = ZodLong(validations + validation, coerce)
 
-    public fun min(value: Long, message: String = "Number must be greater than or equal to $value"): ZodLong =
-        withValidation { number -> if (number < value) issue(ZodIssueCode.TOO_SMALL, message) else null }
+    public fun min(
+        value: Long,
+        message: String = "Number must be greater than or equal to $value",
+    ): ZodLong = withValidation { number -> if (number < value) issue(ZodIssueCode.TOO_SMALL, message) else null }
 
-    public fun max(value: Long, message: String = "Number must be less than or equal to $value"): ZodLong =
-        withValidation { number -> if (number > value) issue(ZodIssueCode.TOO_BIG, message) else null }
+    public fun max(
+        value: Long,
+        message: String = "Number must be less than or equal to $value",
+    ): ZodLong = withValidation { number -> if (number > value) issue(ZodIssueCode.TOO_BIG, message) else null }
 
     public fun positive(message: String = "Number must be positive"): ZodLong =
         withValidation { number -> if (number <= 0) issue(ZodIssueCode.TOO_SMALL, message) else null }

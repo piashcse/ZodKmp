@@ -121,7 +121,9 @@ class ZodPrimitivesTest {
 
     @Test
     fun `instanceOf should work with custom classes`() {
-        class Person(val name: String)
+        class Person(
+            val name: String,
+        )
         val schema = Zod.instanceOf<Person>()
         assertTrue(schema.safeParse(Person("bob")) is ZodResult.Success)
         assertTrue(schema.safeParse("bob") is ZodResult.Failure)

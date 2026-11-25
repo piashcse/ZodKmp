@@ -7,10 +7,17 @@ package com.piashcse.zodkmp
  * This means `Zod.string().optional().default("x")` keeps an explicit `null` as `null`,
  * while a missing property receives the default.
  */
-public class ZodDefault<T> internal constructor(private val schema: ZodSchema<T>, private val defaultValue: () -> T) : ZodSchema<T> {
+public class ZodDefault<T> internal constructor(
+    private val schema: ZodSchema<T>,
+    private val defaultValue: () -> T,
+) : ZodSchema<T> {
     internal fun wrapped(): ZodSchema<T> = schema
+
     public companion object {
-        public fun <T> schema(baseSchema: ZodSchema<T>, defaultValue: () -> T): ZodDefault<T> = ZodDefault(baseSchema, defaultValue)
+        public fun <T> schema(
+            baseSchema: ZodSchema<T>,
+            defaultValue: () -> T,
+        ): ZodDefault<T> = ZodDefault(baseSchema, defaultValue)
     }
 
     override fun safeParse(input: Any?): ZodResult<T> {

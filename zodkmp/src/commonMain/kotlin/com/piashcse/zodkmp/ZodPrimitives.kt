@@ -30,16 +30,17 @@ public class ZodNever private constructor() : ZodSchema<Nothing> {
         public fun schema(): ZodNever = ZodNever()
     }
 
-    override fun safeParse(input: Any?): ZodResult<Nothing> = ZodResult.Failure(
-        ZodError(
-            ZodIssue(
-                ZodIssueCode.INVALID_TYPE,
-                "Expected never, received ${input.typeName()}",
-                expected = "never",
-                received = input.typeName(),
+    override fun safeParse(input: Any?): ZodResult<Nothing> =
+        ZodResult.Failure(
+            ZodError(
+                ZodIssue(
+                    ZodIssueCode.INVALID_TYPE,
+                    "Expected never, received ${input.typeName()}",
+                    expected = "never",
+                    received = input.typeName(),
+                ),
             ),
-        ),
-    )
+        )
 }
 
 /**

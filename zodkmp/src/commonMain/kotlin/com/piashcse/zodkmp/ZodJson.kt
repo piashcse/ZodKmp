@@ -13,17 +13,18 @@ import kotlinx.serialization.json.booleanOrNull
  * Objects become `Map<String, Any?>`, arrays become `List<Any?>`, strings stay strings and
  * unquoted numbers/booleans become [Double]/[Boolean].
  */
-public fun JsonElement.toZodValue(): Any? = when (this) {
-    is JsonNull -> null
-    is JsonPrimitive ->
-        when {
-            isString -> content
-            booleanOrNull != null -> booleanOrNull == true
-            else -> content.toDoubleOrNull() ?: content
-        }
-    is JsonObject -> entries.associate { (key, value) -> key to value.toZodValue() }
-    is JsonArray -> map { it.toZodValue() }
-}
+public fun JsonElement.toZodValue(): Any? =
+    when (this) {
+        is JsonNull -> null
+        is JsonPrimitive ->
+            when {
+                isString -> content
+                booleanOrNull != null -> booleanOrNull == true
+                else -> content.toDoubleOrNull() ?: content
+            }
+        is JsonObject -> entries.associate { (key, value) -> key to value.toZodValue() }
+        is JsonArray -> map { it.toZodValue() }
+    }
 
 public fun <T> ZodSchema<T>.parseJson(json: JsonElement): T = parse(json.toZodValue())
 

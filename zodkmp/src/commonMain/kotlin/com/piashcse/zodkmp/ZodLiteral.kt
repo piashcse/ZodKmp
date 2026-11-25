@@ -3,7 +3,9 @@ package com.piashcse.zodkmp
 /**
  * Schema for validating literal values.
  */
-public class ZodLiteral<T> private constructor(private val value: T) : ZodSchema<T> {
+public class ZodLiteral<T> private constructor(
+    private val value: T,
+) : ZodSchema<T> {
     public companion object {
         public fun <T> schema(value: T): ZodLiteral<T> = ZodLiteral(value)
 

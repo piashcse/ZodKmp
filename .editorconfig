@@ -15,6 +15,6 @@ indent_size = 2
 trim_trailing_whitespace = false
 
 [*.{kt,kts}]
-ktlint_code_style = intellij_idea
+ktlint_code_style = ktlint_official
 ktlint_standard_class-naming = disabled
 max_line_length = 160

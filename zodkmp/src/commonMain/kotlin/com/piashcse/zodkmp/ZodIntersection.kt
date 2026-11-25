@@ -6,12 +6,19 @@ package com.piashcse.zodkmp
  * For two object schemas prefer [Zod.intersection]'s object overload, which merges the
  * shapes into a single object schema. This generic schema returns both parsed values.
  */
-public class ZodIntersection<T, U> private constructor(private val leftSchema: ZodSchema<T>, private val rightSchema: ZodSchema<U>) : ZodSchema<Pair<T, U>> {
+public class ZodIntersection<T, U> private constructor(
+    private val leftSchema: ZodSchema<T>,
+    private val rightSchema: ZodSchema<U>,
+) : ZodSchema<Pair<T, U>> {
     internal fun left(): ZodSchema<T> = leftSchema
 
     internal fun right(): ZodSchema<U> = rightSchema
+
     public companion object {
-        public fun <T, U> schema(leftSchema: ZodSchema<T>, rightSchema: ZodSchema<U>): ZodIntersection<T, U> = ZodIntersection(leftSchema, rightSchema)
+        public fun <T, U> schema(
+            leftSchema: ZodSchema<T>,
+            rightSchema: ZodSchema<U>,
+        ): ZodIntersection<T, U> = ZodIntersection(leftSchema, rightSchema)
     }
 
     override fun safeParse(input: Any?): ZodResult<Pair<T, U>> {
@@ -26,7 +33,10 @@ public class ZodIntersection<T, U> private constructor(private val leftSchema: Z
         return combine(leftResult, rightResult)
     }
 
-    private fun combine(leftResult: ZodResult<T>, rightResult: ZodResult<U>): ZodResult<Pair<T, U>> {
+    private fun combine(
+        leftResult: ZodResult<T>,
+        rightResult: ZodResult<U>,
+    ): ZodResult<Pair<T, U>> {
         val issues = mutableListOf<ZodIssue>()
         if (leftResult is ZodResult.Failure) {
             issues.add(

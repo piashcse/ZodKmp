@@ -4,10 +4,17 @@ package com.piashcse.zodkmp
  * Schema that pipes the output of one schema into the input of another.
  * Mirrors Zod's `z.pipe(a, b)`.
  */
-public class ZodPipe<T, R> internal constructor(private val first: ZodSchema<T>, private val second: ZodSchema<R>) : ZodSchema<R> {
+public class ZodPipe<T, R> internal constructor(
+    private val first: ZodSchema<T>,
+    private val second: ZodSchema<R>,
+) : ZodSchema<R> {
     internal fun firstSchema(): ZodSchema<T> = first
+
     public companion object {
-        public fun <T, R> schema(first: ZodSchema<T>, second: ZodSchema<R>): ZodPipe<T, R> = ZodPipe(first, second)
+        public fun <T, R> schema(
+            first: ZodSchema<T>,
+            second: ZodSchema<R>,
+        ): ZodPipe<T, R> = ZodPipe(first, second)
     }
 
     override fun safeParse(input: Any?): ZodResult<R> {

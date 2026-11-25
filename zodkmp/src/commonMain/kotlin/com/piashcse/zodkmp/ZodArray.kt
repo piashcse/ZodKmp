@@ -22,22 +22,33 @@ public class ZodArray<T> private constructor(
     @Suppress("UNCHECKED_CAST")
     internal fun <R> withElement(elementSchema: ZodSchema<R>): ZodArray<R> = ZodArray(elementSchema, validations as List<(List<R>) -> ZodIssue?>, hints)
 
-    private fun withValidation(newHints: Map<String, JsonElement> = emptyMap(), validation: (List<T>) -> ZodIssue?): ZodArray<T> =
-        ZodArray(elementSchema, validations + validation, hints + newHints)
+    private fun withValidation(
+        newHints: Map<String, JsonElement> = emptyMap(),
+        validation: (List<T>) -> ZodIssue?,
+    ): ZodArray<T> = ZodArray(elementSchema, validations + validation, hints + newHints)
 
     internal fun jsonHints(): Map<String, JsonElement> = hints
 
-    public fun min(minLength: Int, message: String = "Array must contain at least $minLength element(s)"): ZodArray<T> =
+    public fun min(
+        minLength: Int,
+        message: String = "Array must contain at least $minLength element(s)",
+    ): ZodArray<T> =
         withValidation(mapOf("minItems" to JsonPrimitive(minLength))) { value ->
             if (value.size < minLength) issue(ZodIssueCode.TOO_SMALL, message) else null
         }
 
-    public fun max(maxLength: Int, message: String = "Array must contain at most $maxLength element(s)"): ZodArray<T> =
+    public fun max(
+        maxLength: Int,
+        message: String = "Array must contain at most $maxLength element(s)",
+    ): ZodArray<T> =
         withValidation(mapOf("maxItems" to JsonPrimitive(maxLength))) { value ->
             if (value.size > maxLength) issue(ZodIssueCode.TOO_BIG, message) else null
         }
 
-    public fun length(exact: Int, message: String = "Array must contain exactly $exact element(s)"): ZodArray<T> =
+    public fun length(
+        exact: Int,
+        message: String = "Array must contain exactly $exact element(s)",
+    ): ZodArray<T> =
         withValidation(mapOf("minItems" to JsonPrimitive(exact), "maxItems" to JsonPrimitive(exact))) { value ->
             when {
                 value.size < exact -> issue(ZodIssueCode.TOO_SMALL, message)
@@ -51,16 +62,21 @@ public class ZodArray<T> private constructor(
 
     public fun nonempty(message: String = "Array cannot be empty"): ZodArray<T> = nonEmpty(message)
 
-    public fun unique(message: String = "Array elements must be unique"): ZodArray<T> = withValidation(mapOf("uniqueItems" to JsonPrimitive(true))) { value ->
-        if (value.toSet().size != value.size) issue(ZodIssueCode.CUSTOM, message) else null
-    }
+    public fun unique(message: String = "Array elements must be unique"): ZodArray<T> =
+        withValidation(mapOf("uniqueItems" to JsonPrimitive(true))) { value ->
+            if (value.toSet().size != value.size) issue(ZodIssueCode.CUSTOM, message) else null
+        }
 
     /**
      * Adds a custom refinement while preserving the [ZodArray] type.
      */
-    public fun refine(predicate: (List<T>) -> Boolean, message: (List<T>) -> String = { "Invalid value: $it" }): ZodArray<T> = withValidation { value ->
-        if (predicate(value)) null else issue(ZodIssueCode.CUSTOM, message(value))
-    }
+    public fun refine(
+        predicate: (List<T>) -> Boolean,
+        message: (List<T>) -> String = { "Invalid value: $it" },
+    ): ZodArray<T> =
+        withValidation { value ->
+            if (predicate(value)) null else issue(ZodIssueCode.CUSTOM, message(value))
+        }
 
     override fun safeParse(input: Any?): ZodResult<List<T>> {
         val listInput =

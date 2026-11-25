@@ -19,4 +19,6 @@ package com.piashcse.zodkmp
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-public annotation class ZodModel(public val strict: Boolean = false)
+public annotation class ZodModel(
+    public val strict: Boolean = false,
+)

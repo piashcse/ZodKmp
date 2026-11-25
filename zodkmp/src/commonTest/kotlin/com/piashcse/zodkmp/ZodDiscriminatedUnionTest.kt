@@ -5,9 +5,15 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 sealed class Animal {
-    data class Dog(val name: String, val goodBoy: Boolean) : Animal()
+    data class Dog(
+        val name: String,
+        val goodBoy: Boolean,
+    ) : Animal()
 
-    data class Cat(val name: String, val lives: Double) : Animal()
+    data class Cat(
+        val name: String,
+        val lives: Double,
+    ) : Animal()
 }
 
 class ZodDiscriminatedUnionTest {

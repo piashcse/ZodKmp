@@ -16,7 +16,8 @@ dependencies {
 }
 ```
 
-For Kotlin Multiplatform, add the processor to the target that consumes the models:
+For Kotlin Multiplatform, add the processor to the target that consumes the models. KSP2 does
+not expose a common-metadata task in this setup, so the processor runs per target:
 
 ```kotlin
 dependencies {

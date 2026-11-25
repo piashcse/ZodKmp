@@ -3,8 +3,11 @@ package com.piashcse.zodkmp
 /**
  * Schema for validating tuples (fixed-length arrays with a schema for each position).
  */
-public class ZodTuple private constructor(private val elementSchemas: List<ZodSchema<*>>) : ZodSchema<List<Any?>> {
+public class ZodTuple private constructor(
+    private val elementSchemas: List<ZodSchema<*>>,
+) : ZodSchema<List<Any?>> {
     internal fun elements(): List<ZodSchema<*>> = elementSchemas
+
     public companion object {
         public fun schema(vararg schemas: ZodSchema<*>): ZodTuple = ZodTuple(schemas.toList())
 

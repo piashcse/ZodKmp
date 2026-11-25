@@ -86,7 +86,7 @@ jobs:
             :zodkmp:apiCheck \
             :zodkmp:ktlintCheck \
             :zodkmp-ksp:ktlintCheck \
-            :codegen-test:test \
+            :codegen-test:jvmTest \
             --stacktrace --console=plain
 
       - name: Compile remaining native targets

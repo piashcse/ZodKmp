@@ -12,10 +12,14 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class ZodJsonSchemaTest {
-
     @Test
     fun `string constraints become json schema keywords`() {
-        val schema = Zod.string().min(2).max(10).email()
+        val schema =
+            Zod
+                .string()
+                .min(2)
+                .max(10)
+                .email()
         val json = schema.toJsonSchema()
 
         assertEquals("string", json["type"]!!.jsonPrimitive.content)
@@ -26,7 +30,14 @@ class ZodJsonSchemaTest {
 
     @Test
     fun `numbers, integers and multiples are described`() {
-        val json = Zod.number().int().min(0.0).max(100.0).multipleOf(5.0).toJsonSchema()
+        val json =
+            Zod
+                .number()
+                .int()
+                .min(0.0)
+                .max(100.0)
+                .multipleOf(5.0)
+                .toJsonSchema()
         assertEquals("integer", json["type"]!!.jsonPrimitive.content)
         assertEquals("0.0", json["minimum"]!!.jsonPrimitive.content)
         assertEquals("100.0", json["maximum"]!!.jsonPrimitive.content)
@@ -35,11 +46,14 @@ class ZodJsonSchemaTest {
 
     @Test
     fun `objects include properties required keys and additional properties policy`() {
-        val schema = Zod.objectSchema<Map<String, Any?>>({
-            string("name")
-            optionalString("nickname")
-            field("age", Zod.number().default(18.0))
-        }) { it }.strict()
+        val schema =
+            Zod
+                .objectSchema<Map<String, Any?>>({
+                    string("name")
+                    optionalString("nickname")
+                    field("age", Zod.number().default(18.0))
+                }) { it }
+                .strict()
 
         val json = schema.toJsonSchema()
         assertEquals("object", json["type"]!!.jsonPrimitive.content)
@@ -51,7 +65,12 @@ class ZodJsonSchemaTest {
 
     @Test
     fun `arrays sets tuples unions and nullables are described`() {
-        val array = Zod.array(Zod.string()).min(1).unique().toJsonSchema()
+        val array =
+            Zod
+                .array(Zod.string())
+                .min(1)
+                .unique()
+                .toJsonSchema()
         assertEquals("array", array["type"]!!.jsonPrimitive.content)
         assertEquals(1, array["minItems"]!!.jsonPrimitive.int)
         assertEquals(true, array["uniqueItems"]!!.jsonPrimitive.boolean)
@@ -71,7 +90,13 @@ class ZodJsonSchemaTest {
 
     @Test
     fun `literals and enums are described`() {
-        assertEquals("admin", Zod.literal("admin").toJsonSchema()["const"]!!.jsonPrimitive.content)
+        assertEquals(
+            "admin",
+            Zod
+                .literal("admin")
+                .toJsonSchema()["const"]!!
+                .jsonPrimitive.content,
+        )
         val enum = Zod.enum("a", "b").toJsonSchema()["enum"]!!.jsonArray
         assertEquals(listOf("a", "b"), enum.map { it.jsonPrimitive.content })
     }
@@ -79,13 +104,19 @@ class ZodJsonSchemaTest {
     @Test
     fun `recursive lazy schemas do not recurse forever`() {
         lateinit var node: ZodSchema<Map<String, Any?>>
-        node = Zod.lazy {
-            Zod.objectSchema<Map<String, Any?>>({
-                string("name")
-                field("children", Zod.array(node))
-            }) { it }
-        }
+        node =
+            Zod.lazy {
+                Zod.objectSchema<Map<String, Any?>>({
+                    string("name")
+                    field("children", Zod.array(node))
+                }) { it }
+            }
         val json = node.toJsonSchema() as JsonObject
-        assertTrue(json.isEmpty())
+        assertTrue(json.containsKey("\$ref"), "recursive roots must use a reference")
+        val definitions = json["\$defs"]!!.jsonObject
+        val lazy = definitions["Lazy0"]!!.jsonObject
+        assertEquals("object", lazy["type"]!!.jsonPrimitive.content)
+        val children = lazy["properties"]!!.jsonObject["children"]!!.jsonObject
+        assertEquals("#/\$defs/Lazy0", children["items"]!!.jsonObject["\$ref"]!!.jsonPrimitive.content)
     }
 }

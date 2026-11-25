@@ -185,6 +185,18 @@ class ZodErrorModelTest {
     }
 
     @Test
+    fun `bundled locales translate built-in issues`() {
+        ZodConfig.errorMap = ZodLocales.spanish
+        try {
+            val schema = Zod.objectSchema<Map<String, Any?>>({ string("name") }) { it }
+            val error = failure(schema.safeParse(emptyMap<String, Any?>()))
+            assertEquals("name: Campo obligatorio", error.errors.single())
+        } finally {
+            ZodConfig.reset()
+        }
+    }
+
+    @Test
     fun `json elements can be parsed directly`() {
         val schema =
             Zod.objectSchema<Map<String, Any?>>({

@@ -3,14 +3,21 @@ package com.piashcse.zodkmp
 /**
  * Schema for validating enum values.
  */
-public class ZodEnum<T> private constructor(private val values: Set<T>, private val coerceByEnumName: Boolean) : ZodSchema<T> {
+public class ZodEnum<T> private constructor(
+    private val values: Set<T>,
+    private val coerceByEnumName: Boolean,
+) : ZodSchema<T> {
     internal fun enumValues(): Set<T> = values
+
     public companion object {
         public fun <T> schema(vararg values: T): ZodEnum<T> = ZodEnum(values.toSet(), false)
 
         public fun <T> schema(values: Collection<T>): ZodEnum<T> = ZodEnum(values.toSet(), false)
 
-        public fun <T> schema(values: Collection<T>, coerceByEnumName: Boolean): ZodEnum<T> = ZodEnum(values.toSet(), coerceByEnumName)
+        public fun <T> schema(
+            values: Collection<T>,
+            coerceByEnumName: Boolean,
+        ): ZodEnum<T> = ZodEnum(values.toSet(), coerceByEnumName)
     }
 
     override fun safeParse(input: Any?): ZodResult<T> {

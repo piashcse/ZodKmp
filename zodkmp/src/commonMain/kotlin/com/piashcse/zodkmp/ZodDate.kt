@@ -10,7 +10,10 @@ import kotlinx.datetime.atTime
  * By default only [LocalDateTime] (and [LocalDate], normalized to midnight) values are
  * accepted. Use [Zod.coerce] to also accept ISO-8601 strings.
  */
-public class ZodDate private constructor(private val validations: List<(LocalDateTime) -> ZodIssue?>, private val coerce: Boolean) : ZodSchema<LocalDateTime> {
+public class ZodDate private constructor(
+    private val validations: List<(LocalDateTime) -> ZodIssue?>,
+    private val coerce: Boolean,
+) : ZodSchema<LocalDateTime> {
     public companion object {
         public fun schema(coerce: Boolean = false): ZodDate = ZodDate(emptyList(), coerce)
 
@@ -35,15 +38,23 @@ public class ZodDate private constructor(private val validations: List<(LocalDat
 
     private fun withValidation(validation: (LocalDateTime) -> ZodIssue?): ZodDate = ZodDate(validations + validation, coerce)
 
-    public fun min(minDate: LocalDateTime, message: String = "Date must be greater than or equal to $minDate"): ZodDate =
-        withValidation { value -> if (value < minDate) issue(ZodIssueCode.TOO_SMALL, message) else null }
+    public fun min(
+        minDate: LocalDateTime,
+        message: String = "Date must be greater than or equal to $minDate",
+    ): ZodDate = withValidation { value -> if (value < minDate) issue(ZodIssueCode.TOO_SMALL, message) else null }
 
-    public fun max(maxDate: LocalDateTime, message: String = "Date must be less than or equal to $maxDate"): ZodDate =
-        withValidation { value -> if (value > maxDate) issue(ZodIssueCode.TOO_BIG, message) else null }
+    public fun max(
+        maxDate: LocalDateTime,
+        message: String = "Date must be less than or equal to $maxDate",
+    ): ZodDate = withValidation { value -> if (value > maxDate) issue(ZodIssueCode.TOO_BIG, message) else null }
 
-    public fun refine(predicate: (LocalDateTime) -> Boolean, message: (LocalDateTime) -> String = { "Invalid value: $it" }): ZodDate = withValidation { value ->
-        if (predicate(value)) null else issue(ZodIssueCode.CUSTOM, message(value))
-    }
+    public fun refine(
+        predicate: (LocalDateTime) -> Boolean,
+        message: (LocalDateTime) -> String = { "Invalid value: $it" },
+    ): ZodDate =
+        withValidation { value ->
+            if (predicate(value)) null else issue(ZodIssueCode.CUSTOM, message(value))
+        }
 
     override fun safeParse(input: Any?): ZodResult<LocalDateTime> {
         val dateInput =

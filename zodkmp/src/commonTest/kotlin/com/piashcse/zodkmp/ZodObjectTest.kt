@@ -6,9 +6,16 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class ZodObjectTest {
-    data class User(val name: String, val age: Double)
+    data class User(
+        val name: String,
+        val age: Double,
+    )
 
-    data class Product(val id: Int, val name: String, val price: Double)
+    data class Product(
+        val id: Int,
+        val name: String,
+        val price: Double,
+    )
 
     @Test
     fun `parse should succeed with valid object`() {
@@ -136,7 +143,10 @@ class ZodObjectTest {
 
     @Test
     fun `optional fields using optional extensions should work`() {
-        data class Person(val name: String, val age: Double?)
+        data class Person(
+            val name: String,
+            val age: Double?,
+        )
 
         val builder = ZodObjectShapeBuilder()
         builder.string("name")
