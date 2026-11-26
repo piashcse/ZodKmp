@@ -23,7 +23,7 @@ concurrency:
 jobs:
   publish:
     name: Publish to Maven Central
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - name: Check out code
         uses: actions/checkout@v4

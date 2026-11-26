@@ -78,7 +78,7 @@ jobs:
   publish:
     name: Publish release to Maven Central
     needs: release
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - name: Check out release tag
         uses: actions/checkout@v4
