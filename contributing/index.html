@@ -974,6 +974,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#releasing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Releasing
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1068,6 +1079,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#releasing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Releasing
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1113,6 +1135,19 @@
 <li>Add tests for new functionality</li>
 <li>Keep changes focused and minimal</li>
 </ul>
+<h2 id="releasing">Releasing<a class="headerlink" href="#releasing" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Update <code>library.version</code> in <code>gradle.properties</code> and commit it to <code>main</code>.</li>
+<li>Create and push a tag that matches the version (<code>2.1.0</code> or <code>v2.1.0</code>), or publish a
+   GitHub Release for that tag.</li>
+<li>The <strong>Publish</strong> workflow runs automatically and uploads <code>zodkmp</code> and <code>zodkmp-ksp</code> to
+   Maven Central.</li>
+</ol>
+<p>The workflow validates that the tag matches <code>library.version</code> before publishing. A leading
+<code>v</code> is optional. Releases created through the <strong>Create Release</strong> workflow publish in the same
+run, so no separate action is needed there.</p>
+<p>Documentation under <code>docs/</code> is deployed to GitHub Pages automatically when it changes on
+<code>main</code>.</p>
 
 
 
