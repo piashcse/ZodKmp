@@ -30,7 +30,7 @@ jobs:
       tag: ${{ steps.tag.outputs.tag }}
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -81,7 +81,7 @@ jobs:
     runs-on: macos-15
     steps:
       - name: Check out release tag
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ needs.release.outputs.tag }}
 
