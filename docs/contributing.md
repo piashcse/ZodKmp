@@ -25,3 +25,17 @@ To get started with development, you'll need to set up your Kotlin Multiplatform
 - Write clear, well-documented code
 - Add tests for new functionality
 - Keep changes focused and minimal
+## Releasing
+
+1. Update `library.version` in `gradle.properties` and commit it to `main`.
+2. Create and push a tag that matches the version (`2.1.0` or `v2.1.0`), or publish a
+   GitHub Release for that tag.
+3. The **Publish** workflow runs automatically and uploads `zodkmp` and `zodkmp-ksp` to
+   Maven Central.
+
+The workflow validates that the tag matches `library.version` before publishing. A leading
+`v` is optional. Releases created through the **Create Release** workflow publish in the same
+run, so no separate action is needed there.
+
+Documentation under `docs/` is deployed to GitHub Pages automatically when it changes on
+`main`.
