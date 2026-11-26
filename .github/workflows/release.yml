@@ -86,7 +86,7 @@ jobs:
           ref: ${{ needs.release.outputs.tag }}
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: zulu
           java-version: 21
